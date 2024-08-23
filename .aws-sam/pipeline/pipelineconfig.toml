@@ -1,0 +1,11 @@
+version = 0.1
+[default.pipeline_bootstrap.parameters]
+pipeline_user = "arn:aws:iam::021891610553:user/aws-sam-cli-managed-staging-pipeline-r-PipelineUser-orq2veDqdA6I"
+permissions_provider = "AWS IAM"
+
+[staging.pipeline_bootstrap.parameters]
+pipeline_execution_role = "arn:aws:iam::021891610553:role/aws-sam-cli-managed-staging-p-PipelineExecutionRole-uIsoyRxCN20o"
+cloudformation_execution_role = "arn:aws:iam::021891610553:role/aws-sam-cli-managed-stagi-CloudFormationExecutionRo-5JHqv99V788Y"
+artifacts_bucket = "aws-sam-cli-managed-staging-pipeli-artifactsbucket-kixxajb9vq0q"
+image_repository = ""
+region = "eu-west-2"
