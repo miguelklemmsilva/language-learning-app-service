@@ -1,9 +1,9 @@
 data "aws_lambda_function" "pre_sign_up" {
-  function_name = "language-learning-app-PostSignUpFunction-DUcKyEq26HFf"
+  function_name = "language-learning-app-PreSignUpFunction-AH7ZMQXO9Lt9"
 }
 
 data "aws_iam_role" "pre_sign_up_lambda_role" {
-  name = "language-learning-app-PostSignUpFunctionRole-3xD1b0sxS8fd"
+  name = "language-learning-app-PreSignUpFunctionRole-q40sktzJ6swi"
 }
 
 data "aws_lambda_function" "update_language" {

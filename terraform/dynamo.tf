@@ -10,7 +10,7 @@ resource "aws_dynamodb_table" "users" {
 }
 
 resource "aws_dynamodb_table" "user_languages" {
-  name        = "user-languages"
+  name        = "user_languages"
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "UserId"
   range_key    = "Language"

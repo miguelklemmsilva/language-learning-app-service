@@ -2,6 +2,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Amazon;
 using Amazon.DynamoDBv2;
+using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.SystemTextJson;
@@ -16,22 +17,37 @@ public class Function
 
     private static async Task Main()
     {
-        Func<JsonObject, ILambdaContext, Task<JsonObject>> handler = FunctionHandler;
+        Func<APIGatewayHttpApiV2ProxyRequest, ILambdaContext, Task<APIGatewayHttpApiV2ProxyResponse>> handler = FunctionHandler;
         await LambdaBootstrapBuilder.Create(handler,
                 new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
             .Build()
             .RunAsync();
     }
 
-    public static async Task<JsonObject> FunctionHandler(JsonObject input, ILambdaContext context)
+    public static async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(APIGatewayHttpApiV2ProxyRequest input, ILambdaContext context)
     {
+        // lots of logging to figure out what's happening
         Console.WriteLine(input.ToString());
+        Console.WriteLine(input.Body);
+        Console.WriteLine(input.Headers);
+        
 
-        return input;
+        // return new APIGatewayHttpApiV2ProxyResponse
+        
+        return new APIGatewayHttpApiV2ProxyResponse
+        {
+            StatusCode = 200,
+            Body = "Hello World",
+            Headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "text/plain" }
+            }
+        };
     }
 }
 
-[JsonSerializable(typeof(JsonObject))]
+[JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
+[JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
 public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
 {
     // By using this partial class derived from JsonSerializerContext, we can generate reflection free JSON Serializer code at compile time
