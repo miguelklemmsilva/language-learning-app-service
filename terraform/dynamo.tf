@@ -7,14 +7,4 @@ resource "aws_dynamodb_table" "users" {
     name = "UserId"
     type = "S"
   }
-  
-  attribute {
-    name = "Email"
-    type = "S"
-  }
-  
-  attribute {
-    name = "ActiveLanguage"
-    type = "S"
-  }
 }
