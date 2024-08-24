@@ -10,7 +10,7 @@ using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Serialization.SystemTextJson;
 
-namespace HelloWorldAot;
+namespace PostSignUp;
 
 public class Function
 {
