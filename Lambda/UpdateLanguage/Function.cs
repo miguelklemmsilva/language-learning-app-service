@@ -29,7 +29,10 @@ public class Function
         // lots of logging to figure out what's happening
         Console.WriteLine(input.ToString());
         Console.WriteLine(input.Body);
-        Console.WriteLine(input.Headers);
+        foreach (var key in input.Headers.Keys)
+        {
+            Console.WriteLine(key + ": " + input.Headers[key]);
+        }
         
 
         // return new APIGatewayHttpApiV2ProxyResponse
