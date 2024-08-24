@@ -51,6 +51,7 @@ public class Function
     }
 }
 
+[JsonSerializable(typeof(Dictionary<string, string>))]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
 public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
