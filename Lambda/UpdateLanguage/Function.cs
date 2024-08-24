@@ -1,45 +1,52 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Net.Http;
 using System.Text.Json;
-using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using Amazon;
-using Amazon.DynamoDBv2;
-using Amazon.Lambda.APIGatewayEvents;
+
 using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
+using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Serialization.SystemTextJson;
-using AWS.Repositories;
-using Core.Models.DataModels;
 
 namespace Lambda.UpdateLanguage;
 
 public class Function
 {
-    private static readonly AmazonDynamoDBClient DynamoDbClient = new(RegionEndpoint.EUWest2);
-
+    private static readonly HttpClient client = new HttpClient();
+    
+    /// <summary>
+    /// The main entry point for the Lambda function. The main function is called once during the Lambda init phase. It
+    /// initializes the .NET Lambda runtime client passing in the function handler to invoke for each Lambda event and
+    /// the JSON serializer to use for converting Lambda JSON format to the .NET types. 
+    /// </summary>
     private static async Task Main()
     {
         Func<APIGatewayHttpApiV2ProxyRequest, ILambdaContext, Task<APIGatewayHttpApiV2ProxyResponse>> handler = FunctionHandler;
-        await LambdaBootstrapBuilder.Create(handler,
-                new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
+        await LambdaBootstrapBuilder.Create(handler, new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
             .Build()
             .RunAsync();
     }
 
-    public static async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(APIGatewayHttpApiV2ProxyRequest input, ILambdaContext context)
+    private static async Task<string> GetCallingIP()
     {
-        // lots of logging to figure out what's happening
-        Console.WriteLine(input.ToString());
-        Console.WriteLine(input.Body);
-        // foreach (var key in input.Headers.Keys)
-        // {
-        //     Console.WriteLine(key);
-        // }
+        client.DefaultRequestHeaders.Accept.Clear();
+        client.DefaultRequestHeaders.Add("User-Agent", "AWS Lambda .Net Client");
 
-        // return new APIGatewayHttpApiV2ProxyResponse
-        
+        var msg = await client.GetStringAsync("http://checkip.amazonaws.com/").ConfigureAwait(continueOnCapturedContext:false);
+
+        return msg.Replace("\n","");
+    }
+
+    public static async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(APIGatewayHttpApiV2ProxyRequest apigProxyEvent, ILambdaContext context)
+    {
+
+        var location = await GetCallingIP();
         var body = new Dictionary<string, string>
         {
-            { "message", "hello world" }
+            { "message", "hello world" },
+            { "location", location }
         };
 
         return new APIGatewayHttpApiV2ProxyResponse
