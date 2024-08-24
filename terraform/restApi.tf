@@ -40,6 +40,24 @@ resource "aws_api_gateway_integration" "update_language_lambda" {
   uri                     = data.aws_lambda_function.update_language.invoke_arn
 }
 
+resource "aws_api_gateway_method" "update_language_options" {
+  rest_api_id   = aws_api_gateway_rest_api.rest_api.id
+  resource_id   = aws_api_gateway_resource.update_language.id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_integration" "update_language_options" {
+  rest_api_id = aws_api_gateway_rest_api.rest_api.id
+  resource_id = aws_api_gateway_resource.update_language.id
+  http_method = aws_api_gateway_method.update_language_options.http_method
+  type        = "MOCK"
+
+  request_templates = {
+    "application/json" = "{\"statusCode\": 200}"
+  }
+}
+
 # Deploy the API to a stage
 resource "aws_api_gateway_deployment" "deployment" {
   rest_api_id = aws_api_gateway_rest_api.rest_api.id

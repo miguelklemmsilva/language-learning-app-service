@@ -31,7 +31,7 @@ public class Function
         Console.WriteLine(input.Body);
         foreach (var key in input.Headers.Keys)
         {
-            Console.WriteLine(key + ": " + input.Headers[key]);
+            Console.WriteLine(key);
         }
 
         // return new APIGatewayHttpApiV2ProxyResponse
