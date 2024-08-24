@@ -33,7 +33,6 @@ public class Function
         {
             Console.WriteLine(key + ": " + input.Headers[key]);
         }
-        
 
         // return new APIGatewayHttpApiV2ProxyResponse
         
