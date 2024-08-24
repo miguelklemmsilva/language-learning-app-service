@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Amazon;
@@ -36,14 +37,16 @@ public class Function
 
         // return new APIGatewayHttpApiV2ProxyResponse
         
+        var body = new Dictionary<string, string>
+        {
+            { "message", "hello world" }
+        };
+
         return new APIGatewayHttpApiV2ProxyResponse
         {
+            Body = JsonSerializer.Serialize(body, typeof(Dictionary<string, string>), LambdaFunctionJsonSerializerContext.Default),
             StatusCode = 200,
-            Body = "Hello World",
-            Headers = new Dictionary<string, string>
-            {
-                { "Content-Type", "text/plain" }
-            }
+            Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
         };
     }
 }
