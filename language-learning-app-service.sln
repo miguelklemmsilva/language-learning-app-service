@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lambda", "Lambda", "{15C3591B-31E6-4E3B-8AFF-13DAF3A98278}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lambda.PostSignUp", "Lambda\PostSignUp\Lambda.PostSignUp.csproj", "{5587888E-4CDB-4291-B111-786D95C89B6D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lambda.PreSignUp", "Lambda\PostSignUp\Lambda.PreSignUp.csproj", "{5587888E-4CDB-4291-B111-786D95C89B6D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AWS", "AWS\AWS.csproj", "{00AF9B74-2F02-4BF9-BDB6-5373841F0ADF}"
 EndProject

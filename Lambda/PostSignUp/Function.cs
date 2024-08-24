@@ -8,7 +8,7 @@ using Amazon.Lambda.Serialization.SystemTextJson;
 using AWS.Repositories;
 using Core.Models.DataModels;
 
-namespace Lambda.PostSignUp;
+namespace Lambda.PreSignUp;
 
 public class Function
 {

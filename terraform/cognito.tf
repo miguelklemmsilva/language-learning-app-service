@@ -1,33 +1,3 @@
-data "aws_lambda_function" "pre_sign_up" {
-  function_name = "language-learning-app-PostSignUpFunction-DUcKyEq26HFf"
-}
-
-
-resource "aws_lambda_permission" "allow_cognito_preSignUp" {
-  statement_id  = "AllowPreSignUpExecutionFromCognito"
-  action        = "lambda:InvokeFunction"
-  function_name = data.aws_lambda_function.pre_sign_up.function_name
-  principal     = "cognito-idp.amazonaws.com"
-  source_arn    = aws_cognito_user_pool.user_pool.arn
-}
-
-resource "aws_iam_role" "pre_sign_up_lambda_role" {
-  name = "PreSignUpLambdaRole"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17",
-    Statement = [
-      {
-        Action = "sts:AssumeRole",
-        Effect = "Allow",
-        Principal = {
-          Service = "lambda.amazonaws.com"
-        },
-      }
-    ]
-  })
-}
-
 resource "aws_cognito_user_pool" "user_pool" {
   name = "poly-bara"
 
