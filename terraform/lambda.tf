@@ -23,7 +23,7 @@ data "aws_iam_policy_document" "lambda_policy" {
       "dynamodb:Query"
     ]
     effect = "Allow"
-    resources = [aws_dynamodb_table.users.arn]
+    resources = [aws_dynamodb_table.users.arn, aws_dynamodb_table.user-languages.arn]
   }
 }
 
