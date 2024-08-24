@@ -25,6 +25,14 @@ public class Function
 
     public static async Task<JsonObject> FunctionHandler(JsonObject input, ILambdaContext context)
     {
+        // line by line debugging
+        Console.WriteLine("PostSignUp Lambda function called");
+        Console.WriteLine("Input: " + input.ToString());
+        Console.WriteLine("request: " + input["request"].ToString());
+        Console.WriteLine("userAttributes: " + input["request"]["userAttributes"].ToString());
+        Console.WriteLine("email: " + input["request"]["userAttributes"]["email"].ToString());
+        Console.WriteLine("sub: " + input["request"]["userAttributes"]["sub"].ToString());
+        
         var email = input["request"]!["userAttributes"]!["email"]!.ToString().ToLower();
         var sub = input["request"]!["userAttributes"]!["sub"]!.ToString().ToLower();
 
