@@ -68,9 +68,11 @@ public class Function
     }
 }
 
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase
+)]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
-[JsonSerializable(typeof(UserLanguage))]
 [JsonSerializable(typeof(UserLanguageRequest))]
 public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
 {

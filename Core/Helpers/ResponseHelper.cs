@@ -36,7 +36,7 @@ public static class ResponseHelper
             Headers = CommonHeaders
         };
     }
-}
+}   
 
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase
