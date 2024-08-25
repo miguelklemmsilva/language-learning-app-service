@@ -39,16 +39,11 @@ public class Function
 
             // Parse the request body
             var updateRequest = JsonSerializer.Deserialize(apigProxyEvent.Body,
-                LambdaFunctionJsonSerializerContext.Default.UserLanguageRequest)!;
+                LambdaFunctionJsonSerializerContext.Default.RemoveUserLanguageRequest)!;
 
-            var userLanguage = new UserLanguage
+            var removeLanguageRequest = new RemoveUserLanguageRequest
             {
-                UserId = username,
-                Language = updateRequest.Language,
-                Country = updateRequest.Country,
-                Translation = updateRequest.Translation,
-                Listening = updateRequest.Listening,
-                Speaking = updateRequest.Speaking
+                Language = updateRequest.Language
             };
 
             UserLanguageRepository userLanguageRepository = new(DynamoDbClient);
@@ -57,7 +52,7 @@ public class Function
             UserService userService = new(userRepository);
             IUserLanguageService userLanguageService = new UserLanguageService(userLanguageRepository, userService);
 
-            await userLanguageService.RemoveUserLanguageAsync(username, userLanguage.Language);
+            await userLanguageService.RemoveUserLanguageAsync(username, removeLanguageRequest.Language);
             
             var body = new Dictionary<string, string>
             {
@@ -77,7 +72,7 @@ public class Function
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
-[JsonSerializable(typeof(UserLanguageRequest))]
+[JsonSerializable(typeof(RemoveUserLanguageRequest))]
 public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
 {
     // By using this partial class derived from JsonSerializerContext, we can generate reflection-free JSON Serializer code at compile time
