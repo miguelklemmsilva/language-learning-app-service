@@ -9,7 +9,7 @@ using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using AWS.Repositories;
 using Core.Models.DataModels;
-using Core.obj;
+using Core.Models.DataTransferModels;
 using Core.Services;
 
 namespace Lambda.UpdateLanguage;

@@ -1,4 +1,4 @@
-namespace Core.obj;
+namespace Core.Models.DataTransferModels;
 
 public class UpdateLanguageRequest
 {

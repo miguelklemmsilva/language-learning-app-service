@@ -9,9 +9,4 @@
     <ItemGroup>
       <Folder Include="Models\DataTransferModels\" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Compile Include="obj\UpdateLanguageRequest.cs" />
-    </ItemGroup>
-
 </Project>
