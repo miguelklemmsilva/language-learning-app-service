@@ -59,7 +59,7 @@ Resources:
   RemoveUserLanguagesFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: ./Lambda/RemoveUserLanguages/
+      CodeUri: ./Lambda/RemoveUserLanguage/
       Handler: bootstrap
       Runtime: dotnet8
       Architectures:
