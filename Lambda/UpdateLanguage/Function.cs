@@ -76,8 +76,9 @@ public class Function
             updateRequest = JsonSerializer.Deserialize(apigProxyEvent.Body,
                 LambdaFunctionJsonSerializerContext.Default.UpdateLanguageRequest)!;
         }
-        catch (JsonException)
+        catch (JsonException ex)
         {
+            Console.WriteLine($"JsonException: {ex.Message}");
             return new APIGatewayHttpApiV2ProxyResponse
             {
                 Body = "Invalid request body",
