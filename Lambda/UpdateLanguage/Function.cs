@@ -52,6 +52,7 @@ public class Function
             };
         }
         
+        
         string authToken = apigProxyEvent.Headers.TryGetValue("Authorization", out var header)
             ? header
             : string.Empty;
