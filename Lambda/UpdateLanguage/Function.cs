@@ -37,6 +37,11 @@ public class Function
     public static async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(APIGatewayHttpApiV2ProxyRequest apigProxyEvent, ILambdaContext context)
     {
 
+        foreach (var key in apigProxyEvent.Headers.Keys)
+        {
+            Console.WriteLine($"Header: {key} = {apigProxyEvent.Headers[key]}");
+        }
+        
         var location = await GetCallingIP();
         var body = new Dictionary<string, string>
         {
