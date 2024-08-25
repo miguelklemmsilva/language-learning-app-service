@@ -1,17 +1,17 @@
 data "aws_lambda_function" "pre_sign_up" {
-  function_name = "language-learning-app-PreSignUpFunction-AH7ZMQXO9Lt9"
+  function_name = "language-learning-app-PreSignUpFunction-rW5Ei1Q7GTV7"
 }
 
 data "aws_iam_role" "pre_sign_up_lambda_role" {
-  name = "language-learning-app-PreSignUpFunctionRole-q40sktzJ6swi"
+  name = "language-learning-app-PreSignUpFunctionRole-TNzIgUAgMi5J"
 }
 
 data "aws_lambda_function" "update_language" {
-  function_name = "language-learning-app-UpdateLanguageFunction-uhbdgUbTA1Z3"
+  function_name = "language-learning-app-UpdateLanguageFunction-5TgZJhdi9JeJ"
 }
 
 data "aws_iam_role" "update_language_lambda_role" {
-  name = "language-learning-app-UpdateLanguageFunctionRole-smYdUkOQmJoZ"
+  name = "language-learning-app-UpdateLanguageFunctionRole-mX09jyVe3g0u"
 }
 
 resource "aws_lambda_permission" "allow_cognito_preSignUp" {

@@ -16,11 +16,6 @@ public class Function
 {
     private static readonly HttpClient client = new HttpClient();
     
-    /// <summary>
-    /// The main entry point for the Lambda function. The main function is called once during the Lambda init phase. It
-    /// initializes the .NET Lambda runtime client passing in the function handler to invoke for each Lambda event and
-    /// the JSON serializer to use for converting Lambda JSON format to the .NET types. 
-    /// </summary>
     private static async Task Main()
     {
         Func<APIGatewayHttpApiV2ProxyRequest, ILambdaContext, Task<APIGatewayHttpApiV2ProxyResponse>> handler = FunctionHandler;
@@ -53,7 +48,13 @@ public class Function
         {
             Body = JsonSerializer.Serialize(body, typeof(Dictionary<string, string>), LambdaFunctionJsonSerializerContext.Default),
             StatusCode = 200,
-            Headers = new Dictionary<string, string> { { "Content-Type", "application/json" } }
+            Headers = new Dictionary<string, string>
+            {
+                { "Content-Type", "application/json" },
+                { "Access-Control-Allow-Origin", "*" },
+                { "Access-Control-Allow-Methods", "GET, POST, OPTIONS" },
+                { "Access-Control-Allow-Headers", "Content-Type" }
+            }
         };
     }
 }
@@ -63,7 +64,7 @@ public class Function
 [JsonSerializable(typeof(Dictionary<string, string>))]
 public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
 {
-    // By using this partial class derived from JsonSerializerContext, we can generate reflection free JSON Serializer code at compile time
+    // By using this partial class derived from JsonSerializerContext, we can generate reflection-free JSON Serializer code at compile time
     // which can deserialize our class and properties. However, we must attribute this class to tell it what types to generate serialization code for.
     // See https://docs.microsoft.com/en-us/dotnet/standard/serialization/system-text-json-source-generation
 }
