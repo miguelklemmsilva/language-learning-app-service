@@ -17,6 +17,14 @@ namespace Lambda.UpdateLanguage;
 public class Function
 {
     private static readonly AmazonDynamoDBClient DynamoDbClient = new(RegionEndpoint.EUWest2);
+    
+    private static readonly Dictionary<string, string> CommonHeaders = new()
+    {
+        { "Content-Type", "application/json" },
+        { "Access-Control-Allow-Origin", "*" },
+        { "Access-Control-Allow-Methods", "GET, POST, OPTIONS" },
+        { "Access-Control-Allow-Headers", "Content-Type" }
+    };
 
     private static async Task Main()
     {
@@ -39,7 +47,8 @@ public class Function
             return new APIGatewayHttpApiV2ProxyResponse
             {
                 Body = "Authorization token is missing",
-                StatusCode = 400
+                StatusCode = 400,
+                Headers = CommonHeaders
             };
 
         var tokenHandler = new JwtSecurityTokenHandler();
@@ -51,7 +60,8 @@ public class Function
             return new APIGatewayHttpApiV2ProxyResponse
             {
                 Body = "Request body is missing",
-                StatusCode = 400
+                StatusCode = 400,
+                Headers = CommonHeaders
             };
 
         // Parse the request body
@@ -66,7 +76,8 @@ public class Function
             return new APIGatewayHttpApiV2ProxyResponse
             {
                 Body = "Invalid request body",
-                StatusCode = 400
+                StatusCode = 400,
+                Headers = CommonHeaders
             };
         }
 
@@ -95,13 +106,7 @@ public class Function
                 Body = JsonSerializer.Serialize(userLanguage,
                     LambdaFunctionJsonSerializerContext.Default.UserLanguage),
                 StatusCode = 200,
-                Headers = new Dictionary<string, string>
-                {
-                    { "Content-Type", "application/json" },
-                    { "Access-Control-Allow-Origin", "*" },
-                    { "Access-Control-Allow-Methods", "GET, POST, OPTIONS" },
-                    { "Access-Control-Allow-Headers", "Content-Type" }
-                }
+                Headers = CommonHeaders
             };
         }
         catch (Exception ex)
@@ -109,7 +114,8 @@ public class Function
             return new APIGatewayHttpApiV2ProxyResponse
             {
                 Body = $"Error updating user language: {ex.Message}",
-                StatusCode = 500
+                StatusCode = 500,
+                Headers = CommonHeaders
             };
         }
     }
