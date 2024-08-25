@@ -102,3 +102,14 @@ resource "aws_api_gateway_method_response" "cors_method_response" {
     "method.response.header.Access-Control-Allow-Origin"  = true
   }
 }
+
+resource "aws_api_gateway_deployment" "deployment" {
+  rest_api_id = aws_api_gateway_rest_api.rest_api.id
+  stage_name  = "prod"
+
+  depends_on = [
+    aws_api_gateway_integration.cors_integration,
+    aws_api_gateway_integration_response.cors_integration_response,
+    aws_api_gateway_method_response.cors_method_response,
+  ]
+}

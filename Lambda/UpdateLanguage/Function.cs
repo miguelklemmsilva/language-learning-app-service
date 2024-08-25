@@ -59,8 +59,7 @@ public class Function
 
             await userLanguageService.UpdateUserLanguageAsync(userLanguage);
 
-            return ResponseHelper.CreateSuccessResponse(userLanguage,
-                LambdaFunctionJsonSerializerContext.Default.UserLanguage);
+            return ResponseHelper.CreateSuccessResponse(userLanguage, typeof(UserLanguage));
         }
         catch (Exception ex)
         {

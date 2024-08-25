@@ -64,7 +64,7 @@ public class Function
                 { "message", "Language removed successfully" }
             };
 
-            return ResponseHelper.CreateSuccessResponse(body, LambdaFunctionJsonSerializerContext.Default.DictionaryStringString);
+            return ResponseHelper.CreateSuccessResponse(body, typeof(Dictionary<string, string>));
 
         }
         catch (Exception ex)

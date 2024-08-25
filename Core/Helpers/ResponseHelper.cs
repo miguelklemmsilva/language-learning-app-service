@@ -16,12 +16,12 @@ public static class ResponseHelper
         { "Access-Control-Allow-Headers", "Content-Type" }
     };
 
-    public static APIGatewayHttpApiV2ProxyResponse CreateSuccessResponse<T>(T body, JsonTypeInfo<T> jsonTypeInfo)
+    public static APIGatewayHttpApiV2ProxyResponse CreateSuccessResponse<T>(T body, Type type)
     {
         return new APIGatewayHttpApiV2ProxyResponse
         {
             StatusCode = 200,
-            Body = JsonSerializer.Serialize(body, jsonTypeInfo),
+            Body = JsonSerializer.Serialize(body, type, LambdaFunctionJsonSerializerContext.Default),
             Headers = CommonHeaders
         };
     }
@@ -31,13 +31,21 @@ public static class ResponseHelper
         return new APIGatewayHttpApiV2ProxyResponse
         {
             StatusCode = statusCode,
-            Body = JsonSerializer.Serialize(new Dictionary<string, string> { {"error", message} }, typeof(Dictionary<string, string>), LambdaFunctionJsonSerializerContext.Default),
+            Body = JsonSerializer.Serialize(new Dictionary<string, string> { { "error", message } },
+                typeof(Dictionary<string, string>), LambdaFunctionJsonSerializerContext.Default),
             Headers = CommonHeaders
         };
     }
 }
-    
 
+[JsonSourceGenerationOptions(
+    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase
+    )]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
-public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext;
+[JsonSerializable(typeof(User))]
+[JsonSerializable(typeof(UserLanguage))]
+[JsonSerializable(typeof(IEnumerable<UserLanguage>))]
+internal partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
+{
+}

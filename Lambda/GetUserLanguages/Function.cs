@@ -53,7 +53,7 @@ public class Function
 
             var userLanguages = await userLanguageService.GetUserLanguagesAsync(username);
 
-            return ResponseHelper.CreateSuccessResponse(userLanguages, LambdaFunctionJsonSerializerContext.Default.IEnumerableUserLanguage);
+            return ResponseHelper.CreateSuccessResponse(userLanguages, typeof(IEnumerable<UserLanguage>));
         }
         catch (Exception ex)
         {

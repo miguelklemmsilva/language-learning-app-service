@@ -44,7 +44,7 @@ public class Function
 
             var user = await userService.GetUserAsync(username);
 
-            return ResponseHelper.CreateSuccessResponse(user, LambdaFunctionJsonSerializerContext.Default.User);
+            return ResponseHelper.CreateSuccessResponse(user, typeof(User));
         }
         catch (Exception e)
         {
@@ -56,6 +56,7 @@ public class Function
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
 [JsonSerializable(typeof(User))]
+[JsonSerializable(typeof(UserLanguage))]
 public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
 {
     // By using this partial class derived from JsonSerializerContext, we can generate reflection-free JSON Serializer code at compile time
