@@ -8,7 +8,7 @@ namespace AWS.Repositories;
 
 public class UserRepository(IAmazonDynamoDB client) : IUserRepository
 {
-    private readonly string TABLE_NAME = "users";
+    private const string TableName = "users";
 
     public async Task<User> CreateUserAsync(User user)
     {
@@ -27,7 +27,7 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
         
         var request = new PutItemRequest
         {
-            TableName = TABLE_NAME,
+            TableName = TableName,
             Item = item
         };
         
@@ -45,12 +45,57 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
 
         var request = new GetItemRequest
         {
-            TableName = TABLE_NAME,
+            TableName = TableName,
             Key = key
         };
 
         var response = await client.GetItemAsync(request);
 
         return UserFactory.Build(response.Item);
+    }
+
+    public async Task<User> UpdateUserAsync(User user)
+    {
+        var updateExpressions = new List<string>();
+        var expressionAttributeValues = new Dictionary<string, AttributeValue>();
+        var expressionAttributeNames = new Dictionary<string, string>();
+
+        if (user.Email != null)
+        {
+            updateExpressions.Add("#Email = :email");
+            expressionAttributeValues[":email"] = new AttributeValue { S = user.Email };
+            expressionAttributeNames["#Email"] = "Email";
+        }
+
+        if (user.ActiveLanguage != null)
+        {
+            updateExpressions.Add("#ActiveLanguage = :activeLanguage");
+            expressionAttributeValues[":activeLanguage"] = new AttributeValue { S = user.ActiveLanguage };
+            expressionAttributeNames["#ActiveLanguage"] = "ActiveLanguage";
+        }
+
+        if (updateExpressions.Count == 0)
+        {
+            // No fields to update
+            return user;
+        }
+
+        var updateExpression = "SET " + string.Join(", ", updateExpressions);
+
+        var request = new UpdateItemRequest
+        {
+            TableName = TableName,
+            Key = new Dictionary<string, AttributeValue>
+            {
+                { "UserId", new AttributeValue { S = user.UserId } }
+            },
+            UpdateExpression = updateExpression,
+            ExpressionAttributeValues = expressionAttributeValues,
+            ExpressionAttributeNames = expressionAttributeNames,
+            ReturnValues = ReturnValue.ALL_NEW
+        };
+
+        var response = await client.UpdateItemAsync(request);
+        return UserFactory.Build(response.Attributes);
     }
 }

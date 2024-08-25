@@ -6,7 +6,10 @@ using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using AWS.Repositories;
+using AWS.Services;
+using Core.Interfaces;
 using Core.Models.DataModels;
+using Core.Services;
 
 namespace Lambda.PreSignUp;
 
@@ -31,13 +34,16 @@ public class Function
         if (string.IsNullOrEmpty(email))
             throw new ArgumentException("Email not provided in the request.");
 
-        var userRepository = new UserRepository(DynamoDbClient);
-
-        await userRepository.CreateUserAsync(new User
+        IUserRepository userRepository = new UserRepository(DynamoDbClient);
+        IUserService userService = new UserService(userRepository);
+        
+        var newUser = new User
         {
             UserId = sub,
             Email = email
-        });
+        };
+        
+        await userService.CreateUserAsync(newUser);
 
         return input;
     }

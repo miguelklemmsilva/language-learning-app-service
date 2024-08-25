@@ -18,7 +18,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         return await userRepository.CreateUserAsync(user);
     }
     
-    public async Task<User> GetUser(string userId)
+    public async Task<User> GetUserAsync(string userId)
     {
         var user = await userRepository.GetUserAsync(userId);
         
@@ -28,5 +28,28 @@ public class UserService(IUserRepository userRepository) : IUserService
         }
         
         return user;
+    }
+    
+    public async Task<User> UpdateUserAsync(User user)
+    {
+        var existingUser = await userRepository.GetUserAsync(user.UserId);
+        
+        if (existingUser == null)
+        {
+            throw new Exception("User not found");
+        }
+        
+        // Only update fields that are not null
+        if (user.Email != null)
+        {
+            existingUser.Email = user.Email;
+        }
+        
+        if (user.ActiveLanguage != null)
+        {
+            existingUser.ActiveLanguage = user.ActiveLanguage;
+        }
+        
+        return await userRepository.UpdateUserAsync(existingUser);
     }
 }
