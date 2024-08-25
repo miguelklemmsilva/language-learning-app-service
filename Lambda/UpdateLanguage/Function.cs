@@ -39,6 +39,19 @@ public class Function
     public static async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
         APIGatewayHttpApiV2ProxyRequest apigProxyEvent, ILambdaContext context)
     {
+        if (apigProxyEvent.RequestContext.Http.Method.Equals("OPTIONS", StringComparison.OrdinalIgnoreCase))
+        {
+            return new APIGatewayHttpApiV2ProxyResponse
+            {
+                StatusCode = 200,
+                Headers = new Dictionary<string, string>(CommonHeaders)
+                {
+                    { "Access-Control-Allow-Headers", "Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token" },
+                    { "Access-Control-Allow-Methods", "GET,POST,OPTIONS" }
+                }
+            };
+        }
+        
         string authToken = apigProxyEvent.Headers.TryGetValue("Authorization", out var header)
             ? header
             : string.Empty;
