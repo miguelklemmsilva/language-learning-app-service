@@ -37,6 +37,7 @@ public static class ResponseHelper
     }
 }
     
+
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
 public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext;
