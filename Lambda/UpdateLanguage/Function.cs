@@ -67,6 +67,8 @@ public class Function
                 StatusCode = 400,
                 Headers = CommonHeaders
             };
+        
+        Console.WriteLine($"Request body: {apigProxyEvent.Body}");
 
         // Parse the request body
         UpdateLanguageRequest updateRequest;
