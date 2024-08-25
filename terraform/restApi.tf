@@ -58,7 +58,7 @@ resource "aws_api_gateway_integration" "update_language_options_integration" {
     "application/json" = "{\"statusCode\": 200}"
   }
 
-  passthrough_behavior = "WHEN_NO_MATCH"
+  passthrough_behavior = "NEVER"
 }
 
 resource "aws_api_gateway_integration_response" "options_integration_response" {
@@ -69,7 +69,7 @@ resource "aws_api_gateway_integration_response" "options_integration_response" {
   
   response_parameters = {
     "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-    "method.response.header.Access-Control-Allow-Methods" = "'GET,POST,OPTIONS'",
+    "method.response.header.Access-Control-Allow-Methods" = "'*'",
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
 
