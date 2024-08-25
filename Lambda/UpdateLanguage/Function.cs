@@ -1,10 +1,10 @@
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-
 using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.APIGatewayEvents;
@@ -15,43 +15,51 @@ namespace Lambda.UpdateLanguage;
 public class Function
 {
     private static readonly HttpClient client = new HttpClient();
-    
+
     private static async Task Main()
     {
-        Func<APIGatewayHttpApiV2ProxyRequest, ILambdaContext, Task<APIGatewayHttpApiV2ProxyResponse>> handler = FunctionHandler;
-        await LambdaBootstrapBuilder.Create(handler, new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
+        Func<APIGatewayHttpApiV2ProxyRequest, ILambdaContext, Task<APIGatewayHttpApiV2ProxyResponse>> handler =
+            FunctionHandler;
+        await LambdaBootstrapBuilder.Create(handler,
+                new SourceGeneratorLambdaJsonSerializer<LambdaFunctionJsonSerializerContext>())
             .Build()
             .RunAsync();
     }
-
-    private static async Task<string> GetCallingIP()
+    
+    public static async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(
+        APIGatewayHttpApiV2ProxyRequest apigProxyEvent, ILambdaContext context)
     {
-        client.DefaultRequestHeaders.Accept.Clear();
-        client.DefaultRequestHeaders.Add("User-Agent", "AWS Lambda .Net Client");
+        string authToken = apigProxyEvent.Headers.TryGetValue("Authorization", out var header)
+            ? header
+            : string.Empty;
 
-        var msg = await client.GetStringAsync("http://checkip.amazonaws.com/").ConfigureAwait(continueOnCapturedContext:false);
-
-        return msg.Replace("\n","");
-    }
-
-    public static async Task<APIGatewayHttpApiV2ProxyResponse> FunctionHandler(APIGatewayHttpApiV2ProxyRequest apigProxyEvent, ILambdaContext context)
-    {
-
-        foreach (var key in apigProxyEvent.Headers.Keys)
-        {
-            Console.WriteLine($"Header: {key} = {apigProxyEvent.Headers[key]}");
-        }
+        if (string.IsNullOrEmpty(authToken))
+            return new APIGatewayHttpApiV2ProxyResponse
+            {
+                Body = "Authorization token is missing",
+                StatusCode = 400
+            };
         
-        var location = await GetCallingIP();
+        var tokenHandler = new JwtSecurityTokenHandler();
+        
+        var jwtSecurityToken = tokenHandler.ReadJwtToken(authToken);
+
+        var username = jwtSecurityToken.Claims.First(claim => claim.Type == "cognito:username").Value;
+        var email = jwtSecurityToken.Claims.First(claim => claim.Type == "email").Value;
+        
+        Console.WriteLine(username);
+        Console.WriteLine(email);
+
         var body = new Dictionary<string, string>
         {
-            { "message", "hello world" },
-            { "location", location }
+            { "username", username },
+            { "email", email }
         };
 
         return new APIGatewayHttpApiV2ProxyResponse
         {
-            Body = JsonSerializer.Serialize(body, typeof(Dictionary<string, string>), LambdaFunctionJsonSerializerContext.Default),
+            Body = JsonSerializer.Serialize(body, typeof(Dictionary<string, string>),
+                LambdaFunctionJsonSerializerContext.Default),
             StatusCode = 200,
             Headers = new Dictionary<string, string>
             {
