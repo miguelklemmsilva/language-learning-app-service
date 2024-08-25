@@ -1,6 +1,6 @@
 namespace Core.Models.DataTransferModels;
 
-public class UpdateLanguageRequest
+public class UserLanguageRequest
 {
     public required string Language { get; set; }
     public required string Country { get; set; }

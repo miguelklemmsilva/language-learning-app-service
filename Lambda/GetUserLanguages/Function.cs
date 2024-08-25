@@ -14,11 +14,19 @@ using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
 using Core.Services;
 
-namespace Lambda.UpdateLanguage;
+namespace Lambda.GetUserLanguages;
 
 public class Function
 {
     private static readonly AmazonDynamoDBClient DynamoDbClient = new(RegionEndpoint.EUWest2);
+
+    private static readonly Dictionary<string, string> CommonHeaders = new()
+    {
+        { "Content-Type", "application/json" },
+        { "Access-Control-Allow-Origin", "*" },
+        { "Access-Control-Allow-Methods", "GET,POST,OPTIONS" },
+        { "Access-Control-Allow-Headers", "Content-Type" }
+    };
 
     private static async Task Main()
     {
@@ -37,30 +45,15 @@ public class Function
         {
             var username = AuthHelper.ParseToken(apigProxyEvent.Headers).CognitoUsername;
 
-            // Parse the request body
-            var updateRequest = JsonSerializer.Deserialize(apigProxyEvent.Body,
-                LambdaFunctionJsonSerializerContext.Default.UserLanguageRequest)!;
-
-            var userLanguage = new UserLanguage
-            {
-                UserId = username,
-                Language = updateRequest.Language,
-                Country = updateRequest.Country,
-                Translation = updateRequest.Translation,
-                Listening = updateRequest.Listening,
-                Speaking = updateRequest.Speaking
-            };
-
             UserLanguageRepository userLanguageRepository = new(DynamoDbClient);
             UserRepository userRepository = new(DynamoDbClient);
 
             UserService userService = new(userRepository);
             IUserLanguageService userLanguageService = new UserLanguageService(userLanguageRepository, userService);
 
-            await userLanguageService.UpdateUserLanguageAsync(userLanguage);
+            var userLanguages = await userLanguageService.GetUserLanguagesAsync(username);
 
-            return ResponseHelper.CreateSuccessResponse(userLanguage,
-                LambdaFunctionJsonSerializerContext.Default.UserLanguage);
+            return ResponseHelper.CreateSuccessResponse(userLanguages, LambdaFunctionJsonSerializerContext.Default.IEnumerableUserLanguage);
         }
         catch (Exception ex)
         {
@@ -71,7 +64,7 @@ public class Function
 
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
-[JsonSerializable(typeof(UserLanguage))]
+[JsonSerializable(typeof(IEnumerable<UserLanguage>))]
 [JsonSerializable(typeof(UserLanguageRequest))]
 public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
 {

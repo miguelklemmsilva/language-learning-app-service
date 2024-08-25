@@ -14,7 +14,7 @@ using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
 using Core.Services;
 
-namespace Lambda.UpdateLanguage;
+namespace Lambda.RemoveUserLanguage;
 
 public class Function
 {
@@ -57,10 +57,15 @@ public class Function
             UserService userService = new(userRepository);
             IUserLanguageService userLanguageService = new UserLanguageService(userLanguageRepository, userService);
 
-            await userLanguageService.UpdateUserLanguageAsync(userLanguage);
+            await userLanguageService.RemoveUserLanguageAsync(username, userLanguage.Language);
+            
+            var body = new Dictionary<string, string>
+            {
+                { "message", "Language removed successfully" }
+            };
 
-            return ResponseHelper.CreateSuccessResponse(userLanguage,
-                LambdaFunctionJsonSerializerContext.Default.UserLanguage);
+            return ResponseHelper.CreateSuccessResponse(body, LambdaFunctionJsonSerializerContext.Default.DictionaryStringString);
+
         }
         catch (Exception ex)
         {
@@ -71,7 +76,7 @@ public class Function
 
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
-[JsonSerializable(typeof(UserLanguage))]
+[JsonSerializable(typeof(Dictionary<string, string>))]
 [JsonSerializable(typeof(UserLanguageRequest))]
 public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
 {

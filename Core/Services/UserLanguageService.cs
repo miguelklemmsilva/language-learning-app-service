@@ -16,5 +16,15 @@ public class UserLanguageService(IUserLanguageRepository userLanguageRepository,
             await userService.UpdateUserAsync(new User { UserId = userLanguage.UserId, ActiveLanguage = userLanguage.Language });
         
         return await userLanguageRepository.CreateUserLanguageAsync(userLanguage);
-    }   
+    }
+
+    public async Task<IEnumerable<UserLanguage>> GetUserLanguagesAsync(string userId)
+    {
+        return await userLanguageRepository.GetUserLanguagesAsync(userId);
+    }
+
+    public async Task RemoveUserLanguageAsync(string userId, string language)
+    {
+        await userLanguageRepository.RemoveUserLanguageAsync(userId, language);
+    }
 }

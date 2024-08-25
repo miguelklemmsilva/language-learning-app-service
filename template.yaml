@@ -23,9 +23,9 @@ Resources:
       Handler: bootstrap
       Runtime: dotnet8
       Architectures:
-      - x86_64
+        - x86_64
       MemorySize: 512
-      
+  
   UpdateLanguageFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -33,7 +33,37 @@ Resources:
       Handler: bootstrap
       Runtime: dotnet8
       Architectures:
-      - x86_64
+        - x86_64
+      MemorySize: 512
+  
+  GetUserLanguagesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./Lambda/GetUserLanguages/
+      Handler: bootstrap
+      Runtime: dotnet8
+      Architectures:
+        - x86_64
+      MemorySize: 512
+  
+  GetUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./Lambda/GetUser/
+      Handler: bootstrap
+      Runtime: dotnet8
+      Architectures:
+        - x86_64
+      MemorySize: 512
+  
+  RemoveUserLanguagesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./Lambda/RemoveUserLanguages/
+      Handler: bootstrap
+      Runtime: dotnet8
+      Architectures:
+        - x86_64
       MemorySize: 512
   
   ApplicationResourceGroup:
