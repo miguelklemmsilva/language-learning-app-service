@@ -69,7 +69,6 @@ public class Function
             };
         
         Console.WriteLine($"Request body: {apigProxyEvent.Body}");
-
         // Parse the request body
         UpdateLanguageRequest updateRequest;
         try
