@@ -20,7 +20,7 @@ resource "aws_api_gateway_authorizer" "authorizer" {
 resource "aws_api_gateway_method" "update_language" {
   rest_api_id   = aws_api_gateway_rest_api.rest_api.id
   resource_id   = aws_api_gateway_resource.update_language.id
-  http_method   = "POST"
+  http_method   = "GET"
   authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.authorizer.id
 
@@ -35,8 +35,8 @@ resource "aws_api_gateway_integration" "update_language_lambda" {
   resource_id = aws_api_gateway_resource.update_language.id
   http_method = aws_api_gateway_method.update_language.http_method
 
-  integration_http_method = "POST"
-  type                    = "AWS"
+  integration_http_method = "GET"
+  type                    = "AWS_PROXY"
   uri                     = data.aws_lambda_function.update_language.invoke_arn
 }
 
