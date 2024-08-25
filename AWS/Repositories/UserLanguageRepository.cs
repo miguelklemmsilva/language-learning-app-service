@@ -7,7 +7,7 @@ namespace AWS.Repositories;
 
 public class UserLanguageRepository(IAmazonDynamoDB client) : IUserLanguageRepository
 {
-    private const string TableName = "userLanguages";
+    private const string TableName = "user_languages";
 
     public async Task<UserLanguage> CreateUserLanguageAsync(UserLanguage userLanguage)
     {

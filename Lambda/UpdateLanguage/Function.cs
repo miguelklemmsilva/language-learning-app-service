@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Amazon;
 using Amazon.DynamoDBv2;
@@ -17,7 +18,7 @@ namespace Lambda.UpdateLanguage;
 public class Function
 {
     private static readonly AmazonDynamoDBClient DynamoDbClient = new(RegionEndpoint.EUWest2);
-    
+
     private static readonly Dictionary<string, string> CommonHeaders = new()
     {
         { "Content-Type", "application/json" },
@@ -42,7 +43,7 @@ public class Function
         string authToken = apigProxyEvent.Headers.TryGetValue("Authorization", out var header)
             ? header
             : string.Empty;
-        
+
         Console.WriteLine($"Authorization token: {authToken}");
 
         if (string.IsNullOrEmpty(authToken))
@@ -57,18 +58,7 @@ public class Function
         var jwtSecurityToken = tokenHandler.ReadJwtToken(authToken);
 
         var username = jwtSecurityToken.Claims.First(claim => claim.Type == "cognito:username").Value;
-        
-        Console.WriteLine($"Username: {username}");
 
-        if (apigProxyEvent.Body == null)
-            return new APIGatewayHttpApiV2ProxyResponse
-            {
-                Body = "Request body is missing",
-                StatusCode = 400,
-                Headers = CommonHeaders
-            };
-        
-        Console.WriteLine($"Request body: {apigProxyEvent.Body}");
         // Parse the request body
         UpdateLanguageRequest updateRequest;
         try
@@ -78,63 +68,47 @@ public class Function
         }
         catch (JsonException ex)
         {
-            Console.WriteLine($"JsonException: {ex.Message}");
             return new APIGatewayHttpApiV2ProxyResponse
             {
-                Body = "Invalid request body",
+                Body = $"Invalid request body {ex.Message}",
                 StatusCode = 400,
                 Headers = CommonHeaders
             };
         }
-        
-        Console.WriteLine(updateRequest);
 
+        var userLanguage = new UserLanguage
+        {
+            UserId = username,
+            Language = updateRequest.Language,
+            Country = updateRequest.Country,
+            Translation = updateRequest.Translation,
+            Listening = updateRequest.Listening,
+            Speaking = updateRequest.Speaking
+        };
+
+        UserLanguageRepository userLanguageRepository = new(DynamoDbClient);
+        UserRepository userRepository = new(DynamoDbClient);
+
+        UserService userService = new(userRepository);
+        var userLanguageService = new UserLanguageService(userLanguageRepository, userService);
 
         try
         {
-            var userLanguage = new UserLanguage
+            await userLanguageService.UpdateUserLanguageAsync(userLanguage);
+
+            return new APIGatewayHttpApiV2ProxyResponse
             {
-                UserId = username,
-                Language = updateRequest.Language,
-                Country = updateRequest.Country,
-                Translation = updateRequest.Translation,
-                Listening = updateRequest.Listening,
-                Speaking = updateRequest.Speaking
+                Body = JsonSerializer.Serialize(userLanguage,
+                    LambdaFunctionJsonSerializerContext.Default.UserLanguage),
+                StatusCode = 200,
+                Headers = CommonHeaders
             };
-            
-            UserLanguageRepository userLanguageRepository = new(DynamoDbClient);
-            UserRepository userRepository = new(DynamoDbClient);
-
-            UserService userService = new(userRepository);
-            var userLanguageService = new UserLanguageService(userLanguageRepository, userService);
-
-            try
-            {
-                await userLanguageService.UpdateUserLanguageAsync(userLanguage);
-
-                return new APIGatewayHttpApiV2ProxyResponse
-                {
-                    Body = JsonSerializer.Serialize(userLanguage,
-                        LambdaFunctionJsonSerializerContext.Default.UserLanguage),
-                    StatusCode = 200,
-                    Headers = CommonHeaders
-                };
-            }
-            catch (Exception ex)
-            {
-                return new APIGatewayHttpApiV2ProxyResponse
-                {
-                    Body = $"Error updating user language: {ex.Message}",
-                    StatusCode = 500,
-                    Headers = CommonHeaders
-                };
-            }
         }
         catch (Exception ex)
         {
             return new APIGatewayHttpApiV2ProxyResponse
             {
-                Body = $"Error creating user language: {ex.Message}",
+                Body = $"Error updating user language: {ex.Message}",
                 StatusCode = 500,
                 Headers = CommonHeaders
             };
