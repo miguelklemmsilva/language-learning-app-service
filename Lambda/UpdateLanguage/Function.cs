@@ -1,8 +1,4 @@
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Amazon;
@@ -12,7 +8,6 @@ using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using AWS.Repositories;
-using Core.Interfaces;
 using Core.Models.DataModels;
 using Core.obj;
 using Core.Services;
