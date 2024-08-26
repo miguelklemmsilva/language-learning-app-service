@@ -9,12 +9,14 @@ using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using AWS.Repositories;
+using AWS.Services;
 using Core.Helpers;
+using Core.Interfaces;
 using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
 using Core.Services;
 
-namespace Lambda.RemoveUserLanguage;
+namespace Lambda.GetVocabulary;
 
 public class Function
 {
@@ -36,30 +38,25 @@ public class Function
         try
         {
             var username = AuthHelper.ParseToken(apigProxyEvent.Headers).CognitoUsername;
-
-            // Parse the request body
+            
             var body = JsonSerializer.Deserialize(apigProxyEvent.Body,
-                LambdaFunctionJsonSerializerContext.Default.RemoveUserLanguageRequest)!;
-
-            var removeLanguageRequest = new RemoveUserLanguageRequest
+                LambdaFunctionJsonSerializerContext.Default.GetVocabularyRequest)!;
+            
+            var getVocabularyRequest = new GetVocabularyRequest
             {
                 Language = body.Language
             };
-
-            UserLanguageRepository userLanguageRepository = new(DynamoDbClient);
-            UserRepository userRepository = new(DynamoDbClient);
-
-            UserService userService = new(userRepository);
-            IUserLanguageService userLanguageService = new UserLanguageService(userLanguageRepository, userService);
-
-            var removeUserLanguageResponse = await userLanguageService.RemoveUserLanguageAsync(username, removeLanguageRequest.Language);
             
-            return ResponseHelper.CreateSuccessResponse(removeUserLanguageResponse, typeof(RemoveUserLanguageResponse));
-
+            IVocabularyRepository vocabularyRepository = new VocabularyRepository(DynamoDbClient);
+            IVocabularyService vocabularyService = new VocabularyService(vocabularyRepository);
+            
+            var vocabulary = await vocabularyService.GetUserVocabularyAsync(username, getVocabularyRequest.Language);
+            
+            return ResponseHelper.CreateSuccessResponse(vocabulary, typeof(IEnumerable<GetUserVocabularyResponse>));
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return ResponseHelper.CreateErrorResponse(ex.Message);
+            return ResponseHelper.CreateErrorResponse(e.Message);
         }
     }
 }
@@ -69,8 +66,7 @@ public class Function
 )]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
-[JsonSerializable(typeof(Dictionary<string, string>))]
-[JsonSerializable(typeof(RemoveUserLanguageRequest))]
+[JsonSerializable(typeof(GetVocabularyRequest))]
 public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
 {
     // By using this partial class derived from JsonSerializerContext, we can generate reflection-free JSON Serializer code at compile time

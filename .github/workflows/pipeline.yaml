@@ -34,9 +34,44 @@ jobs:
         with:
           use-installer: true
 
-      - name: Build resources
-        run: sam build --template ${SAM_TEMPLATE}
+      - name: Build specific resources based on commit message
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" == *"[getuser]"* ]]; then
+            sam build GetUserFunction --template ${SAM_TEMPLATE}
+          fi
 
+          if [[ "${{ github.event.head_commit.message }}" == *"[updateuser]"* ]]; then
+            sam build UpdateUserFunction --template ${SAM_TEMPLATE}
+          fi
+
+          if [[ "${{ github.event.head_commit.message }}" == *"[presignup]"* ]]; then
+            sam build PreSignUpFunction --template ${SAM_TEMPLATE}
+          fi
+
+          if [[ "${{ github.event.head_commit.message }}" == *"[updatelanguage]"* ]]; then
+            sam build UpdateLanguageFunction --template ${SAM_TEMPLATE}
+          fi
+
+          if [[ "${{ github.event.head_commit.message }}" == *"[getuserlanguages]"* ]]; then
+            sam build GetUserLanguagesFunction --template ${SAM_TEMPLATE}
+          fi
+
+          if [[ "${{ github.event.head_commit.message }}" == *"[removeuserlanguages]"* ]]; then
+            sam build RemoveUserLanguagesFunction --template ${SAM_TEMPLATE}
+          fi
+          
+          if [[ "${{ github.event.head_commit.message }}" == *"[addvocabulary]"* ]]; then
+            sam build AddVocabularyFunction --template ${SAM_TEMPLATE}
+          fi      
+          
+          if [[ "${{ github.event.head_commit.message }}" == *"[removevocabulary]"* ]]; then
+            sam build RemoveVocabularyFunction --template ${SAM_TEMPLATE}
+          fi     
+          
+          if [[ "${{ github.event.head_commit.message }}" == *"[getvocabulary]"* ]]; then
+            sam build GetVocabularyFunction --template ${SAM_TEMPLATE}
+          fi     
+          
       - name: Assume the testing pipeline user role
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:

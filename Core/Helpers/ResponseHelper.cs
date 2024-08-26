@@ -48,6 +48,8 @@ public static class ResponseHelper
 [JsonSerializable(typeof(UserLanguage))]
 [JsonSerializable(typeof(RemoveUserLanguageResponse))]
 [JsonSerializable(typeof(IEnumerable<UserLanguage>))]
+[JsonSerializable(typeof(IEnumerable<string>))]
+[JsonSerializable(typeof(IEnumerable<GetUserVocabularyResponse>))]
 internal partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
 {
 }

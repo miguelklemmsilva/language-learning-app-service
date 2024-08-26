@@ -1,33 +1,33 @@
 data "aws_lambda_function" "pre_sign_up" {
-  function_name = "language-learning-app-PreSignUpFunction-rW5Ei1Q7GTV7"
+  function_name = "language-learning-app-PreSignUpFunction-OnrppInklow4"
 }
 
 data "aws_iam_role" "pre_sign_up_lambda_role" {
-  name = "language-learning-app-PreSignUpFunctionRole-TNzIgUAgMi5J"
+  name = "language-learning-app-PreSignUpFunctionRole-gb6UaGhm4BC7"
 }
 
 data "aws_lambda_function" "update_language" {
-  function_name = "language-learning-app-UpdateLanguageFunction-5TgZJhdi9JeJ"
+  function_name = "language-learning-app-UpdateLanguageFunction-v3kSpmKMbhL6"
 }
 
 data "aws_iam_role" "update_language_lambda_role" {
-  name = "language-learning-app-UpdateLanguageFunctionRole-mX09jyVe3g0u"
+  name = "language-learning-app-UpdateLanguageFunctionRole-iCQkaVKjyk4j"
 }
 
 data "aws_lambda_function" "get_user" {
-  function_name = "language-learning-app-GetUserFunction-Rs8DA5kfSGWI"
+  function_name = "language-learning-app-GetUserFunction-eV7uyp131nIH"
 }
 
 data "aws_iam_role" "get_user_lambda_role" {
-  name = "language-learning-app-GetUserFunctionRole-8CQ9Z7ShPki9"
+  name = "language-learning-app-GetUserFunctionRole-IwNiUdLI7YBe"
 }
 
 data "aws_lambda_function" "get_user_languages" {
-  function_name = "language-learning-app-GetUserLanguagesFunction-16IBdpQXmreg"
+  function_name = "language-learning-app-GetUserLanguagesFunction-abAwGiwZX1RE"
 }
 
 data "aws_iam_role" "get_user_languages_lambda_role" {
-  name = "language-learning-app-GetUserLanguagesFunctionRole-NigLu8zHX3Le"
+  name = "language-learning-app-GetUserLanguagesFunctionRole-pdi6oUWPngKf"
 }
 
 data "aws_lambda_function" "remove_user_language" {
@@ -39,11 +39,11 @@ data "aws_iam_role" "remove_user_language_lambda_role" {
 }
 
 data "aws_lambda_function" "update_user" {
-  function_name = "language-learning-app-UpdateUserFunction-O9cUCqNXKal9"
+  function_name = "language-learning-app-UpdateUserFunction-Dhtse8Skce9e"
 }
 
 data "aws_iam_role" "update_user_lambda_role" {
-  name = "language-learning-app-UpdateUserFunctionRole-qYDSwX7rPo2T"
+  name = "language-learning-app-UpdateUserFunctionRole-UM2lqhDTTDcb"
 }
 
 resource "aws_lambda_permission" "allow_cognito_preSignUp" {

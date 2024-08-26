@@ -46,4 +46,13 @@ manifest_hash = ""
 packagetype = "Zip"
 functions = ["RemoveUserLanguagesFunction"]
 
+[function_build_definitions.c4d62e73-f416-47e4-8611-ab61724bb058]
+codeuri = "/Users/miguelklemmsilva/Developer/personal/language-learning-app-service/Lambda/UpdateUser"
+runtime = "dotnet8"
+architecture = "x86_64"
+handler = "bootstrap"
+manifest_hash = ""
+packagetype = "Zip"
+functions = ["UpdateUserFunction"]
+
 [layer_build_definitions]
