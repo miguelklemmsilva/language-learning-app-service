@@ -89,3 +89,75 @@ Resources:
       ResourceGroupName:
         Ref: ApplicationResourceGroup
       AutoConfigurationEnabled: 'true'
+  
+  Outputs:
+    PreSignUpFunction:
+      Description: "PreSignUp Lambda Function name"
+      Value:
+        Ref: PreSignUpFunction
+        
+    PreSignUpRole:
+      Description: "PreSignUp Lambda Function Role"
+      Value:
+        Fn::GetAtt:
+          - PreSignUpFunction
+          - Role
+    UpdateLanguageFunction:
+      Description: "UpdateLanguage Lambda Function name"
+      Value:
+        Ref: UpdateLanguageFunction
+        
+    UpdateLanguageRole:
+        Description: "UpdateLanguage Lambda Function Role"
+        Value:
+            Fn::GetAtt:
+            - UpdateLanguageFunction
+            - Role
+    
+    GetUserLanguagesFunction:
+        Description: "GetUserLanguages Lambda Function name"
+        Value:
+            Ref: GetUserLanguagesFunction
+    
+    GetUserLanguagesRole:
+        Description: "GetUserLanguages Lambda Function Role"
+        Value:
+            Fn::GetAtt:
+            - GetUserLanguagesFunction
+            - Role
+    
+    GetUserFunction:
+        Description: "GetUser Lambda Function name"
+        Value:
+            Ref: GetUserFunction
+            
+    GetUserRole:
+        Description: "GetUser Lambda Function Role"
+        Value:
+            Fn::GetAtt:
+            - GetUserFunction
+            - Role
+              
+    UpdateUserFunction:
+        Description: "UpdateUser Lambda Function name"
+        Value:
+            Ref: UpdateUserFunction
+            
+    UpdateUserRole:
+        Description: "UpdateUser Lambda Function Role"
+        Value:
+            Fn::GetAtt:
+            - UpdateUserFunction
+            - Role
+              
+    RemoveUserLanguagesFunction:
+        Description: "RemoveUserLanguages Lambda Function name"
+        Value:
+            Ref: RemoveUserLanguagesFunction
+            
+    RemoveUserLanguagesRole:
+        Description: "RemoveUserLanguages Lambda Function Role"
+        Value:
+            Fn::GetAtt:
+            - RemoveUserLanguagesFunction
+            - Role
