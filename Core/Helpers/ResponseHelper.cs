@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.Json.Serialization.Metadata;
 using Core.Models.DataModels;
+using Core.Models.DataTransferModels;
 
 namespace Core.Helpers;
 
@@ -45,6 +46,7 @@ public static class ResponseHelper
 [JsonSerializable(typeof(Dictionary<string, string>))]
 [JsonSerializable(typeof(User))]
 [JsonSerializable(typeof(UserLanguage))]
+[JsonSerializable(typeof(RemoveUserLanguageResponse))]
 [JsonSerializable(typeof(IEnumerable<UserLanguage>))]
 internal partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
 {

@@ -9,12 +9,14 @@ using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.APIGatewayEvents;
 using Amazon.Lambda.Serialization.SystemTextJson;
 using AWS.Repositories;
+using AWS.Services;
 using Core.Helpers;
+using Core.Interfaces;
 using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
 using Core.Services;
 
-namespace Lambda.RemoveUserLanguage;
+namespace Lambda.UpdateUser;
 
 public class Function
 {
@@ -37,34 +39,22 @@ public class Function
         {
             var username = AuthHelper.ParseToken(apigProxyEvent.Headers).CognitoUsername;
 
-            // Parse the request body
             var updateRequest = JsonSerializer.Deserialize(apigProxyEvent.Body,
-                LambdaFunctionJsonSerializerContext.Default.RemoveUserLanguageRequest)!;
+                LambdaFunctionJsonSerializerContext.Default.UpdateUserRequest)!;
 
-            var removeLanguageRequest = new RemoveUserLanguageRequest
-            {
-                Language = updateRequest.Language
-            };
+            var updateUserRequest = new UpdateUserRequest { ActiveLanguage = updateRequest.ActiveLanguage };
 
-            UserLanguageRepository userLanguageRepository = new(DynamoDbClient);
-            UserRepository userRepository = new(DynamoDbClient);
+            IUserRepository userRepository = new UserRepository(DynamoDbClient);
+            IUserService userService = new UserService(userRepository);
 
-            UserService userService = new(userRepository);
-            IUserLanguageService userLanguageService = new UserLanguageService(userLanguageRepository, userService);
+            var user = await userService.UpdateUserAsync(new User
+                { UserId = username, ActiveLanguage = updateUserRequest.ActiveLanguage });
 
-            await userLanguageService.RemoveUserLanguageAsync(username, removeLanguageRequest.Language);
-            
-            var body = new Dictionary<string, string>
-            {
-                { "message", "Language removed successfully" }
-            };
-
-            return ResponseHelper.CreateSuccessResponse(body, typeof(RemoveUserLanguageResponse));
-
+            return ResponseHelper.CreateSuccessResponse(user, typeof(User));
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            return ResponseHelper.CreateErrorResponse(ex.Message);
+            return ResponseHelper.CreateErrorResponse(e.Message);
         }
     }
 }
@@ -74,8 +64,7 @@ public class Function
 )]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
-[JsonSerializable(typeof(Dictionary<string, string>))]
-[JsonSerializable(typeof(RemoveUserLanguageRequest))]
+[JsonSerializable(typeof(UpdateUserRequest))]
 public partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
 {
     // By using this partial class derived from JsonSerializerContext, we can generate reflection-free JSON Serializer code at compile time
