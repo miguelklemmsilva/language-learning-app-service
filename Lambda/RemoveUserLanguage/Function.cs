@@ -52,14 +52,9 @@ public class Function
             UserService userService = new(userRepository);
             IUserLanguageService userLanguageService = new UserLanguageService(userLanguageRepository, userService);
 
-            await userLanguageService.RemoveUserLanguageAsync(username, removeLanguageRequest.Language);
+            var removeUserLanguageResponse = await userLanguageService.RemoveUserLanguageAsync(username, removeLanguageRequest.Language);
             
-            var body = new Dictionary<string, string>
-            {
-                { "message", "Language removed successfully" }
-            };
-
-            return ResponseHelper.CreateSuccessResponse(body, typeof(RemoveUserLanguageResponse));
+            return ResponseHelper.CreateSuccessResponse(removeUserLanguageResponse, typeof(RemoveUserLanguageResponse));
 
         }
         catch (Exception ex)

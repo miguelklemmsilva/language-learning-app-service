@@ -16,55 +16,55 @@ Globals:
   Api:
     TracingEnabled: true
 Resources:
-  PreSignUpFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: ./Lambda/PreSignUp/
-      Handler: bootstrap
-      Runtime: dotnet8
-      Architectures:
-        - x86_64
-      MemorySize: 512
-  
-  UpdateLanguageFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ./Lambda/UpdateLanguage/
-      Handler: bootstrap
-      Runtime: dotnet8
-      Architectures:
-        - x86_64
-      MemorySize: 512
-  
-  GetUserLanguagesFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ./Lambda/GetUserLanguages/
-      Handler: bootstrap
-      Runtime: dotnet8
-      Architectures:
-        - x86_64
-      MemorySize: 512
-  
-  GetUserFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ./Lambda/GetUser/
-      Handler: bootstrap
-      Runtime: dotnet8
-      Architectures:
-        - x86_64
-      MemorySize: 512
-      
-  UpdateUserFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: ./Lambda/UpdateUser/
-      Handler: bootstrap
-      Runtime: dotnet8
-      Architectures:
-        - x86_64
-      MemorySize: 512
+#  PreSignUpFunction:
+#    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+#    Properties:
+#      CodeUri: ./Lambda/PreSignUp/
+#      Handler: bootstrap
+#      Runtime: dotnet8
+#      Architectures:
+#        - x86_64
+#      MemorySize: 512
+#  
+#  UpdateLanguageFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      CodeUri: ./Lambda/UpdateLanguage/
+#      Handler: bootstrap
+#      Runtime: dotnet8
+#      Architectures:
+#        - x86_64
+#      MemorySize: 512
+#  
+#  GetUserLanguagesFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      CodeUri: ./Lambda/GetUserLanguages/
+#      Handler: bootstrap
+#      Runtime: dotnet8
+#      Architectures:
+#        - x86_64
+#      MemorySize: 512
+#  
+#  GetUserFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      CodeUri: ./Lambda/GetUser/
+#      Handler: bootstrap
+#      Runtime: dotnet8
+#      Architectures:
+#        - x86_64
+#      MemorySize: 512
+#      
+#  UpdateUserFunction:
+#    Type: AWS::Serverless::Function
+#    Properties:
+#      CodeUri: ./Lambda/UpdateUser/
+#      Handler: bootstrap
+#      Runtime: dotnet8
+#      Architectures:
+#        - x86_64
+#      MemorySize: 512
   
   RemoveUserLanguagesFunction:
     Type: AWS::Serverless::Function
