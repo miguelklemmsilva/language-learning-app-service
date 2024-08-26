@@ -14,8 +14,8 @@ env:
   PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   SAM_TEMPLATE: template.yaml
   TESTING_STACK_NAME: language-learning-app
-  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::021891610553:role/aws-sam-cli-managed-staging-p-PipelineExecutionRole-uIsoyRxCN20o
-  TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::021891610553:role/aws-sam-cli-managed-stagi-CloudFormationExecutionRo-5JHqv99V788Y
+  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::021891610553:role/aws-sam-cli-managed-sttg-pipe-PipelineExecutionRole-BtxVshGQRTdm
+  TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::021891610553:role/aws-sam-cli-managed-sttg--CloudFormationExecutionRo-CpMUVuR6YY5P
   TESTING_ARTIFACTS_BUCKET: aws-sam-cli-managed-staging-pipeli-artifactsbucket-kixxajb9vq0q
   TESTING_REGION: eu-west-2
 
