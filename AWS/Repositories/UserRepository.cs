@@ -33,7 +33,7 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
         
         await client.PutItemAsync(request);
         
-        return await GetUserAsync(user.UserId);
+        return user;
     }
 
     public async Task<User> GetUserAsync(string userId)
