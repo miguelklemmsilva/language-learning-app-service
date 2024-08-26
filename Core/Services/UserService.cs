@@ -32,13 +32,6 @@ public class UserService(IUserRepository userRepository) : IUserService
     
     public async Task<User> UpdateUserAsync(User user)
     {
-        var existingUser = await userRepository.GetUserAsync(user.UserId);
-        
-        if (existingUser == null)
-        {
-            throw new Exception("User not found");
-        }
-        
-        return await userRepository.UpdateUserAsync(existingUser);
+        return await userRepository.UpdateUserAsync(user);
     }
 }
