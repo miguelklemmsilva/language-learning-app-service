@@ -12,7 +12,7 @@ variable "api_routes" {
     {
       path            = "updatelanguage"
       http_method     = "POST"
-      lambda_function = "updatelanguage_function" # Placeholder
+      lambda_function = "updatelanguage_function"
       authorization   = "COGNITO_USER_POOLS"
       authorizer      = true
       enable_cors     = true
@@ -20,7 +20,7 @@ variable "api_routes" {
     {
       path            = "getuser"
       http_method     = "GET"
-      lambda_function = "getuser_function" # Placeholder
+      lambda_function = "getuser_function"
       authorization   = "COGNITO_USER_POOLS"
       authorizer      = true
       enable_cors     = true
@@ -28,15 +28,15 @@ variable "api_routes" {
     {
       path            = "getuserlanguages"
       http_method     = "GET"
-      lambda_function = "getuserlanguages_function" # Placeholder
+      lambda_function = "getuserlanguages_function"
       authorization   = "COGNITO_USER_POOLS"
       authorizer      = true
       enable_cors     = true
     },
     {
       path            = "removeuserlanguage"
-      http_method     = "DELETE"
-      lambda_function = "removeuserlanguage_function" # Placeholder
+      http_method     = "POST"
+      lambda_function = "removeuserlanguage_function"
       authorization   = "COGNITO_USER_POOLS"
       authorizer      = true
       enable_cors     = true

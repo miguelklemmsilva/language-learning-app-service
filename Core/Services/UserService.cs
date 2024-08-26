@@ -39,17 +39,6 @@ public class UserService(IUserRepository userRepository) : IUserService
             throw new Exception("User not found");
         }
         
-        // Only update fields that are not null
-        if (user.Email != null)
-        {
-            existingUser.Email = user.Email;
-        }
-        
-        if (user.ActiveLanguage != null)
-        {
-            existingUser.ActiveLanguage = user.ActiveLanguage;
-        }
-        
         return await userRepository.UpdateUserAsync(existingUser);
     }
 }

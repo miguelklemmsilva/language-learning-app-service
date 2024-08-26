@@ -56,46 +56,35 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
 
     public async Task<User> UpdateUserAsync(User user)
     {
-        var updateExpressions = new List<string>();
-        var expressionAttributeValues = new Dictionary<string, AttributeValue>();
-        var expressionAttributeNames = new Dictionary<string, string>();
-
-        if (user.Email != null)
+        var key = new Dictionary<string, AttributeValue>
         {
-            updateExpressions.Add("#Email = :email");
-            expressionAttributeValues[":email"] = new AttributeValue { S = user.Email };
-            expressionAttributeNames["#Email"] = "Email";
-        }
+            { "UserId", new AttributeValue { S = user.UserId } }
+        };
 
-        if (user.ActiveLanguage != null)
+        var updateExpression = "SET ActiveLanguage = :activeLanguage";
+        var expressionAttributeValues = new Dictionary<string, AttributeValue>
         {
-            updateExpressions.Add("#ActiveLanguage = :activeLanguage");
-            expressionAttributeValues[":activeLanguage"] = new AttributeValue { S = user.ActiveLanguage };
-            expressionAttributeNames["#ActiveLanguage"] = "ActiveLanguage";
-        }
+            { ":activeLanguage", new AttributeValue { S = user.ActiveLanguage } }
+        };
 
-        if (updateExpressions.Count == 0)
+        // If ActiveLanguage is null or empty, remove it instead of setting it
+        if (string.IsNullOrEmpty(user.ActiveLanguage))
         {
-            // No fields to update
-            return user;
+            updateExpression = "REMOVE ActiveLanguage";
+            expressionAttributeValues.Clear(); // We don't need any expression attribute values for REMOVE
         }
-
-        var updateExpression = "SET " + string.Join(", ", updateExpressions);
 
         var request = new UpdateItemRequest
         {
             TableName = TableName,
-            Key = new Dictionary<string, AttributeValue>
-            {
-                { "UserId", new AttributeValue { S = user.UserId } }
-            },
+            Key = key,
             UpdateExpression = updateExpression,
             ExpressionAttributeValues = expressionAttributeValues,
-            ExpressionAttributeNames = expressionAttributeNames,
             ReturnValues = ReturnValue.ALL_NEW
         };
 
         var response = await client.UpdateItemAsync(request);
+
         return UserFactory.Build(response.Attributes);
     }
 }

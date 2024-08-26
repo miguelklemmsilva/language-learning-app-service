@@ -1,6 +1,7 @@
 using AWS.Services;
 using Core.Interfaces;
 using Core.Models.DataModels;
+using Core.Models.DataTransferModels;
 
 namespace Core.Services;
 
@@ -20,11 +21,22 @@ public class UserLanguageService(IUserLanguageRepository userLanguageRepository,
 
     public async Task<IEnumerable<UserLanguage>> GetUserLanguagesAsync(string userId)
     {
-        return await userLanguageRepository.GetUserLanguagesAsync(userId);
+        var userLanguages = await userLanguageRepository.GetUserLanguagesAsync(userId);
+        return userLanguages.Reverse();
     }
 
-    public async Task RemoveUserLanguageAsync(string userId, string language)
+    public async Task<RemoveUserLanguageResponse> RemoveUserLanguageAsync(string userId, string language)
     {
         await userLanguageRepository.RemoveUserLanguageAsync(userId, language);
+
+        var user = await userService.GetUserAsync(userId);
+        
+        if (language != user.ActiveLanguage) return new RemoveUserLanguageResponse { ActiveLanguage = user.ActiveLanguage };
+        
+        var userLanguages = await GetUserLanguagesAsync(userId);
+        var newActiveLanguage = userLanguages.FirstOrDefault()?.Language;
+        var updatedUser = await userService.UpdateUserAsync(new User { UserId = userId, ActiveLanguage = newActiveLanguage });
+
+        return new RemoveUserLanguageResponse { ActiveLanguage = updatedUser.ActiveLanguage };
     }
 }
