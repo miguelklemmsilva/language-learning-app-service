@@ -46,6 +46,30 @@ data "aws_iam_role" "update_user_lambda_role" {
   name = "language-learning-app-UpdateUserFunctionRole-UM2lqhDTTDcb"
 }
 
+data "aws_lambda_function" "add_vocabulary" {
+  function_name = "language-learning-app-AddVocabularyFunction-ElLcgwkccldr"
+}
+
+data "aws_iam_role" "add_vocabulary_lambda_role" {
+  name = "language-learning-app-AddVocabularyFunctionRole-OPjDaGDKqgpx"
+}
+
+data "aws_lambda_function" "get_vocabulary" {
+  function_name = "language-learning-app-GetVocabularyFunction-TczttQO3m2uj"
+}
+
+data "aws_iam_role" "get_vocabulary_lambda_role" {
+  name = "language-learning-app-GetVocabularyFunctionRole-7WCFbpg0NK5k"
+}
+
+data "aws_lambda_function" "remove_vocabulary" {
+  function_name = "language-learning-app-RemoveVocabularyFunction-EcmGpNz2xSC2"
+}
+
+data "aws_iam_role" "remove_vocabulary_lambda_role" {
+  name = "language-learning-app-RemoveVocabularyFunctionRole-F5r53XPzxikn"
+}
+
 resource "aws_lambda_permission" "allow_cognito_preSignUp" {
   statement_id  = "AllowPreSignUpExecutionFromCognito"
   action        = "lambda:InvokeFunction"
