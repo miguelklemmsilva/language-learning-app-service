@@ -23,13 +23,13 @@ resource "aws_api_gateway_method" "routes" {
   rest_api_id    = aws_api_gateway_rest_api.rest_api.id
   resource_id    = aws_api_gateway_resource.routes[each.value.path].id
   http_method    = each.value.http_method
-  authorization  = each.value.authorization
+  authorization  = "COGNITO_USER_POOLS"
 
-  authorizer_id = each.value.authorizer ? aws_api_gateway_authorizer.authorizer.id : null
+  authorizer_id = aws_api_gateway_authorizer.authorizer.id
 
-  request_parameters = each.value.authorizer ? {
+  request_parameters =  {
     "method.request.header.Authorization" = true
-  } : {}
+  }
 }
 
 resource "aws_api_gateway_integration" "routes" {
@@ -53,7 +53,7 @@ resource "aws_lambda_permission" "api_gateway_invoke" {
 
 # Create OPTIONS method and CORS integration for each route if enabled
 resource "aws_api_gateway_method" "cors_options" {
-  for_each       = { for route in var.api_routes : route.path => route if route.enable_cors }
+  for_each       = { for route in var.api_routes : route.path => route }
   rest_api_id    = aws_api_gateway_rest_api.rest_api.id
   resource_id    = aws_api_gateway_resource.routes[each.value.path].id
   http_method    = "OPTIONS"
@@ -61,7 +61,7 @@ resource "aws_api_gateway_method" "cors_options" {
 }
 
 resource "aws_api_gateway_integration" "cors_integration" {
-  for_each    = { for route in var.api_routes : route.path => route if route.enable_cors }
+  for_each    = { for route in var.api_routes : route.path => route }
   rest_api_id = aws_api_gateway_rest_api.rest_api.id
   resource_id = aws_api_gateway_resource.routes[each.value.path].id
   http_method = aws_api_gateway_method.cors_options[each.key].http_method
@@ -76,7 +76,7 @@ resource "aws_api_gateway_integration" "cors_integration" {
 }
 
 resource "aws_api_gateway_integration_response" "cors_integration_response" {
-  for_each    = { for route in var.api_routes : route.path => route if route.enable_cors }
+  for_each    = { for route in var.api_routes : route.path => route }
   rest_api_id = aws_api_gateway_rest_api.rest_api.id
   resource_id = aws_api_gateway_resource.routes[each.value.path].id
   http_method = aws_api_gateway_method.cors_options[each.key].http_method
@@ -87,10 +87,12 @@ resource "aws_api_gateway_integration_response" "cors_integration_response" {
     "method.response.header.Access-Control-Allow-Methods" = "'*'",
     "method.response.header.Access-Control-Allow-Origin"  = "'*'"
   }
+
+  depends_on = [aws_api_gateway_integration.cors_integration]
 }
 
 resource "aws_api_gateway_method_response" "cors_method_response" {
-  for_each    = { for route in var.api_routes : route.path => route if route.enable_cors }
+  for_each    = { for route in var.api_routes : route.path => route }
   rest_api_id = aws_api_gateway_rest_api.rest_api.id
   resource_id = aws_api_gateway_resource.routes[each.value.path].id
   http_method = aws_api_gateway_method.cors_options[each.key].http_method
@@ -111,5 +113,11 @@ resource "aws_api_gateway_deployment" "deployment" {
     aws_api_gateway_integration.cors_integration,
     aws_api_gateway_integration_response.cors_integration_response,
     aws_api_gateway_method_response.cors_method_response,
+    aws_api_gateway_method.cors_options,
+    aws_api_gateway_authorizer.authorizer,
+    aws_api_gateway_integration.routes,
+    aws_api_gateway_method.routes,
+    aws_api_gateway_resource.routes,
+    aws_lambda_permission.api_gateway_invoke,
   ]
 }

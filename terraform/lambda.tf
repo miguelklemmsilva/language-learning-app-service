@@ -38,6 +38,14 @@ data "aws_iam_role" "remove_user_language_lambda_role" {
   name = "language-learning-app-RemoveUserLanguagesFunctionRo-MMo4Wb3bdD0X"
 }
 
+data "aws_lambda_function" "update_user" {
+  function_name = "language-learning-app-UpdateUserFunction-O9cUCqNXKal9"
+}
+
+data "aws_iam_role" "update_user_lambda_role" {
+  name = "language-learning-app-UpdateUserFunctionRole-qYDSwX7rPo2T"
+}
+
 resource "aws_lambda_permission" "allow_cognito_preSignUp" {
   statement_id  = "AllowPreSignUpExecutionFromCognito"
   action        = "lambda:InvokeFunction"
@@ -90,6 +98,10 @@ resource "aws_iam_role_policy_attachment" "attach_remove_user_language_policy" {
   policy_arn = aws_iam_policy.lambda_policy.arn
 }
 
+resource "aws_iam_role_policy_attachment" "attach_update_user_policy" {
+  role       = data.aws_iam_role.update_user_lambda_role.name
+  policy_arn = aws_iam_policy.lambda_policy.arn
+}
 
 
 
