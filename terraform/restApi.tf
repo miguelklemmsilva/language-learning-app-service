@@ -17,7 +17,7 @@ resource "aws_api_gateway_resource" "routes" {
   path_part   = each.key
 }
 
-# Create methods and integrate with Lambda functions
+# Create methods
 resource "aws_api_gateway_method" "routes" {
   for_each      = { for idx, route in var.api_routes : "${route.path}-${route.http_method}" => route }
   rest_api_id   = aws_api_gateway_rest_api.rest_api.id
@@ -31,6 +31,7 @@ resource "aws_api_gateway_method" "routes" {
   }
 }
 
+# Create integrations
 resource "aws_api_gateway_integration" "routes" {
   for_each                = { for idx, route in var.api_routes : "${route.path}-${route.http_method}" => route }
   rest_api_id             = aws_api_gateway_rest_api.rest_api.id
@@ -39,11 +40,13 @@ resource "aws_api_gateway_integration" "routes" {
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = local.lambda_function_map[each.value.lambda_function]
+
+  depends_on = [aws_api_gateway_method.routes]
 }
 
 resource "aws_lambda_permission" "api_gateway_invoke" {
   for_each      = { for idx, route in var.api_routes : "${route.path}-${route.http_method}" => route }
-  statement_id  = "AllowAPIGatewayInvoke${each.value.path}${each.value.http_method}"
+  statement_id  = "AllowAPIGatewayInvoke${replace(each.value.path, "/", "")}${each.value.http_method}"
   action        = "lambda:InvokeFunction"
   function_name = local.lambda_arn_map[each.value.lambda_function]
   principal     = "apigateway.amazonaws.com"
@@ -71,23 +74,9 @@ resource "aws_api_gateway_integration" "cors_integration" {
     "application/json" = "{\"statusCode\": 200}"
   }
 
-  passthrough_behavior = "NEVER"
-}
+  passthrough_behavior = "WHEN_NO_MATCH"
 
-resource "aws_api_gateway_integration_response" "cors_integration_response" {
-  for_each    = toset([for route in var.api_routes : route.path])
-  rest_api_id = aws_api_gateway_rest_api.rest_api.id
-  resource_id = aws_api_gateway_resource.routes[each.key].id
-  http_method = aws_api_gateway_method.cors_options[each.key].http_method
-  status_code = "200"
-
-  response_parameters = {
-    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-    "method.response.header.Access-Control-Allow-Methods" = "'*'",
-    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
-  }
-
-  depends_on = [aws_api_gateway_integration.cors_integration]
+  depends_on = [aws_api_gateway_method.cors_options]
 }
 
 resource "aws_api_gateway_method_response" "cors_method_response" {
@@ -102,21 +91,48 @@ resource "aws_api_gateway_method_response" "cors_method_response" {
     "method.response.header.Access-Control-Allow-Methods" = true
     "method.response.header.Access-Control-Allow-Origin"  = true
   }
+
+  depends_on = [aws_api_gateway_method.cors_options]
+}
+
+resource "aws_api_gateway_integration_response" "cors_integration_response" {
+  for_each    = toset([for route in var.api_routes : route.path])
+  rest_api_id = aws_api_gateway_rest_api.rest_api.id
+  resource_id = aws_api_gateway_resource.routes[each.key].id
+  http_method = aws_api_gateway_method.cors_options[each.key].http_method
+  status_code = aws_api_gateway_method_response.cors_method_response[each.key].status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT,DELETE'",
+    "method.response.header.Access-Control-Allow-Origin"  = "'*'"
+  }
+
+  depends_on = [aws_api_gateway_integration.cors_integration, aws_api_gateway_method_response.cors_method_response]
 }
 
 resource "aws_api_gateway_deployment" "deployment" {
   rest_api_id = aws_api_gateway_rest_api.rest_api.id
   stage_name  = "prod"
 
+  triggers = {
+    redeployment = sha1(jsonencode([
+      aws_api_gateway_resource.routes,
+      aws_api_gateway_method.routes,
+      aws_api_gateway_integration.routes,
+    ]))
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+
   depends_on = [
     aws_api_gateway_integration.cors_integration,
     aws_api_gateway_integration_response.cors_integration_response,
     aws_api_gateway_method_response.cors_method_response,
     aws_api_gateway_method.cors_options,
-    aws_api_gateway_authorizer.authorizer,
     aws_api_gateway_integration.routes,
     aws_api_gateway_method.routes,
-    aws_api_gateway_resource.routes,
-    aws_lambda_permission.api_gateway_invoke,
   ]
 }

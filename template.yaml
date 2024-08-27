@@ -118,7 +118,6 @@ Resources:
         - x86_64
       MemorySize: 512
 
-
   GetVocabularyFunction:
     Type: AWS::Serverless::Function
     Properties:
