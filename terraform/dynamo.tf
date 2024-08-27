@@ -30,7 +30,7 @@ resource "aws_dynamodb_table" "vocabulary" {
     name         = "vocabulary"
     billing_mode = "PAY_PER_REQUEST"
     hash_key     = "UserId"
-    range_key    = "Language#Word"
+    range_key    = "sk"
     
     attribute {
         name = "UserId"
@@ -38,7 +38,7 @@ resource "aws_dynamodb_table" "vocabulary" {
     }
     
     attribute {
-        name = "Language#Word"
+        name = "sk"
         type = "S"
     }
 }

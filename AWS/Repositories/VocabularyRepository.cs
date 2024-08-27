@@ -15,7 +15,7 @@ public class VocabularyRepository(IAmazonDynamoDB client) : IVocabularyRepositor
         var item = new Dictionary<string, AttributeValue>
         {
             { "UserId", new AttributeValue { S = vocabulary.UserId } },
-            { "Language#Word", new AttributeValue { S = vocabulary.LanguageWord } },
+            { "sk", new AttributeValue { S = vocabulary.LanguageWord } },
             { "LastSeen", new AttributeValue { N = vocabulary.LastPracticed.ToString() } },
             { "BoxNumber", new AttributeValue { N = vocabulary.BoxNumber.ToString() } }
         };
@@ -36,7 +36,7 @@ public class VocabularyRepository(IAmazonDynamoDB client) : IVocabularyRepositor
         var key = new Dictionary<string, AttributeValue>
         {
             { "UserId", new AttributeValue { S = userId } },
-            { "Language#Word", new AttributeValue { S = languageWord } }
+            { "sk", new AttributeValue { S = languageWord } }
         };
 
         var request = new GetItemRequest
@@ -55,7 +55,7 @@ public class VocabularyRepository(IAmazonDynamoDB client) : IVocabularyRepositor
         var request = new QueryRequest
         {
             TableName = TableName,
-            KeyConditionExpression = "UserId = :userId AND begins_with(Language#Word, :language)",
+            KeyConditionExpression = "UserId = :userId AND begins_with(sk, :language)",
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
                 { ":userId", new AttributeValue { S = userId } },
@@ -76,7 +76,7 @@ public class VocabularyRepository(IAmazonDynamoDB client) : IVocabularyRepositor
             Key = new Dictionary<string, AttributeValue>
             {
                 { "UserId", new AttributeValue { S = userId } },
-                { "Language#Word", new AttributeValue { S = languageWord } }
+                { "sk", new AttributeValue { S = languageWord } }
             }
         };
         
