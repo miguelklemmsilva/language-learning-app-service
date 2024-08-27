@@ -103,9 +103,9 @@ public class Function(
     }
 
     [LambdaFunction]
-    [HttpApi(LambdaHttpMethod.Delete, "/language/{language}")]
+    [HttpApi(LambdaHttpMethod.Delete, "/language}")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveLanguage([FromHeader] string authorization,
-        string? language)
+        [FromQuery] string language)
     {
         try
         {
@@ -164,8 +164,8 @@ public class Function(
     }
 
     [LambdaFunction]
-    [HttpApi(LambdaHttpMethod.Delete, "/vocabulary/{languageWord}")]
-    public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveVocabulary([FromHeader] string authorization, string languageWord)
+    [HttpApi(LambdaHttpMethod.Delete, "/vocabulary")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveVocabulary([FromHeader] string authorization, [FromQuery] string languageWord)
     {
         try
         {
