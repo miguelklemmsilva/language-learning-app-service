@@ -242,6 +242,86 @@
           }
         }
       }
+    },
+    "LambdaLambdaStartupFunctionAddVocabularyGenerated": {
+      "Type": "AWS::Serverless::Function",
+      "Metadata": {
+        "Tool": "Amazon.Lambda.Annotations",
+        "SyncedEvents": [
+          "RootPut"
+        ],
+        "SyncedEventProperties": {
+          "RootPut": [
+            "Path",
+            "Method"
+          ]
+        }
+      },
+      "Properties": {
+        "Runtime": "dotnet8",
+        "CodeUri": ".",
+        "MemorySize": 512,
+        "Timeout": 30,
+        "Policies": [
+          "AWSLambdaBasicExecutionRole"
+        ],
+        "PackageType": "Zip",
+        "Handler": "bootstrap",
+        "Environment": {
+          "Variables": {
+            "ANNOTATIONS_HANDLER": "AddVocabulary"
+          }
+        },
+        "Events": {
+          "RootPut": {
+            "Type": "HttpApi",
+            "Properties": {
+              "Path": "/vocabulary",
+              "Method": "PUT"
+            }
+          }
+        }
+      }
+    },
+    "LambdaLambdaStartupFunctionRemoveVocabularyGenerated": {
+      "Type": "AWS::Serverless::Function",
+      "Metadata": {
+        "Tool": "Amazon.Lambda.Annotations",
+        "SyncedEvents": [
+          "RootDelete"
+        ],
+        "SyncedEventProperties": {
+          "RootDelete": [
+            "Path",
+            "Method"
+          ]
+        }
+      },
+      "Properties": {
+        "Runtime": "dotnet8",
+        "CodeUri": ".",
+        "MemorySize": 512,
+        "Timeout": 30,
+        "Policies": [
+          "AWSLambdaBasicExecutionRole"
+        ],
+        "PackageType": "Zip",
+        "Handler": "bootstrap",
+        "Environment": {
+          "Variables": {
+            "ANNOTATIONS_HANDLER": "RemoveVocabulary"
+          }
+        },
+        "Events": {
+          "RootDelete": {
+            "Type": "HttpApi",
+            "Properties": {
+              "Path": "/vocabulary",
+              "Method": "DELETE"
+            }
+          }
+        }
+      }
     }
   }
 }
