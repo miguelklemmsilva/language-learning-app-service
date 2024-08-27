@@ -28,7 +28,7 @@ namespace Lambda.LambdaStartup;
 public class Function(IUserService userService)
 {
     [LambdaFunction]
-    [RestApi(LambdaHttpMethod.Get, "/user")]
+    [HttpApi(LambdaHttpMethod.Get, "/user")]
     public async Task<User> GetUser(/*[FromHeader] string Authorization*/)
     {
         
@@ -38,7 +38,7 @@ public class Function(IUserService userService)
     }
     
     [LambdaFunction]
-    [RestApi(LambdaHttpMethod.Put, "/user")]
+    [HttpApi(LambdaHttpMethod.Put, "/user")]
     public async Task<User> UpdateUser([FromHeader] string Authorization, [FromBody] UpdateUserRequest updateRequest)
     {
         var username = AuthHelper.ParseToken(Authorization).CognitoUsername;
