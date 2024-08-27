@@ -63,7 +63,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: ./Lambda/LambdaStartup/
-      Handler: UpdateUser
+      Handler: bootstrap
       Environment:
         Variables:
           ANNOTATIONS_HANDLER: "UpdateUser"
