@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using Amazon.Lambda.Annotations.APIGateway;
 using Amazon.Lambda.APIGatewayEvents;
 using Core.Models.DataTransferModels;
 
@@ -17,6 +18,7 @@ namespace Core.Models.DataModels;
 [JsonSerializable(typeof(IEnumerable<UserLanguage>))]
 [JsonSerializable(typeof(IEnumerable<string>))]
 [JsonSerializable(typeof(IEnumerable<GetUserVocabularyResponse>))]
+[JsonSerializable(typeof(IHttpResult))]
 public partial class CustomJsonSerializerContext : JsonSerializerContext
 {
 }

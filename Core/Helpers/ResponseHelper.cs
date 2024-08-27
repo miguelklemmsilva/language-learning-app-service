@@ -1,7 +1,7 @@
 using Amazon.Lambda.APIGatewayEvents;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Text.Json.Serialization.Metadata;
+using Amazon.Lambda.Annotations.APIGateway;
 using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
 
@@ -9,47 +9,43 @@ namespace Core.Helpers;
 
 public static class ResponseHelper
 {
+    private static readonly JsonSerializerOptions JsonOptions = new()
+    {
+        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
+
     private static readonly Dictionary<string, string> CommonHeaders = new()
     {
         { "Content-Type", "application/json" },
         { "Access-Control-Allow-Origin", "*" },
-        { "Access-Control-Allow-Methods", "GET,POST,OPTIONS" },
-        { "Access-Control-Allow-Headers", "Content-Type" }
+        { "Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS" },
+        { "Access-Control-Allow-Headers", "Content-Type,Authorization" }
     };
 
-    public static APIGatewayHttpApiV2ProxyResponse CreateSuccessResponse<T>(T body, Type type)
+    public static IHttpResult CreateSuccessResponse<T>(T body)
     {
-        return new APIGatewayHttpApiV2ProxyResponse
+        var jsonBody = JsonSerializer.Serialize(body, JsonOptions);
+        var result = HttpResults.Ok(jsonBody);
+
+        foreach (var header in CommonHeaders)
         {
-            StatusCode = 200,
-            Body = JsonSerializer.Serialize(body, type, LambdaFunctionJsonSerializerContext.Default),
-            Headers = CommonHeaders
-        };
+            result.AddHeader(header.Key, header.Value);
+        }
+
+        return HttpResults.Ok(jsonBody);
     }
 
-    public static APIGatewayHttpApiV2ProxyResponse CreateErrorResponse(string message, int statusCode = 500)
+    public static IHttpResult CreateErrorResponse(string message)
     {
-        return new APIGatewayHttpApiV2ProxyResponse
-        {
-            StatusCode = statusCode,
-            Body = JsonSerializer.Serialize(new Dictionary<string, string> { { "error", message } },
-                typeof(Dictionary<string, string>), LambdaFunctionJsonSerializerContext.Default),
-            Headers = CommonHeaders
-        };
-    }
-}   
+        var errorBody = JsonSerializer.Serialize(new { error = message }, JsonOptions);
+        var result = HttpResults.BadRequest(errorBody);
 
-[JsonSourceGenerationOptions(
-    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase
-    )]
-[JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
-[JsonSerializable(typeof(Dictionary<string, string>))]
-[JsonSerializable(typeof(User))]
-[JsonSerializable(typeof(UserLanguage))]
-[JsonSerializable(typeof(RemoveUserLanguageResponse))]
-[JsonSerializable(typeof(IEnumerable<UserLanguage>))]
-[JsonSerializable(typeof(IEnumerable<string>))]
-[JsonSerializable(typeof(IEnumerable<GetUserVocabularyResponse>))]
-internal partial class LambdaFunctionJsonSerializerContext : JsonSerializerContext
-{
+        foreach (var header in CommonHeaders)
+        {
+            result.AddHeader(header.Key, header.Value);
+        }
+
+        return result;
+    }
 }
