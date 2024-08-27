@@ -33,8 +33,11 @@ jobs:
       - uses: aws-actions/setup-sam@v2
         with:
           use-installer: true
+          
+      - name: List dotnet SDK versions
+        run: ls /usr/share/dotnet/sdk
 
-      - name: Build specific resources based on commit message
+      - name: Build lambdas
         run: sam build --template ${SAM_TEMPLATE} --parallel
           
       - name: Assume the testing pipeline user role
