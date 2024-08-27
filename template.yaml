@@ -26,6 +26,7 @@ Resources:
         - x86_64
       MemorySize: 512
   
+  
   UpdateLanguageFunction:
     Type: AWS::Serverless::Function
     Properties:
