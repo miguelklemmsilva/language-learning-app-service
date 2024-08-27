@@ -196,7 +196,7 @@
           "RootDelete": {
             "Type": "HttpApi",
             "Properties": {
-              "Path": "/language/{language}",
+              "Path": "/language}",
               "Method": "DELETE"
             }
           }
@@ -316,7 +316,7 @@
           "RootDelete": {
             "Type": "HttpApi",
             "Properties": {
-              "Path": "/vocabulary/{languageWord}",
+              "Path": "/vocabulary",
               "Method": "DELETE"
             }
           }
