@@ -9,6 +9,7 @@ namespace Core.Helpers;
 
 public static class ResponseHelper
 {
+    // You can reuse your existing headers
     private static readonly Dictionary<string, string> CommonHeaders = new()
     {
         { "Content-Type", "application/json" },
@@ -16,26 +17,39 @@ public static class ResponseHelper
         { "Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS" },
         { "Access-Control-Allow-Headers", "Content-Type,Authorization" }
     };
+    
+    private static readonly HttpResultSerializationOptions HttpResultSerializationOptions = new HttpResultSerializationOptions { Format = HttpResultSerializationOptions.ProtocolFormat.RestApi, Version = HttpResultSerializationOptions.ProtocolVersion.V2 };
 
-    public static APIGatewayProxyResponse CreateSuccessResponse<T>(T body)
+    public static IHttpResult CreateSuccessResponse<T>(T body)
     {
-        var jsonBody = JsonSerializer.Serialize(body, typeof(T), CustomJsonSerializerContext.Default);
-        return new APIGatewayProxyResponse
+        // Use the custom serializer context to serialize the response
+        var result = HttpResults.Ok(body);
+
+        // Add custom headers
+        foreach (var header in CommonHeaders)
         {
-            StatusCode = 200,
-            Headers = CommonHeaders,
-            Body = jsonBody,
-        };
+            result.AddHeader(header.Key, header.Value);
+        }
+        
+        result.Serialize(HttpResultSerializationOptions);
+
+        return result;
     }
 
-    public static APIGatewayProxyResponse CreateErrorResponse(string message)
+    public static IHttpResult CreateErrorResponse(string message)
     {
-        var errorBody = JsonSerializer.Serialize(new { error = message }, typeof(Dictionary<string, string>), CustomJsonSerializerContext.Default);
-        return new APIGatewayProxyResponse
+        // Serialize the error message with the custom serializer context
+        var errorBody = new Dictionary<string, string> { { "message", message } };
+        var result = HttpResults.BadRequest(errorBody);
+
+        // Add custom headers
+        foreach (var header in CommonHeaders)
         {
-            StatusCode = 400,
-            Headers = CommonHeaders,
-            Body = errorBody,
-        };
+            result.AddHeader(header.Key, header.Value);
+        }
+        
+        result.Serialize(HttpResultSerializationOptions);
+
+        return result;
     }
 }
