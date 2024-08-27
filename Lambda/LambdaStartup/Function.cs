@@ -29,11 +29,10 @@ public class Function(IUserService userService)
 {
     [LambdaFunction]
     [RestApi(LambdaHttpMethod.Get, "/user")]
-    public async Task<User> GetUser([FromHeader] string Authorization)
+    public async Task<User> GetUser(/*[FromHeader] string Authorization*/)
     {
-        var username = AuthHelper.ParseToken(Authorization).CognitoUsername;
         
-        var user = await userService.GetUserAsync(username);
+        var user = await userService.GetUserAsync("f6624294-2011-70e4-b7bc-a8b2a43307e0");
 
         return user;
     }
