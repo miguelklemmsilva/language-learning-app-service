@@ -37,14 +37,14 @@ variable "api_routes" {
       lambda_function = "addvocabulary_function"
     },
     {
-        path            = "getvocabulary"
-        http_method     = "GET"
-        lambda_function = "getvocabulary_function"
-        },
-        {
-        path            = "removevocabulary"
-        http_method     = "POST"
-        lambda_function = "removevocabulary_function"
+      path            = "getvocabulary"
+      http_method     = "GET"
+      lambda_function = "getvocabulary_function"
+    },
+    {
+      path            = "removevocabulary"
+      http_method     = "POST"
+      lambda_function = "removevocabulary_function"
     }
   ]
 }
