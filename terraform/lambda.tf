@@ -127,5 +127,19 @@ resource "aws_iam_role_policy_attachment" "attach_update_user_policy" {
   policy_arn = aws_iam_policy.lambda_policy.arn
 }
 
+resource "aws_iam_role_policy_attachment" "attach_add_vocabulary_policy" {
+  role       = data.aws_iam_role.add_vocabulary_lambda_role.name
+  policy_arn = aws_iam_policy.lambda_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach_get_vocabulary_policy" {
+  role       = data.aws_iam_role.get_vocabulary_lambda_role.name
+  policy_arn = aws_iam_policy.lambda_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach_remove_vocabulary_policy" {
+  role       = data.aws_iam_role.remove_vocabulary_lambda_role.name
+  policy_arn = aws_iam_policy.lambda_policy.arn
+}
 
 

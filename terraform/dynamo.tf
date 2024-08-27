@@ -33,7 +33,7 @@ resource "aws_dynamodb_table" "vocabulary" {
     range_key    = "sk"
     
     attribute {
-        name = "UserId"
+        name = "UserId" 
         type = "S"
     }
     
