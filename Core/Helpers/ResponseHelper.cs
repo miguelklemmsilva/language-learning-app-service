@@ -21,8 +21,7 @@ public static class ResponseHelper
     public static IHttpResult CreateSuccessResponse<T>(T body)
     {
         // Use the custom serializer context to serialize the response
-        var jsonBody = JsonSerializer.Serialize(body, typeof(T), CustomJsonSerializerContext.Default);
-        var result = HttpResults.Ok(jsonBody);
+        var result = HttpResults.Ok(body);
 
         // Add custom headers
         foreach (var header in CommonHeaders)
@@ -36,8 +35,7 @@ public static class ResponseHelper
     public static IHttpResult CreateErrorResponse(string message)
     {
         // Serialize the error message with the custom serializer context
-        var errorBody = JsonSerializer.Serialize(new Dictionary<string, string> { { "message", message } },
-            typeof(Dictionary<string, string>), CustomJsonSerializerContext.Default);
+        var errorBody = new Dictionary<string, string> { { "message", message } };
         var result = HttpResults.BadRequest(errorBody);
 
         // Add custom headers
