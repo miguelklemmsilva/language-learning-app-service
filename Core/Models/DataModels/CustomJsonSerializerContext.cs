@@ -21,6 +21,7 @@ namespace Core.Models.DataModels;
 [JsonSerializable(typeof(IHttpResult))]
 [JsonSerializable(typeof(HttpResults))]
 [JsonSerializable(typeof(UserLanguageRequest))]
+[JsonSerializable(typeof(AddVocabularyRequest))]
 public partial class CustomJsonSerializerContext : JsonSerializerContext
 {
 }
