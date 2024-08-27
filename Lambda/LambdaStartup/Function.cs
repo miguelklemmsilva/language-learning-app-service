@@ -20,7 +20,7 @@ public class Function(
 {
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/user")]
-    public async Task<IHttpResult> GetUser([FromHeader] string authorization)
+    public async Task<APIGatewayProxyResponse> GetUser([FromHeader] string authorization)
     {
         try
         {
@@ -38,7 +38,7 @@ public class Function(
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Put, "/user")]
-    public async Task<IHttpResult> UpdateUser([FromHeader] string authorization, [FromBody] UpdateUserRequest updateRequest)
+    public async Task<APIGatewayProxyResponse> UpdateUser([FromHeader] string authorization, [FromBody] UpdateUserRequest updateRequest)
     {
         try
         {
@@ -57,7 +57,7 @@ public class Function(
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Put, "/language")]
-    public async Task<IHttpResult> UpdateLanguage([FromHeader] string authorization,
+    public async Task<APIGatewayProxyResponse> UpdateLanguage([FromHeader] string authorization,
         [FromBody] UserLanguageRequest updateRequest)
     {
         try
@@ -84,7 +84,7 @@ public class Function(
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/languages")]
-    public async Task<IHttpResult> GetUserLanguages([FromHeader] string authorization)
+    public async Task<APIGatewayProxyResponse> GetUserLanguages([FromHeader] string authorization)
     {
         try
         {
@@ -100,24 +100,24 @@ public class Function(
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Delete, "/language")]
-    public async Task<IHttpResult> RemoveLanguage([FromHeader] string authorization,
+    public async Task<APIGatewayProxyResponse> RemoveLanguage([FromHeader] string authorization,
         [FromBody] RemoveUserLanguageRequest removeRequest)
     {
         try
         {
             var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-            return HttpResults.Ok(await userLanguageService.RemoveUserLanguageAsync(userId, removeRequest.Language));
+            return ResponseHelper.CreateSuccessResponse(await userLanguageService.RemoveUserLanguageAsync(userId, removeRequest.Language));
         }
         catch (Exception e)
         {
-            return HttpResults.BadRequest(e.Message);
+            return ResponseHelper.CreateErrorResponse(e.Message);
         }
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/vocabulary/{language}")]
-    public async Task<IHttpResult> GetUserVocabulary([FromHeader] string authorization,
+    public async Task<APIGatewayProxyResponse> GetUserVocabulary([FromHeader] string authorization,
         string language)
     {
         try
@@ -134,7 +134,7 @@ public class Function(
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Put, "/vocabulary")]
-    public async Task<IHttpResult> AddVocabulary([FromHeader] string authorization,
+    public async Task<APIGatewayProxyResponse> AddVocabulary([FromHeader] string authorization,
         [FromBody] AddVocabularyRequest addRequest)
     {
         try {
@@ -150,7 +150,7 @@ public class Function(
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Delete, "/vocabulary")]
-    public async Task<IHttpResult> RemoveVocabulary([FromHeader] string authorization,
+    public async Task<APIGatewayProxyResponse> RemoveVocabulary([FromHeader] string authorization,
         [FromBody] RemoveVocabularyRequest removeRequest)
     {
         try
@@ -159,7 +159,7 @@ public class Function(
 
             await vocabularyService.RemoveVocabularyAsync(userId, removeRequest);
 
-            return HttpResults.Ok();
+            return ResponseHelper.CreateSuccessResponse(new { message = "Vocabulary removed" });
         }
         catch (Exception e)
         {

@@ -9,7 +9,6 @@ namespace Core.Helpers;
 
 public static class ResponseHelper
 {
-    // You can reuse your existing headers
     private static readonly Dictionary<string, string> CommonHeaders = new()
     {
         { "Content-Type", "application/json" },
@@ -18,32 +17,25 @@ public static class ResponseHelper
         { "Access-Control-Allow-Headers", "Content-Type,Authorization" }
     };
 
-    public static IHttpResult CreateSuccessResponse<T>(T body)
+    public static APIGatewayProxyResponse CreateSuccessResponse<T>(T body)
     {
-        // Use the custom serializer context to serialize the response
-        var result = HttpResults.Ok(body);
-
-        // Add custom headers
-        foreach (var header in CommonHeaders)
+        var jsonBody = JsonSerializer.Serialize(body, typeof(T), CustomJsonSerializerContext.Default);
+        return new APIGatewayProxyResponse
         {
-            result.AddHeader(header.Key, header.Value);
-        }
-
-        return result;
+            StatusCode = 200,
+            Headers = CommonHeaders,
+            Body = jsonBody,
+        };
     }
 
-    public static IHttpResult CreateErrorResponse(string message)
+    public static APIGatewayProxyResponse CreateErrorResponse(string message)
     {
-        // Serialize the error message with the custom serializer context
-        var errorBody = new Dictionary<string, string> { { "message", message } };
-        var result = HttpResults.BadRequest(errorBody);
-
-        // Add custom headers
-        foreach (var header in CommonHeaders)
+        var errorBody = JsonSerializer.Serialize(new { error = message }, typeof(Dictionary<string, string>), CustomJsonSerializerContext.Default);
+        return new APIGatewayProxyResponse
         {
-            result.AddHeader(header.Key, header.Value);
-        }
-
-        return result;
+            StatusCode = 400,
+            Headers = CommonHeaders,
+            Body = errorBody,
+        };
     }
 }
