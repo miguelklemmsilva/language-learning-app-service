@@ -8,6 +8,7 @@ namespace Core.Models.DataModels;
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase
 )]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
+[JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
 [JsonSerializable(typeof(User))]
 [JsonSerializable(typeof(UserLanguage))]

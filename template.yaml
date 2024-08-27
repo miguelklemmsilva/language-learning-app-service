@@ -59,15 +59,18 @@ Resources:
         - x86_64
       MemorySize: 512
       
-#  UpdateUserFunction:
-#    Type: AWS::Serverless::Function
-#    Properties:
-#      CodeUri: ./Lambda/UpdateUser/
-#      Handler: bootstrap
-#      Runtime: dotnet8
-#      Architectures:
-#        - x86_64
-#      MemorySize: 512
+  UpdateUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./Lambda/LambdaStartup/
+      Handler: UpdateUser
+      Environment:
+        Variables:
+          ANNOTATIONS_HANDLER: "UpdateUser"
+      Runtime: dotnet8
+      Architectures:
+        - x86_64
+      MemorySize: 512
 #  
 #  RemoveUserLanguagesFunction:
 #    Type: AWS::Serverless::Function

@@ -37,4 +37,16 @@ public class Function(IUserService userService)
 
         return user;
     }
+    
+    [LambdaFunction]
+    [RestApi(LambdaHttpMethod.Put, "/user")]
+    public async Task<User> UpdateUser([FromHeader] string Authorization, [FromBody] UpdateUserRequest updateRequest)
+    {
+        var username = AuthHelper.ParseToken(Authorization).CognitoUsername;
+        
+        var user = await userService.UpdateUserAsync(new User
+            { UserId = username, ActiveLanguage = updateRequest.ActiveLanguage });
+
+        return user;
+    }
 }
