@@ -9,12 +9,7 @@ namespace Core.Helpers;
 
 public static class ResponseHelper
 {
-    private static readonly JsonSerializerOptions JsonOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-    };
-
+    // You can reuse your existing headers
     private static readonly Dictionary<string, string> CommonHeaders = new()
     {
         { "Content-Type", "application/json" },
@@ -25,22 +20,27 @@ public static class ResponseHelper
 
     public static IHttpResult CreateSuccessResponse<T>(T body)
     {
-        var jsonBody = JsonSerializer.Serialize(body, JsonOptions);
+        // Use the custom serializer context to serialize the response
+        var jsonBody = JsonSerializer.Serialize(body, typeof(T), CustomJsonSerializerContext.Default);
         var result = HttpResults.Ok(jsonBody);
 
+        // Add custom headers
         foreach (var header in CommonHeaders)
         {
             result.AddHeader(header.Key, header.Value);
         }
 
-        return HttpResults.Ok(jsonBody);
+        return result;
     }
 
     public static IHttpResult CreateErrorResponse(string message)
     {
-        var errorBody = JsonSerializer.Serialize(new { error = message }, JsonOptions);
+        // Serialize the error message with the custom serializer context
+        var errorBody = JsonSerializer.Serialize(new Dictionary<string, string> { { "message", message } },
+            typeof(Dictionary<string, string>), CustomJsonSerializerContext.Default);
         var result = HttpResults.BadRequest(errorBody);
 
+        // Add custom headers
         foreach (var header in CommonHeaders)
         {
             result.AddHeader(header.Key, header.Value);
