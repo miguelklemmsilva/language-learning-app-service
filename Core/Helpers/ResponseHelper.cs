@@ -2,6 +2,7 @@ using Amazon.Lambda.APIGatewayEvents;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Amazon.Lambda.Annotations.APIGateway;
+using Amazon.Lambda.Serialization.SystemTextJson;
 using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
 
@@ -17,8 +18,14 @@ public static class ResponseHelper
         { "Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS" },
         { "Access-Control-Allow-Headers", "Content-Type,Authorization" }
     };
-    
-    private static readonly HttpResultSerializationOptions HttpResultSerializationOptions = new HttpResultSerializationOptions { Format = HttpResultSerializationOptions.ProtocolFormat.RestApi, Version = HttpResultSerializationOptions.ProtocolVersion.V2 };
+
+    private static readonly HttpResultSerializationOptions HttpResultSerializationOptions =
+        new()
+        {
+            Format = HttpResultSerializationOptions.ProtocolFormat.RestApi,
+            Version = HttpResultSerializationOptions.ProtocolVersion.V2,
+            Serializer = new SourceGeneratorLambdaJsonSerializer<CustomJsonSerializerContext>()
+        };
 
     public static IHttpResult CreateSuccessResponse<T>(T body)
     {
@@ -30,7 +37,7 @@ public static class ResponseHelper
         {
             result.AddHeader(header.Key, header.Value);
         }
-        
+
         result.Serialize(HttpResultSerializationOptions);
 
         return result;
@@ -47,7 +54,7 @@ public static class ResponseHelper
         {
             result.AddHeader(header.Key, header.Value);
         }
-        
+
         result.Serialize(HttpResultSerializationOptions);
 
         return result;
