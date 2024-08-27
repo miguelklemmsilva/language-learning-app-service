@@ -10,49 +10,13 @@ manifest_hash = ""
 packagetype = "Zip"
 functions = ["PreSignUpFunction"]
 
-[function_build_definitions.2503b154-693e-4e64-b71c-21b7e615097b]
-codeuri = "/Users/miguelklemmsilva/Developer/personal/language-learning-app-service/Lambda/UpdateLanguage"
-runtime = "dotnet8"
-architecture = "x86_64"
-handler = "bootstrap"
-manifest_hash = ""
-packagetype = "Zip"
-functions = ["UpdateLanguageFunction"]
-
-[function_build_definitions.bfced986-a934-41e0-8659-d33fee0f04e0]
-codeuri = "/Users/miguelklemmsilva/Developer/personal/language-learning-app-service/Lambda/GetUserLanguages"
-runtime = "dotnet8"
-architecture = "x86_64"
-handler = "bootstrap"
-manifest_hash = ""
-packagetype = "Zip"
-functions = ["GetUserLanguagesFunction"]
-
-[function_build_definitions.ef56efd0-b5fd-4ae1-8de4-e3c37b597570]
-codeuri = "/Users/miguelklemmsilva/Developer/personal/language-learning-app-service/Lambda/GetUser"
+[function_build_definitions.c6c3d5ac-0485-4c96-b0a2-b63b1ba1b275]
+codeuri = "/Users/miguelklemmsilva/Developer/personal/language-learning-app-service/Lambda/LambdaStartup"
 runtime = "dotnet8"
 architecture = "x86_64"
 handler = "bootstrap"
 manifest_hash = ""
 packagetype = "Zip"
 functions = ["GetUserFunction"]
-
-[function_build_definitions.35b37ace-c2b9-413d-84ad-b0c68915cebc]
-codeuri = "/Users/miguelklemmsilva/Developer/personal/language-learning-app-service/Lambda/RemoveUserLanguage"
-runtime = "dotnet8"
-architecture = "x86_64"
-handler = "bootstrap"
-manifest_hash = ""
-packagetype = "Zip"
-functions = ["RemoveUserLanguagesFunction"]
-
-[function_build_definitions.c4d62e73-f416-47e4-8611-ab61724bb058]
-codeuri = "/Users/miguelklemmsilva/Developer/personal/language-learning-app-service/Lambda/UpdateUser"
-runtime = "dotnet8"
-architecture = "x86_64"
-handler = "bootstrap"
-manifest_hash = ""
-packagetype = "Zip"
-functions = ["UpdateUserFunction"]
 
 [layer_build_definitions]
