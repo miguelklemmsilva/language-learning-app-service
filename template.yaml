@@ -78,46 +78,58 @@ Resources:
       Architectures:
         - x86_64
       MemorySize: 512
-  #  
-  #  RemoveUserLanguagesFunction:
-  #    Type: AWS::Serverless::Function
-  #    Properties:
-  #      CodeUri: ./Lambda/RemoveUserLanguage/
-  #      Handler: bootstrap
-  #      Runtime: dotnet8
-  #      Architectures:
-  #        - x86_64
-  #      MemorySize: 512
-  #      
-  #  AddVocabularyFunction:
-  #    Type: AWS::Serverless::Function
-  #    Properties:
-  #      CodeUri: ./Lambda/AddVocabulary/
-  #      Handler: bootstrap
-  #      Runtime: dotnet8
-  #      Architectures:
-  #        - x86_64
-  #      MemorySize: 512
-  #      
-  #  RemoveVocabularyFunction:
-  #    Type: AWS::Serverless::Function
-  #    Properties:
-  #      CodeUri: ./Lambda/RemoveVocabulary/
-  #      Handler: bootstrap
-  #      Runtime: dotnet8
-  #      Architectures:
-  #        - x86_64
-  #      MemorySize: 512
-  #      
-  #  GetVocabularyFunction:
-  #    Type: AWS::Serverless::Function
-  #    Properties:
-  #      CodeUri: ./Lambda/GetVocabulary/
-  #      Handler: bootstrap
-  #      Runtime: dotnet8
-  #      Architectures:
-  #        - x86_64
-  #      MemorySize: 512
+
+  RemoveUserLanguageFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./Lambda/LambdaStartup/
+      Environment:
+        Variables:
+          ANNOTATIONS_HANDLER: "RemoveLanguage"
+      Handler: bootstrap
+      Runtime: dotnet8
+      Architectures:
+        - x86_64
+      MemorySize: 512
+
+  AddVocabularyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./Lambda/LambdaStartup/
+      Handler: bootstrap
+      Environment:
+          Variables:
+          ANNOTATIONS_HANDLER: "AddVocabulary"
+      Runtime: dotnet8
+      Architectures:
+        - x86_64
+      MemorySize: 512
+
+  RemoveVocabularyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./Lambda/LambdaStartup/
+      Handler: bootstrap
+      Environment:
+          Variables:
+          ANNOTATIONS_HANDLER: "RemoveVocabulary"
+      Runtime: dotnet8
+      Architectures:
+        - x86_64
+      MemorySize: 512
+
+  GetVocabularyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./Lambda/LambdaStartup/
+      Handler: bootstrap
+      Environment:
+          Variables:
+          ANNOTATIONS_HANDLER: "GetVocabulary"
+      Runtime: dotnet8
+      Architectures:
+        - x86_64
+      MemorySize: 512
   
   ApplicationResourceGroup:
     Type: AWS::ResourceGroups::Group

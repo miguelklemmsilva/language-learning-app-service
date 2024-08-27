@@ -7,6 +7,6 @@ public interface IVocabularyService
 {
     Task<IEnumerable<string>> AddVocabularyAsync(string userId, AddVocabularyRequest request);
     Task<IEnumerable<GetUserVocabularyResponse>> GetUserVocabularyAsync(string userId, string language);
-    Task RemoveVocabularyAsync(Vocabulary vocabulary);
+    Task RemoveVocabularyAsync(string userId, RemoveVocabularyRequest request);
     Task<Vocabulary> UpdateVocabularyAsync(Vocabulary vocabulary);
 }

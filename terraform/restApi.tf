@@ -3,67 +3,66 @@ resource "aws_api_gateway_rest_api" "rest_api" {
 }
 
 resource "aws_api_gateway_authorizer" "authorizer" {
-  name        = "CognitoUserPoolAuthorizer"
-  type        = "COGNITO_USER_POOLS"
-  rest_api_id = aws_api_gateway_rest_api.rest_api.id
+  name          = "CognitoUserPoolAuthorizer"
+  type          = "COGNITO_USER_POOLS"
+  rest_api_id   = aws_api_gateway_rest_api.rest_api.id
   provider_arns = [aws_cognito_user_pool.user_pool.arn]
 }
 
-# Create API Gateway resources dynamically
+# Create API Gateway resources
 resource "aws_api_gateway_resource" "routes" {
-  for_each    = { for route in var.api_routes : route.path => route }
+  for_each    = toset([for route in var.api_routes : route.path])
   rest_api_id = aws_api_gateway_rest_api.rest_api.id
   parent_id   = aws_api_gateway_rest_api.rest_api.root_resource_id
-  path_part   = each.value.path
+  path_part   = each.key
 }
 
 # Create methods and integrate with Lambda functions
 resource "aws_api_gateway_method" "routes" {
-  for_each       = { for route in var.api_routes : route.path => route }
-  rest_api_id    = aws_api_gateway_rest_api.rest_api.id
-  resource_id    = aws_api_gateway_resource.routes[each.value.path].id
-  http_method    = each.value.http_method
-  authorization  = "COGNITO_USER_POOLS"
-
+  for_each      = { for idx, route in var.api_routes : "${route.path}-${route.http_method}" => route }
+  rest_api_id   = aws_api_gateway_rest_api.rest_api.id
+  resource_id   = aws_api_gateway_resource.routes[each.value.path].id
+  http_method   = each.value.http_method
+  authorization = "COGNITO_USER_POOLS"
   authorizer_id = aws_api_gateway_authorizer.authorizer.id
 
-  request_parameters =  {
+  request_parameters = {
     "method.request.header.Authorization" = true
   }
 }
 
 resource "aws_api_gateway_integration" "routes" {
-  for_each                = { for route in var.api_routes : route.path => route }
+  for_each                = { for idx, route in var.api_routes : "${route.path}-${route.http_method}" => route }
   rest_api_id             = aws_api_gateway_rest_api.rest_api.id
   resource_id             = aws_api_gateway_resource.routes[each.value.path].id
-  http_method             = aws_api_gateway_method.routes[each.value.path].http_method
+  http_method             = each.value.http_method
   integration_http_method = "POST"
   type                    = "AWS_PROXY"
   uri                     = local.lambda_function_map[each.value.lambda_function]
 }
 
 resource "aws_lambda_permission" "api_gateway_invoke" {
-  for_each      = { for route in var.api_routes : route.path => route }
-  statement_id  = "AllowAPIGatewayInvoke${each.value.path}"
+  for_each      = { for idx, route in var.api_routes : "${route.path}-${route.http_method}" => route }
+  statement_id  = "AllowAPIGatewayInvoke${each.value.path}${each.value.http_method}"
   action        = "lambda:InvokeFunction"
   function_name = local.lambda_arn_map[each.value.lambda_function]
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.rest_api.execution_arn}/*/*"
 }
 
-# Create OPTIONS method and CORS integration for each route if enabled
+# CORS configuration (only one OPTIONS method per resource is needed)
 resource "aws_api_gateway_method" "cors_options" {
-  for_each       = { for route in var.api_routes : route.path => route }
-  rest_api_id    = aws_api_gateway_rest_api.rest_api.id
-  resource_id    = aws_api_gateway_resource.routes[each.value.path].id
-  http_method    = "OPTIONS"
-  authorization  = "NONE"
+  for_each      = toset([for route in var.api_routes : route.path])
+  rest_api_id   = aws_api_gateway_rest_api.rest_api.id
+  resource_id   = aws_api_gateway_resource.routes[each.key].id
+  http_method   = "OPTIONS"
+  authorization = "NONE"
 }
 
 resource "aws_api_gateway_integration" "cors_integration" {
-  for_each    = { for route in var.api_routes : route.path => route }
+  for_each    = toset([for route in var.api_routes : route.path])
   rest_api_id = aws_api_gateway_rest_api.rest_api.id
-  resource_id = aws_api_gateway_resource.routes[each.value.path].id
+  resource_id = aws_api_gateway_resource.routes[each.key].id
   http_method = aws_api_gateway_method.cors_options[each.key].http_method
 
   type = "MOCK"
@@ -76,9 +75,9 @@ resource "aws_api_gateway_integration" "cors_integration" {
 }
 
 resource "aws_api_gateway_integration_response" "cors_integration_response" {
-  for_each    = { for route in var.api_routes : route.path => route }
+  for_each    = toset([for route in var.api_routes : route.path])
   rest_api_id = aws_api_gateway_rest_api.rest_api.id
-  resource_id = aws_api_gateway_resource.routes[each.value.path].id
+  resource_id = aws_api_gateway_resource.routes[each.key].id
   http_method = aws_api_gateway_method.cors_options[each.key].http_method
   status_code = "200"
 
@@ -92,9 +91,9 @@ resource "aws_api_gateway_integration_response" "cors_integration_response" {
 }
 
 resource "aws_api_gateway_method_response" "cors_method_response" {
-  for_each    = { for route in var.api_routes : route.path => route }
+  for_each    = toset([for route in var.api_routes : route.path])
   rest_api_id = aws_api_gateway_rest_api.rest_api.id
-  resource_id = aws_api_gateway_resource.routes[each.value.path].id
+  resource_id = aws_api_gateway_resource.routes[each.key].id
   http_method = aws_api_gateway_method.cors_options[each.key].http_method
   status_code = "200"
 

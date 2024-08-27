@@ -1,9 +1,9 @@
 data "aws_lambda_function" "pre_sign_up" {
-  function_name = "language-learning-app-PreSignUpFunction-OnrppInklow4"
+  function_name = "language-learning-app-PreSignUpFunction-c2EgeILvBscU"
 }
 
 data "aws_iam_role" "pre_sign_up_lambda_role" {
-  name = "language-learning-app-PreSignUpFunctionRole-gb6UaGhm4BC7"
+  name = "language-learning-app-PreSignUpFunctionRole-raE5RaEOALPy"
 }
 
 data "aws_lambda_function" "update_language" {
@@ -23,11 +23,11 @@ data "aws_iam_role" "get_user_lambda_role" {
 }
 
 data "aws_lambda_function" "get_user_languages" {
-  function_name = "language-learning-app-GetUserLanguagesFunction-abAwGiwZX1RE"
+  function_name = "language-learning-app-GetUserLanguagesFunction-cyY1K7NGD85d"
 }
 
 data "aws_iam_role" "get_user_languages_lambda_role" {
-  name = "language-learning-app-GetUserLanguagesFunctionRole-pdi6oUWPngKf"
+  name = "language-learning-app-GetUserLanguagesFunctionRole-evm6Ncog26JI"
 }
 
 /*data "aws_lambda_function" "remove_user_language" {

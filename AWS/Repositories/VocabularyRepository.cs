@@ -68,15 +68,15 @@ public class VocabularyRepository(IAmazonDynamoDB client) : IVocabularyRepositor
         return response.Items.Select(VocabularyFactory.Build).ToList();
     }
 
-    public async Task RemoveVocabularyAsync(Vocabulary vocabulary)
+    public async Task RemoveVocabularyAsync(string userId, string languageWord)
     {
         var request = new DeleteItemRequest
         {
             TableName = TableName,
             Key = new Dictionary<string, AttributeValue>
             {
-                { "UserId", new AttributeValue { S = vocabulary.UserId } },
-                { "Language#Word", new AttributeValue { S = vocabulary.LanguageWord } }
+                { "UserId", new AttributeValue { S = userId } },
+                { "Language#Word", new AttributeValue { S = languageWord } }
             }
         };
         
