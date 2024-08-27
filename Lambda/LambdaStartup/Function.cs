@@ -20,11 +20,14 @@ public class Function(
 {
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/user")]
-    public async Task<User> GetUser([FromHeader] string authorization)
+    public async Task<IHttpResult> GetUser([FromHeader] string authorization)
     {
         var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
-
-        return await userService.GetUserAsync(userId);
+        
+        await userService.GetUserAsync(userId);
+        
+        return HttpResults.NotFound($"Resource with id could not be found")
+            .AddHeader("Custom-Header1", "Value1");
     }
 
     [LambdaFunction]
