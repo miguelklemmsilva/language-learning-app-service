@@ -11,6 +11,8 @@ namespace Core.Models.DataModels;
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
 [JsonSerializable(typeof(APIGatewayProxyRequest))]
 [JsonSerializable(typeof(APIGatewayProxyResponse))]
+[JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest.ProxyRequestContext))]
+[JsonSerializable(typeof(APIGatewayProxyRequest.ProxyRequestContext))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
 [JsonSerializable(typeof(User))]
 [JsonSerializable(typeof(UserLanguage))]
