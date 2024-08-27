@@ -10,7 +10,7 @@ public static class VocabularyFactory
         return new Vocabulary
         {
             UserId = item["UserId"].S,
-            LanguageWord = item["Language#Word"].S,
+            LanguageWord = item["sk"].S,
             LastPracticed = long.Parse(item["LastSeen"].N),
             BoxNumber = int.Parse(item["BoxNumber"].N)
         };
