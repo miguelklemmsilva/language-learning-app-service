@@ -22,98 +22,163 @@ public class Function(
     [HttpApi(LambdaHttpMethod.Get, "/user")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> GetUser([FromHeader] string authorization)
     {
-        var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
-        
-        await userService.GetUserAsync(userId);
-        
-        return new APIGatewayHttpApiV2ProxyResponse
+        try
         {
-            StatusCode = 200,
-            Body = "User found",
-            Headers = new Dictionary<string, string> { { "Custom header", "trying this" } }
-        };
+            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+
+            var user = await userService.GetUserAsync(userId);
+
+            return ResponseHelper.CreateSuccessResponse(user, typeof(User));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Put, "/user")]
-    public async Task<User> UpdateUser([FromHeader] string authorization, [FromBody] UpdateUserRequest updateRequest)
+    public async Task<APIGatewayHttpApiV2ProxyResponse> UpdateUser([FromHeader] string authorization,
+        [FromBody] UpdateUserRequest updateRequest)
     {
-        var username = AuthHelper.ParseToken(authorization).CognitoUsername;
+        try
+        {
+            var username = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-        var user = await userService.UpdateUserAsync(new User
-            { UserId = username, ActiveLanguage = updateRequest.ActiveLanguage });
+            var user = await userService.UpdateUserAsync(new User
+                { UserId = username, ActiveLanguage = updateRequest.ActiveLanguage });
 
-        return user;
+            return ResponseHelper.CreateSuccessResponse(user, typeof(User));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Put, "/language")]
-    public async Task<UserLanguage> UpdateLanguage([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> UpdateLanguage([FromHeader] string authorization,
         [FromBody] UserLanguageRequest updateRequest)
     {
-        var username = AuthHelper.ParseToken(authorization).CognitoUsername;
-
-        var userLanguage = new UserLanguage
+        try
         {
-            UserId = username,
-            Language = updateRequest.Language,
-            Country = updateRequest.Country,
-            Translation = updateRequest.Translation,
-            Listening = updateRequest.Listening,
-            Speaking = updateRequest.Speaking
-        };
+            var username = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-        return await userLanguageService.UpdateUserLanguageAsync(userLanguage);
+            var userLanguage = new UserLanguage
+            {
+                UserId = username,
+                Language = updateRequest.Language,
+                Country = updateRequest.Country,
+                Translation = updateRequest.Translation,
+                Listening = updateRequest.Listening,
+                Speaking = updateRequest.Speaking
+            };
+
+            return ResponseHelper.CreateSuccessResponse(await userLanguageService.UpdateUserLanguageAsync(userLanguage),
+                typeof(UserLanguage));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/languages")]
-    public async Task<IEnumerable<UserLanguage>> GetUserLanguages([FromHeader] string authorization)
+    public async Task<APIGatewayHttpApiV2ProxyResponse> GetUserLanguages([FromHeader] string authorization)
     {
-        var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+        try
+        {
+            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-        return await userLanguageService.GetUserLanguagesAsync(userId);
+            var languages = await userLanguageService.GetUserLanguagesAsync(userId);
+
+            return ResponseHelper.CreateSuccessResponse(languages, typeof(IEnumerable<UserLanguage>));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Delete, "/language")]
-    public async Task<RemoveUserLanguageResponse> RemoveLanguage([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveLanguage([FromHeader] string authorization,
         [FromBody] RemoveUserLanguageRequest removeRequest)
     {
-        var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+        try
+        {
+            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-        return await userLanguageService.RemoveUserLanguageAsync(userId, removeRequest.Language);
+            await userLanguageService.RemoveUserLanguageAsync(userId, removeRequest.Language);
+
+            return ResponseHelper.CreateSuccessResponse(
+                new Dictionary<string, string> { { "message", "Language removed successfully" } },
+                typeof(Dictionary<string, string>));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/vocabulary/{language}")]
-    public async Task<IEnumerable<GetUserVocabularyResponse>> GetUserVocabulary([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> GetUserVocabulary([FromHeader] string authorization,
         string language)
     {
-        var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+        try
+        {
+            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-        return await vocabularyService.GetUserVocabularyAsync(userId, language);
+            var vocabularies = await vocabularyService.GetUserVocabularyAsync(userId, language);
+
+            return ResponseHelper.CreateSuccessResponse(vocabularies, typeof(IEnumerable<GetUserVocabularyResponse>));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Put, "/vocabulary")]
-    public async Task<IEnumerable<string>> AddVocabulary([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> AddVocabulary([FromHeader] string authorization,
         [FromBody] AddVocabularyRequest addRequest)
     {
-        var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+        try
+        {
+            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-        return await vocabularyService.AddVocabularyAsync(userId, addRequest);
+            var vocabularies = await vocabularyService.AddVocabularyAsync(userId, addRequest);
+
+            return ResponseHelper.CreateSuccessResponse(vocabularies, typeof(IEnumerable<string>));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Delete, "/vocabulary")]
-    public async Task<Dictionary<string, string>> RemoveVocabulary([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveVocabulary([FromHeader] string authorization,
         [FromBody] RemoveVocabularyRequest removeRequest)
     {
-        var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+        try
+        {
+            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-        await vocabularyService.RemoveVocabularyAsync(userId, removeRequest);
+            await vocabularyService.RemoveVocabularyAsync(userId, removeRequest);
 
-        return new Dictionary<string, string> { { "message", "Vocabulary removed successfully" } };
+            return ResponseHelper.CreateSuccessResponse(
+                new Dictionary<string, string> { { "message", "Vocabulary removed successfully" } },
+                typeof(Dictionary<string, string>));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
     }
 }
