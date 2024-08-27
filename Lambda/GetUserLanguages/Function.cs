@@ -51,7 +51,7 @@ public class Function
             UserService userService = new(userRepository);
             IUserLanguageService userLanguageService = new UserLanguageService(userLanguageRepository, userService);
 
-            var userLanguages = await userLanguageService.GetUserLanguagesAsync(username); 
+            var userLanguages = await userLanguageService.GetUserLanguagesAsync(username);
 
             return ResponseHelper.CreateSuccessResponse(userLanguages, typeof(IEnumerable<UserLanguage>));
         }
