@@ -39,18 +39,18 @@ Resources:
         - x86_64
       MemorySize: 512
 
-    GetUserLanguagesFunction:
-      Type: AWS::Serverless::Function
-      Properties:
-        CodeUri: ./Lambda/LambdaStartup/
-        Handler: bootstrap
-        Environment:
-          Variables:
-            ANNOTATIONS_HANDLER: "GetUserLanguages"
-        Runtime: dotnet8
-        Architectures:
-          - x86_64
-        MemorySize: 512
+  GetUserLanguagesFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./Lambda/LambdaStartup/
+      Handler: bootstrap
+      Environment:
+        Variables:
+          ANNOTATIONS_HANDLER: "GetUserLanguages"
+      Runtime: dotnet8
+      Architectures:
+        - x86_64
+      MemorySize: 512
 
   GetUserFunction:
     Type: AWS::Serverless::Function
