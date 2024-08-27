@@ -31,7 +31,6 @@ public class Function(IUserService userService)
     [HttpApi(LambdaHttpMethod.Get, "/user")]
     public async Task<User> GetUser(/*[FromHeader] string Authorization*/)
     {
-        
         var user = await userService.GetUserAsync("f6624294-2011-70e4-b7bc-a8b2a43307e0");
 
         return user;
