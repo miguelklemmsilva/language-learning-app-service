@@ -33,7 +33,7 @@ Resources:
       Handler: bootstrap
       Environment:
         Variables:
-        ANNOTATIONS_HANDLER: "UpdateLanguage"
+          ANNOTATIONS_HANDLER: "UpdateLanguage"
       Runtime: dotnet8
       Architectures:
         - x86_64
