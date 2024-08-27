@@ -19,5 +19,7 @@ public class Startup
         services.AddSingleton<IUserService, UserService>();
         services.AddSingleton<IUserLanguageRepository, UserLanguageRepository>();
         services.AddSingleton<IUserLanguageService, UserLanguageService>();
+        services.AddSingleton<IVocabularyRepository, VocabularyRepository>();
+        services.AddSingleton<IVocabularyService, VocabularyService>();
     }
 }

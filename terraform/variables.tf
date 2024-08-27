@@ -7,31 +7,31 @@ variable "api_routes" {
 
   default = [
     {
-      path            = "updatelanguage"
-      http_method     = "POST"
+      path            = "language"
+      http_method     = "PUT"
       lambda_function = "updatelanguage_function"
     },
     {
-      path            = "getuser"
+      path            = "user"
       http_method     = "GET"
       lambda_function = "getuser_function"
     },
     {
-      path            = "getuserlanguages"
+      path            = "languages"
       http_method     = "GET"
       lambda_function = "getuserlanguages_function"
     },
-    {
+/*    {
       path            = "removeuserlanguage"
       http_method     = "POST"
       lambda_function = "removeuserlanguage_function"
-    },
+    },*/
     {
-      path            = "updateuser"
-      http_method     = "POST"
+      path            = "user"
+      http_method     = "PUT"
       lambda_function = "updateuser_function"
     },
-    {
+/*    {
       path            = "addvocabulary"
       http_method     = "POST"
       lambda_function = "addvocabulary_function"
@@ -45,7 +45,7 @@ variable "api_routes" {
       path            = "removevocabulary"
       http_method     = "POST"
       lambda_function = "removevocabulary_function"
-    }
+    }*/
   ]
 }
 
@@ -54,23 +54,21 @@ locals {
     "updatelanguage_function"     = data.aws_lambda_function.update_language.invoke_arn
     "getuser_function"            = data.aws_lambda_function.get_user.invoke_arn
     "getuserlanguages_function"   = data.aws_lambda_function.get_user_languages.invoke_arn
-    "removeuserlanguage_function" = data.aws_lambda_function.remove_user_language.invoke_arn
-    "presignup_function"          = data.aws_lambda_function.pre_sign_up.invoke_arn
+#     "removeuserlanguage_function" = data.aws_lambda_function.remove_user_language.invoke_arn
     "updateuser_function"         = data.aws_lambda_function.update_user.invoke_arn
-    "addvocabulary_function"      = data.aws_lambda_function.add_vocabulary.invoke_arn
+/*    "addvocabulary_function"      = data.aws_lambda_function.add_vocabulary.invoke_arn
     "getvocabulary_function"      = data.aws_lambda_function.get_vocabulary.invoke_arn
     "removevocabulary_function"   = data.aws_lambda_function.remove_vocabulary.invoke_arn
-  }
+*/  }
 
   lambda_arn_map = {
     "updatelanguage_function"     = data.aws_lambda_function.update_language.arn
     "getuser_function"            = data.aws_lambda_function.get_user.arn
     "getuserlanguages_function"   = data.aws_lambda_function.get_user_languages.arn
-    "removeuserlanguage_function" = data.aws_lambda_function.remove_user_language.arn
-    "presignup_function"          = data.aws_lambda_function.pre_sign_up.arn
+#     "removeuserlanguage_function" = data.aws_lambda_function.remove_user_language.arn
     "updateuser_function"         = data.aws_lambda_function.update_user.arn
-    "addvocabulary_function"      = data.aws_lambda_function.add_vocabulary.arn
+/*    "addvocabulary_function"      = data.aws_lambda_function.add_vocabulary.arn
     "getvocabulary_function"      = data.aws_lambda_function.get_vocabulary.arn
     "removevocabulary_function"   = data.aws_lambda_function.remove_vocabulary.arn
-  }
+*/  }
 }
