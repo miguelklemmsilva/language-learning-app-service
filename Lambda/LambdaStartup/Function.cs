@@ -103,19 +103,21 @@ public class Function(
     }
 
     [LambdaFunction]
-    [HttpApi(LambdaHttpMethod.Delete, "/language")]
+    [HttpApi(LambdaHttpMethod.Delete, "/language/{language}")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveLanguage([FromHeader] string authorization,
-        [FromBody] RemoveUserLanguageRequest removeRequest)
+        string? language)
     {
         try
         {
             var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-            await userLanguageService.RemoveUserLanguageAsync(userId, removeRequest.Language);
+            string? newLanguage = await userLanguageService.RemoveUserLanguageAsync(userId, language);
 
-            return ResponseHelper.CreateSuccessResponse(
-                new Dictionary<string, string> { { "message", "Language removed successfully" } },
-                typeof(Dictionary<string, string>));
+            if (newLanguage == null)
+                throw new Exception("Language not found");
+
+            return ResponseHelper.CreateSuccessResponse(new RemoveUserLanguageResponse { ActiveLanguage = newLanguage },
+                typeof(RemoveUserLanguageResponse));
         }
         catch (Exception e)
         {
@@ -162,15 +164,14 @@ public class Function(
     }
 
     [LambdaFunction]
-    [HttpApi(LambdaHttpMethod.Delete, "/vocabulary")]
-    public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveVocabulary([FromHeader] string authorization,
-        [FromBody] RemoveVocabularyRequest removeRequest)
+    [HttpApi(LambdaHttpMethod.Delete, "/vocabulary/{languageWord}")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveVocabulary([FromHeader] string authorization, string languageWord)
     {
         try
         {
             var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-            await vocabularyService.RemoveVocabularyAsync(userId, removeRequest);
+            await vocabularyService.RemoveVocabularyAsync(userId, languageWord);
 
             return ResponseHelper.CreateSuccessResponse(
                 new Dictionary<string, string> { { "message", "Vocabulary removed successfully" } },

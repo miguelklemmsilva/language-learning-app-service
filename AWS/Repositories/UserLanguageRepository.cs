@@ -68,7 +68,7 @@ public class UserLanguageRepository(IAmazonDynamoDB client) : IUserLanguageRepos
         return userLanguage;
     }
     
-    public async Task RemoveUserLanguageAsync(string userId, string language)
+    public async Task RemoveUserLanguageAsync(string userId, string? language)
     {
         var key = new Dictionary<string, AttributeValue>
         {

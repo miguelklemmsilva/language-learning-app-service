@@ -89,14 +89,14 @@ public class VocabularyService(
         return await vocabularyRepository.UpdateVocabularyAsync(vocabulary);
     }
 
-    public async Task RemoveVocabularyAsync(string userId, RemoveVocabularyRequest request)
+    public async Task RemoveVocabularyAsync(string userId, string languageWord)
     {
         var existingVocabulary =
-            await vocabularyRepository.GetVocabularyAsync(userId, request.LanguageWord);
+            await vocabularyRepository.GetVocabularyAsync(userId, languageWord);
 
         if (existingVocabulary == null)
             throw new Exception("Vocabulary not found");
 
-        await vocabularyRepository.RemoveVocabularyAsync(userId, request.LanguageWord);
+        await vocabularyRepository.RemoveVocabularyAsync(userId, languageWord);
     }
 }

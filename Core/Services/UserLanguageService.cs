@@ -25,18 +25,17 @@ public class UserLanguageService(IUserLanguageRepository userLanguageRepository,
         return userLanguages.Reverse();
     }
 
-    public async Task<RemoveUserLanguageResponse> RemoveUserLanguageAsync(string userId, string language)
+    public async Task<string?> RemoveUserLanguageAsync(string userId, string? language)
     {
         await userLanguageRepository.RemoveUserLanguageAsync(userId, language);
 
         var user = await userService.GetUserAsync(userId);
-        
-        if (language != user.ActiveLanguage) return new RemoveUserLanguageResponse { ActiveLanguage = user.ActiveLanguage };
+
+        if (language != user.ActiveLanguage) return language;
         
         var userLanguages = await GetUserLanguagesAsync(userId);
         var newActiveLanguage = userLanguages.FirstOrDefault()?.Language;
-        var updatedUser = await userService.UpdateUserAsync(new User { UserId = userId, ActiveLanguage = newActiveLanguage });
-
-        return new RemoveUserLanguageResponse { ActiveLanguage = updatedUser.ActiveLanguage };
+        await userService.UpdateUserAsync(new User { UserId = userId, ActiveLanguage = newActiveLanguage });
+        return newActiveLanguage;
     }
 }
