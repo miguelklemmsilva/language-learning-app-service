@@ -17,5 +17,7 @@ public class Startup
         services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(RegionEndpoint.EUWest2));
         services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IUserService, UserService>();
+        services.AddSingleton<IUserLanguageRepository, UserLanguageRepository>();
+        services.AddSingleton<IUserLanguageService, UserLanguageService>();
     }
 }

@@ -25,7 +25,7 @@ namespace Lambda.LambdaStartup;
 [method: DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(Function))]
 [method: DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(APIGatewayHttpApiV2ProxyRequest))]
 [method: DynamicDependency(DynamicallyAccessedMemberTypes.All,  typeof(APIGatewayHttpApiV2ProxyResponse))]
-public class Function(IUserService userService)
+public class Function(IUserService userService, IUserLanguageService userLanguageService)
 {
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/user")]
@@ -48,5 +48,33 @@ public class Function(IUserService userService)
             { UserId = username, ActiveLanguage = updateRequest.ActiveLanguage });
 
         return user;
+    }
+    
+    [LambdaFunction]
+    [HttpApi(LambdaHttpMethod.Put, "/language")]
+    public async Task<UserLanguage> UpdateLanguage([FromHeader] string Authorization, [FromBody] UserLanguageRequest updateRequest)
+    {
+        var username = AuthHelper.ParseToken(Authorization).CognitoUsername;
+        
+        var userLanguage = new UserLanguage
+        {
+            UserId = username,
+            Language = updateRequest.Language,
+            Country = updateRequest.Country,
+            Translation = updateRequest.Translation,
+            Listening = updateRequest.Listening,
+            Speaking = updateRequest.Speaking
+        };
+        
+        return await userLanguageService.UpdateUserLanguageAsync(userLanguage);
+    }
+    
+    [LambdaFunction]
+    [HttpApi(LambdaHttpMethod.Get, "/languages")]
+    public async Task<IEnumerable<UserLanguage>> GetUserLanguages([FromHeader] string Authorization)
+    {
+        var userId = AuthHelper.ParseToken(Authorization).CognitoUsername;
+        
+        return await userLanguageService.GetUserLanguagesAsync(userId);
     }
 }
