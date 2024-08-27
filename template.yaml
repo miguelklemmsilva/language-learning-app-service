@@ -98,7 +98,7 @@ Resources:
       CodeUri: ./Lambda/LambdaStartup/
       Handler: bootstrap
       Environment:
-          Variables:
+        Variables:
           ANNOTATIONS_HANDLER: "AddVocabulary"
       Runtime: dotnet8
       Architectures:
@@ -111,7 +111,7 @@ Resources:
       CodeUri: ./Lambda/LambdaStartup/
       Handler: bootstrap
       Environment:
-          Variables:
+        Variables:
           ANNOTATIONS_HANDLER: "RemoveVocabulary"
       Runtime: dotnet8
       Architectures:
@@ -124,7 +124,7 @@ Resources:
       CodeUri: ./Lambda/LambdaStartup/
       Handler: bootstrap
       Environment:
-          Variables:
+        Variables:
           ANNOTATIONS_HANDLER: "GetVocabulary"
       Runtime: dotnet8
       Architectures:
