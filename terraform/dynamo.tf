@@ -27,7 +27,7 @@ resource "aws_dynamodb_table" "user_languages" {
 }
 
 resource "aws_dynamodb_table" "vocabulary" {
-    name         = "words"
+    name         = "vocabulary"
     billing_mode = "PAY_PER_REQUEST"
     hash_key     = "UserId"
     range_key    = "Language#Word"
