@@ -15,16 +15,16 @@ Globals:
       LogFormat: JSON
   Api:
     TracingEnabled: true
-Resources:
-  PreSignUpFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: ./Lambda/PreSignUp/
-      Handler: bootstrap
-      Runtime: dotnet8
-      Architectures:
-        - x86_64
-      MemorySize: 512
+#Resources:
+#  PreSignUpFunction:
+#    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+#    Properties:
+#      CodeUri: ./Lambda/PreSignUp/
+#      Handler: bootstrap
+#      Runtime: dotnet8
+#      Architectures:
+#        - x86_64
+#      MemorySize: 512
 
 #  UpdateLanguageFunction:
 #    Type: AWS::Serverless::Function
