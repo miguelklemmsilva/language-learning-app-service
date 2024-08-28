@@ -15,6 +15,7 @@ Globals:
       LogFormat: JSON
   Api:
     TracingEnabled: true
+      
 Resources:
   PreSignUpFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -25,7 +26,6 @@ Resources:
       Architectures:
         - x86_64
       MemorySize: 512
-  
   
   UpdateLanguageFunction:
     Type: AWS::Serverless::Function
@@ -130,17 +130,3 @@ Resources:
       Architectures:
         - x86_64
       MemorySize: 512
-  
-  ApplicationResourceGroup:
-    Type: AWS::ResourceGroups::Group
-    Properties:
-      Name:
-        Fn::Sub: ApplicationInsights-SAM-${AWS::StackName}
-      ResourceQuery:
-        Type: CLOUDFORMATION_STACK_1_0
-  ApplicationInsightsMonitoring:
-    Type: AWS::ApplicationInsights::Application
-    Properties:
-      ResourceGroupName:
-        Ref: ApplicationResourceGroup
-      AutoConfigurationEnabled: 'true'
