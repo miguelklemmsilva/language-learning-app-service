@@ -126,9 +126,9 @@ public class Function(
     }
 
     [LambdaFunction]
-    [HttpApi(LambdaHttpMethod.Get, "/vocabulary/{language}")]
+    [HttpApi(LambdaHttpMethod.Get, "/vocabulary")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> GetUserVocabulary([FromHeader] string authorization,
-        string language)
+        [FromQuery] string language)
     {
         try
         {

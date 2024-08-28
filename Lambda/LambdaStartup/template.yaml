@@ -236,7 +236,7 @@
           "RootGet": {
             "Type": "HttpApi",
             "Properties": {
-              "Path": "/vocabulary/{language}",
+              "Path": "/vocabulary",
               "Method": "GET"
             }
           }
