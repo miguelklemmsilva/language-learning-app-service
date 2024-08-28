@@ -62,11 +62,30 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
 
         string updateExpression;
         var expressionAttributeValues = new Dictionary<string, AttributeValue>();
+        var expressionAttributeNames = new Dictionary<string, string>();
 
-        // If ActiveLanguage is null or empty, remove it instead of setting it
         if (string.IsNullOrEmpty(user.ActiveLanguage))
         {
-            updateExpression = "REMOVE ActiveLanguage";
+            // Check if ActiveLanguage attribute exists before attempting to remove it
+            var getItemResponse = await client.GetItemAsync(new GetItemRequest
+            {
+                TableName = TableName,
+                Key = key,
+                ProjectionExpression = "ActiveLanguage"
+            });
+
+            if (getItemResponse.Item.ContainsKey("ActiveLanguage"))
+            {
+                updateExpression = "REMOVE ActiveLanguage";
+            }
+            else
+            {
+                // If ActiveLanguage doesn't exist, we need to update a different attribute
+                // to avoid empty ExpressionAttributeValues
+                updateExpression = "SET #updatedAt = :updatedAt";
+                expressionAttributeNames.Add("#updatedAt", "UpdatedAt");
+                expressionAttributeValues.Add(":updatedAt", new AttributeValue { S = DateTime.UtcNow.ToString("o") });
+            }
         }
         else
         {
@@ -80,11 +99,11 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
             Key = key,
             UpdateExpression = updateExpression,
             ExpressionAttributeValues = expressionAttributeValues,
+            ExpressionAttributeNames = expressionAttributeNames,
             ReturnValues = ReturnValue.ALL_NEW
         };
 
         var response = await client.UpdateItemAsync(request);
 
         return UserFactory.Build(response.Attributes);
-    }
-}
+    }}
