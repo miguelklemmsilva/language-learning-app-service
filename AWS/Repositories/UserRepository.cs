@@ -55,55 +55,34 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
 
     public async Task<User> UpdateUserAsync(User user)
     {
-        var key = new Dictionary<string, AttributeValue>
+        var userToUpdate = await GetUserAsync(user.UserId);
+
+        var item = new Dictionary<string, AttributeValue>()
         {
-            { "UserId", new AttributeValue { S = user.UserId } }
+            {
+                "UserId",
+                new AttributeValue { S = userToUpdate.UserId }
+            },
+            {
+                "Email",
+                new AttributeValue { S = userToUpdate.Email }
+            },
+            {
+                "ActiveLanguage",
+                user.ActiveLanguage != null
+                    ? new AttributeValue { S = user.ActiveLanguage }
+                    : new AttributeValue { NULL = true }
+            }
         };
 
-        string updateExpression;
-        var expressionAttributeValues = new Dictionary<string, AttributeValue>();
-        var expressionAttributeNames = new Dictionary<string, string>();
-
-        if (string.IsNullOrEmpty(user.ActiveLanguage))
-        {
-            // Check if ActiveLanguage attribute exists before attempting to remove it
-            var getItemResponse = await client.GetItemAsync(new GetItemRequest
-            {
-                TableName = TableName,
-                Key = key,
-                ProjectionExpression = "ActiveLanguage"
-            });
-
-            if (getItemResponse.Item.ContainsKey("ActiveLanguage"))
-            {
-                updateExpression = "REMOVE ActiveLanguage";
-            }
-            else
-            {
-                // If ActiveLanguage doesn't exist, we need to update a different attribute
-                // to avoid empty ExpressionAttributeValues
-                updateExpression = "SET #updatedAt = :updatedAt";
-                expressionAttributeNames.Add("#updatedAt", "UpdatedAt");
-                expressionAttributeValues.Add(":updatedAt", new AttributeValue { S = DateTime.UtcNow.ToString("o") });
-            }
-        }
-        else
-        {
-            updateExpression = "SET ActiveLanguage = :activeLanguage";
-            expressionAttributeValues.Add(":activeLanguage", new AttributeValue { S = user.ActiveLanguage });
-        }
-
-        var request = new UpdateItemRequest
+        var request = new PutItemRequest
         {
             TableName = TableName,
-            Key = key,
-            UpdateExpression = updateExpression,
-            ExpressionAttributeValues = expressionAttributeValues,
-            ExpressionAttributeNames = expressionAttributeNames,
-            ReturnValues = ReturnValue.ALL_NEW
+            Item = item
         };
 
-        var response = await client.UpdateItemAsync(request);
+        await client.PutItemAsync(request);
 
-        return UserFactory.Build(response.Attributes);
-    }}
+        return await GetUserAsync(user.UserId);
+    }
+}
