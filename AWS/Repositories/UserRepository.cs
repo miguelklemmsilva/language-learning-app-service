@@ -55,41 +55,35 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
 
     public async Task<User> UpdateUserAsync(User user)
     {
-        var userToUpdate = await GetUserAsync(user.UserId);
-
-        var item = new Dictionary<string, AttributeValue>()
+        var key = new Dictionary<string, AttributeValue>
         {
-            {
-                "UserId",
-                new AttributeValue { S = userToUpdate.UserId }
-            },
-            {
-                "Email",
-                new AttributeValue { S = userToUpdate.Email }
-            },
-            {
-                "ActiveLanguage",
-                new AttributeValue { S = userToUpdate.ActiveLanguage }
-            }
+            { "UserId", new AttributeValue { S = user.UserId } }
         };
 
-        if (!string.IsNullOrEmpty(user.ActiveLanguage))
+        var updateExpression = "SET ActiveLanguage = :activeLanguage";
+        var expressionAttributeValues = new Dictionary<string, AttributeValue>
         {
-            item["ActiveLanguage"] = new AttributeValue { S = user.ActiveLanguage };
-        }
-        else if (string.IsNullOrEmpty(userToUpdate.ActiveLanguage))
+            { ":activeLanguage", new AttributeValue { S = user.ActiveLanguage } }
+        };
+
+        // If ActiveLanguage is null or empty, remove it instead of setting it
+        if (string.IsNullOrEmpty(user.ActiveLanguage))
         {
-            item.Remove("ActiveLanguage");
+            updateExpression = "REMOVE ActiveLanguage";
+            expressionAttributeValues.Clear(); // We don't need any expression attribute values for REMOVE
         }
 
-        var request = new PutItemRequest
+        var request = new UpdateItemRequest
         {
             TableName = TableName,
-            Item = item
+            Key = key,
+            UpdateExpression = updateExpression,
+            ExpressionAttributeValues = expressionAttributeValues,
+            ReturnValues = ReturnValue.ALL_NEW
         };
 
-        await client.PutItemAsync(request);
+        var response = await client.UpdateItemAsync(request);
 
-        return await GetUserAsync(user.UserId);
+        return UserFactory.Build(response.Attributes);
     }
 }
