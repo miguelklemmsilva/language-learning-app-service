@@ -134,9 +134,9 @@ public class Function(
         {
             var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-            var vocabularies = await vocabularyService.GetUserVocabularyAsync(userId, language);
+            var vocabularies = await vocabularyService.GetVocabularyAsync(userId, language);
 
-            return ResponseHelper.CreateSuccessResponse(vocabularies, typeof(IEnumerable<GetUserVocabularyResponse>));
+            return ResponseHelper.CreateSuccessResponse(vocabularies, typeof(IEnumerable<GetVocabularyResponse>));
         }
         catch (Exception e)
         {
@@ -165,13 +165,14 @@ public class Function(
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Delete, "/vocabulary")]
-    public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveVocabulary([FromHeader] string authorization, [FromQuery] string languageWord)
+    public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveVocabulary([FromHeader] string authorization,
+        [FromQuery] string language, [FromQuery] string word)
     {
         try
         {
             var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-            await vocabularyService.RemoveVocabularyAsync(userId, languageWord);
+            await vocabularyService.RemoveVocabularyAsync(userId, language, word);
 
             return ResponseHelper.CreateSuccessResponse(
                 new Dictionary<string, string> { { "message", "Vocabulary removed successfully" } },

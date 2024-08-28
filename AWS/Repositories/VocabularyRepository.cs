@@ -15,7 +15,7 @@ public class VocabularyRepository(IAmazonDynamoDB client) : IVocabularyRepositor
         var item = new Dictionary<string, AttributeValue>
         {
             { "UserId", new AttributeValue { S = vocabulary.UserId } },
-            { "sk", new AttributeValue { S = vocabulary.LanguageWord } },
+            { "sk", new AttributeValue { S = $"{vocabulary.Language}#{vocabulary.Word}" } },
             { "LastSeen", new AttributeValue { N = vocabulary.LastPracticed.ToString() } },
             { "BoxNumber", new AttributeValue { N = vocabulary.BoxNumber.ToString() } }
         };
@@ -28,15 +28,15 @@ public class VocabularyRepository(IAmazonDynamoDB client) : IVocabularyRepositor
 
         await client.PutItemAsync(request);
 
-        return await GetVocabularyAsync(vocabulary.UserId, vocabulary.LanguageWord);
+        return await GetVocabularyAsync(vocabulary.UserId, vocabulary.Language, vocabulary.Word);
     }
 
-    public async Task<Vocabulary> GetVocabularyAsync(string userId, string languageWord)
+    public async Task<Vocabulary> GetVocabularyAsync(string userId, string language, string word)
     {
         var key = new Dictionary<string, AttributeValue>
         {
             { "UserId", new AttributeValue { S = userId } },
-            { "sk", new AttributeValue { S = languageWord } }
+            { "sk", new AttributeValue { S = $"{language}#{word}" } }
         };
 
         var request = new GetItemRequest
@@ -68,7 +68,7 @@ public class VocabularyRepository(IAmazonDynamoDB client) : IVocabularyRepositor
         return response.Items.Select(VocabularyFactory.Build).ToList();
     }
 
-    public async Task RemoveVocabularyAsync(string userId, string languageWord)
+    public async Task RemoveVocabularyAsync(string userId, string language, string word)
     {
         var request = new DeleteItemRequest
         {
@@ -76,7 +76,7 @@ public class VocabularyRepository(IAmazonDynamoDB client) : IVocabularyRepositor
             Key = new Dictionary<string, AttributeValue>
             {
                 { "UserId", new AttributeValue { S = userId } },
-                { "sk", new AttributeValue { S = languageWord } }
+                { "sk", new AttributeValue { S = $"{language}#{word}" } }
             }
         };
         

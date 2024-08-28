@@ -17,7 +17,7 @@ namespace Core.Models.DataModels;
 [JsonSerializable(typeof(RemoveUserLanguageResponse))]
 [JsonSerializable(typeof(IEnumerable<UserLanguage>))]
 [JsonSerializable(typeof(IEnumerable<string>))]
-[JsonSerializable(typeof(IEnumerable<GetUserVocabularyResponse>))]
+[JsonSerializable(typeof(IEnumerable<GetVocabularyResponse>))]
 [JsonSerializable(typeof(IHttpResult))]
 [JsonSerializable(typeof(HttpResults))]
 [JsonSerializable(typeof(UserLanguageRequest))]

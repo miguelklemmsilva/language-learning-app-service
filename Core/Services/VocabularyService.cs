@@ -20,30 +20,32 @@ public class VocabularyService(
 
     public async Task<IEnumerable<string>> AddVocabularyAsync(string userId, AddVocabularyRequest request)
     {
-        var currentVocabulary = (await GetUserVocabularyAsync(userId, request.Language)).ToList();
+        var currentVocabulary = (await GetVocabularyAsync(userId, request.Language)).ToList();
         var newWords = new List<string>();
 
         foreach (var word in request.Vocabulary)
         {
             if (!IsRealWord(word, request.Language)) continue;
 
-            var languageWord = $"{request.Language}#{word}";
-
-            if (currentVocabulary.Any(v => v.LanguageWord.Equals(languageWord, StringComparison.OrdinalIgnoreCase)))
+            if (currentVocabulary.Any(v =>
+                    v.Language.Equals(request.Language, StringComparison.OrdinalIgnoreCase) &&
+                    v.Word.Equals(word, StringComparison.OrdinalIgnoreCase)))
                 continue;
 
             await vocabularyRepository.UpdateVocabularyAsync(new Vocabulary
-                { UserId = userId, LanguageWord = languageWord, LastPracticed = DateTime.Now.Millisecond });
+            {
+                UserId = userId, Language = request.Language, Word = word, LastPracticed = DateTime.Now.Millisecond
+            });
             newWords.Add(word);
         }
 
         return newWords;
     }
 
-    public async Task<IEnumerable<GetUserVocabularyResponse>> GetUserVocabularyAsync(string userId, string language)
+    public async Task<IEnumerable<GetVocabularyResponse>> GetVocabularyAsync(string userId, string language)
     {
         var vocabularies = await vocabularyRepository.GetUserVocabularyAsync(userId, language);
-        
+
         var now = DateTime.UtcNow;
 
         return vocabularies.Select(v =>
@@ -65,10 +67,11 @@ public class VocabularyService(
                 _ => 0
             };
 
-            return new GetUserVocabularyResponse
+            return new GetVocabularyResponse
             {
                 UserId = v.UserId,
-                LanguageWord = v.LanguageWord,
+                Language = v.Language,
+                Word = v.Word,
                 LastPracticed = v.LastPracticed,
                 BoxNumber = v.BoxNumber,
 
@@ -81,7 +84,7 @@ public class VocabularyService(
     public async Task<Vocabulary> UpdateVocabularyAsync(Vocabulary vocabulary)
     {
         var existingVocabulary =
-            await vocabularyRepository.GetUserVocabularyAsync(vocabulary.UserId, vocabulary.LanguageWord);
+            await vocabularyRepository.GetUserVocabularyAsync(vocabulary.UserId, vocabulary.Language);
 
         if (existingVocabulary == null)
             throw new Exception("Vocabulary not found");
@@ -89,14 +92,14 @@ public class VocabularyService(
         return await vocabularyRepository.UpdateVocabularyAsync(vocabulary);
     }
 
-    public async Task RemoveVocabularyAsync(string userId, string languageWord)
+    public async Task RemoveVocabularyAsync(string userId, string language, string word)
     {
         var existingVocabulary =
-            await vocabularyRepository.GetVocabularyAsync(userId, languageWord);
+            await vocabularyRepository.GetVocabularyAsync(userId, language, word);
 
         if (existingVocabulary == null)
             throw new Exception("Vocabulary not found");
 
-        await vocabularyRepository.RemoveVocabularyAsync(userId, languageWord);
+        await vocabularyRepository.RemoveVocabularyAsync(userId, language, word);
     }
 }
