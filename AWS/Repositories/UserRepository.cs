@@ -69,11 +69,18 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
             },
             {
                 "ActiveLanguage",
-                user.ActiveLanguage != null
-                    ? new AttributeValue { S = user.ActiveLanguage }
-                    : new AttributeValue { NULL = true }
+                new AttributeValue { S = userToUpdate.ActiveLanguage }
             }
         };
+
+        if (!string.IsNullOrEmpty(user.ActiveLanguage))
+        {
+            item["ActiveLanguage"] = new AttributeValue { S = user.ActiveLanguage };
+        }
+        else if (string.IsNullOrEmpty(userToUpdate.ActiveLanguage))
+        {
+            item.Remove("ActiveLanguage");
+        }
 
         var request = new PutItemRequest
         {
