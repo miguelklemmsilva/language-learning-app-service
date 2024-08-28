@@ -25,20 +25,31 @@ public class VocabularyService(
 
         foreach (var word in request.Vocabulary)
         {
-            if (!await IsVocabularyAllowedAsync(request.Language, word)) continue;
-
-            if (currentVocabulary.Any(v =>
-                    v.Language.Equals(request.Language, StringComparison.OrdinalIgnoreCase) &&
-                    v.Word.Equals(word, StringComparison.OrdinalIgnoreCase)))
-                continue;
-
-            await vocabularyRepository.UpdateVocabularyAsync(new Vocabulary
+            try
             {
-                UserId = userId, Language = request.Language, Word = word,
-                LastPracticed = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
-            });
+                if (!await IsVocabularyAllowedAsync(request.Language, word))
+                    continue;
+
+                if (currentVocabulary.Any(v =>
+                        v.Language.Equals(request.Language, StringComparison.OrdinalIgnoreCase) &&
+                        v.Word.Equals(word, StringComparison.OrdinalIgnoreCase)))
+                    continue;
+
+                await vocabularyRepository.UpdateVocabularyAsync(new Vocabulary
+                {
+                    UserId = userId,
+                    Language = request.Language,
+                    Word = word,
+                    LastPracticed = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                });
             
-            newWords.Add(word);
+                newWords.Add(word);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error processing word '{word}': {ex.Message}");
+            }
+
         }
 
         return newWords;

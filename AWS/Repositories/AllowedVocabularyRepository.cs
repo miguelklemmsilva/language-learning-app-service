@@ -25,6 +25,6 @@ public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocab
         var response = await client.GetItemAsync(request);
 
         // If the item exists, the word is allowed
-        return response.HttpStatusCode == HttpStatusCode.OK && response.Item.Count > 0;
+        return response.HttpStatusCode == HttpStatusCode.OK && response.Item is { Count: > 0 };
     }
 }
