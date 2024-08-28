@@ -7,17 +7,9 @@ using Core.Models.DataTransferModels;
 namespace Core.Services;
 
 public class VocabularyService(
-    IVocabularyRepository vocabularyRepository) : IVocabularyService
+    IVocabularyRepository vocabularyRepository,
+    IAllowedVocabularyService allowedVocabularyService) : IVocabularyService
 {
-    private static bool IsRealWord(string word, string language)
-    {
-        return language.ToLower() switch
-        {
-            "spanish" => AllowedWords.Spanish.Contains(word),
-            _ => false
-        };
-    }
-
     public async Task<IEnumerable<string>> AddVocabularyAsync(string userId, AddVocabularyRequest request)
     {
         var currentVocabulary = (await GetVocabularyAsync(userId, request.Language)).ToList();
@@ -25,7 +17,7 @@ public class VocabularyService(
 
         foreach (var word in request.Vocabulary)
         {
-            if (!IsRealWord(word, request.Language)) continue;
+            if (! await allowedVocabularyService.IsVocabularyAllowedAsync(request.Language, word)) continue;
 
             if (currentVocabulary.Any(v =>
                     v.Language.Equals(request.Language, StringComparison.OrdinalIgnoreCase) &&
@@ -34,7 +26,8 @@ public class VocabularyService(
 
             await vocabularyRepository.UpdateVocabularyAsync(new Vocabulary
             {
-                UserId = userId, Language = request.Language, Word = word, LastPracticed = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                UserId = userId, Language = request.Language, Word = word,
+                LastPracticed = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
             });
             newWords.Add(word);
         }
