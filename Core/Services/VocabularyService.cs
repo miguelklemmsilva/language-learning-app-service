@@ -34,7 +34,7 @@ public class VocabularyService(
 
             await vocabularyRepository.UpdateVocabularyAsync(new Vocabulary
             {
-                UserId = userId, Language = request.Language, Word = word, LastPracticed = DateTime.Now.Second
+                UserId = userId, Language = request.Language, Word = word, LastPracticed = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
             });
             newWords.Add(word);
         }

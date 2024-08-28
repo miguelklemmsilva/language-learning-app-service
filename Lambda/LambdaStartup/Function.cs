@@ -161,7 +161,7 @@ public class Function(
         {
             return ResponseHelper.CreateErrorResponse(e.Message);
         }
-    }
+    }   
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Delete, "/vocabulary")]
