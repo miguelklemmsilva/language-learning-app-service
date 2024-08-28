@@ -37,6 +37,7 @@ public class VocabularyService(
                 UserId = userId, Language = request.Language, Word = word,
                 LastPracticed = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
             });
+            
             newWords.Add(word);
         }
 

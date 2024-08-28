@@ -12,7 +12,6 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
 
     public async Task<User> CreateUserAsync(User user)
     {
-
         var item = new Dictionary<string, AttributeValue>()
         {
             {
@@ -24,15 +23,15 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
                 new AttributeValue { S = user.Email }
             }
         };
-        
+
         var request = new PutItemRequest
         {
             TableName = TableName,
             Item = item
         };
-        
+
         await client.PutItemAsync(request);
-        
+
         return user;
     }
 
@@ -61,17 +60,18 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
             { "UserId", new AttributeValue { S = user.UserId } }
         };
 
-        var updateExpression = "SET ActiveLanguage = :activeLanguage";
-        var expressionAttributeValues = new Dictionary<string, AttributeValue>
-        {
-            { ":activeLanguage", new AttributeValue { S = user.ActiveLanguage } }
-        };
+        string updateExpression;
+        var expressionAttributeValues = new Dictionary<string, AttributeValue>();
 
         // If ActiveLanguage is null or empty, remove it instead of setting it
         if (string.IsNullOrEmpty(user.ActiveLanguage))
         {
             updateExpression = "REMOVE ActiveLanguage";
-            expressionAttributeValues.Clear(); // We don't need any expression attribute values for REMOVE
+        }
+        else
+        {
+            updateExpression = "SET ActiveLanguage = :activeLanguage";
+            expressionAttributeValues.Add(":activeLanguage", new AttributeValue { S = user.ActiveLanguage });
         }
 
         var request = new UpdateItemRequest
