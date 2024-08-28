@@ -81,6 +81,7 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
         }
 
         var response = await client.UpdateItemAsync(request);
-        
+
         return UserFactory.Build(response.Attributes);
-    }}
+    }
+}

@@ -32,6 +32,6 @@ public class UserService(IUserRepository userRepository) : IUserService
             throw new Exception("User not found");
         }
         
-        return await userRepository.UpdateUserAsync(existingUser);
+        return await userRepository.UpdateUserAsync(user);
     }
 }
