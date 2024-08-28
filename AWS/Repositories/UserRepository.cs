@@ -60,30 +60,27 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
             { "UserId", new AttributeValue { S = user.UserId } }
         };
 
-        var updateExpression = "SET ActiveLanguage = :activeLanguage";
-        var expressionAttributeValues = new Dictionary<string, AttributeValue>
-        {
-            { ":activeLanguage", new AttributeValue { S = user.ActiveLanguage } }
-        };
-
-        // If ActiveLanguage is null or empty, remove it instead of setting it
-        if (string.IsNullOrEmpty(user.ActiveLanguage))
-        {
-            updateExpression = "REMOVE ActiveLanguage";
-            expressionAttributeValues.Clear(); // We don't need any expression attribute values for REMOVE
-        }
-
         var request = new UpdateItemRequest
         {
             TableName = TableName,
             Key = key,
-            UpdateExpression = updateExpression,
-            ExpressionAttributeValues = expressionAttributeValues,
             ReturnValues = ReturnValue.ALL_NEW
         };
 
-        var response = await client.UpdateItemAsync(request);
+        if (string.IsNullOrEmpty(user.ActiveLanguage))
+        {
+            request.UpdateExpression = "REMOVE ActiveLanguage";
+        }
+        else
+        {
+            request.UpdateExpression = "SET ActiveLanguage = :activeLanguage";
+            request.ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+            {
+                { ":activeLanguage", new AttributeValue { S = user.ActiveLanguage } }
+            };
+        }
 
+        var response = await client.UpdateItemAsync(request);
+        
         return UserFactory.Build(response.Attributes);
-    }
-}
+    }}
