@@ -112,10 +112,7 @@ public class Function(
             var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
 
             var newLanguage = await userLanguageService.RemoveUserLanguageAsync(userId, language);
-
-            if (newLanguage == null)
-                throw new Exception("Language not found");
-
+            
             return ResponseHelper.CreateSuccessResponse(new RemoveUserLanguageResponse { ActiveLanguage = newLanguage },
                 typeof(RemoveUserLanguageResponse));
         }
