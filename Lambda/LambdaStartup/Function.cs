@@ -111,7 +111,7 @@ public class Function(
         {
             var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
 
-            string? newLanguage = await userLanguageService.RemoveUserLanguageAsync(userId, language);
+            var newLanguage = await userLanguageService.RemoveUserLanguageAsync(userId, language);
 
             if (newLanguage == null)
                 throw new Exception("Language not found");
@@ -127,7 +127,7 @@ public class Function(
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/vocabulary")]
-    public async Task<APIGatewayHttpApiV2ProxyResponse> GetUserVocabulary([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> GetVocabulary([FromHeader] string authorization,
         [FromQuery] string language)
     {
         try
