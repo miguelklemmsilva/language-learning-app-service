@@ -34,7 +34,7 @@ public class VocabularyService(
 
             await vocabularyRepository.UpdateVocabularyAsync(new Vocabulary
             {
-                UserId = userId, Language = request.Language, Word = word, LastPracticed = DateTime.Now.Millisecond
+                UserId = userId, Language = request.Language, Word = word, LastPracticed = DateTime.Now.Second
             });
             newWords.Add(word);
         }
@@ -50,7 +50,7 @@ public class VocabularyService(
 
         return vocabularies.Select(v =>
         {
-            var lastPracticed = DateTimeOffset.FromUnixTimeMilliseconds(v.LastPracticed).UtcDateTime;
+            var lastPracticed = DateTimeOffset.FromUnixTimeSeconds(v.LastPracticed).UtcDateTime;
             var lastSeen = (long)(now - lastPracticed).TotalMinutes;
 
             var minutesUntilDue = v.BoxNumber switch
