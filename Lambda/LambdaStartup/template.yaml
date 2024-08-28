@@ -196,7 +196,7 @@
           "RootDelete": {
             "Type": "HttpApi",
             "Properties": {
-              "Path": "/language}",
+              "Path": "/language",
               "Method": "DELETE"
             }
           }

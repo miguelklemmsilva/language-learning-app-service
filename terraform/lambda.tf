@@ -88,7 +88,10 @@ data "aws_iam_policy_document" "lambda_policy" {
       "dynamodb:DeleteItem",
     ]
     effect = "Allow"
-    resources = [aws_dynamodb_table.users.arn, aws_dynamodb_table.user_languages.arn, aws_dynamodb_table.vocabulary.arn]
+    resources = [
+      aws_dynamodb_table.users.arn, aws_dynamodb_table.user_languages.arn, aws_dynamodb_table.vocabulary.arn,
+      aws_dynamodb_table.allowed_vocabulary.arn
+    ]
   }
 }
 

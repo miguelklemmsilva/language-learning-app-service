@@ -103,7 +103,7 @@ public class Function(
     }
 
     [LambdaFunction]
-    [HttpApi(LambdaHttpMethod.Delete, "/language}")]
+    [HttpApi(LambdaHttpMethod.Delete, "/language")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveLanguage([FromHeader] string authorization,
         [FromQuery] string language)
     {

@@ -10,6 +10,14 @@ public class VocabularyService(
     IVocabularyRepository vocabularyRepository,
     IAllowedVocabularyService allowedVocabularyService) : IVocabularyService
 {
+    private async Task<bool> IsVocabularyAllowedAsync(string language, string word)
+    {
+        if (language.Equals("Japanese"))
+            return true;
+        
+        return await allowedVocabularyService.IsVocabularyAllowedAsync(language, word);
+    }
+    
     public async Task<IEnumerable<string>> AddVocabularyAsync(string userId, AddVocabularyRequest request)
     {
         var currentVocabulary = (await GetVocabularyAsync(userId, request.Language)).ToList();
@@ -17,7 +25,7 @@ public class VocabularyService(
 
         foreach (var word in request.Vocabulary)
         {
-            if (! await allowedVocabularyService.IsVocabularyAllowedAsync(request.Language, word)) continue;
+            if (!await IsVocabularyAllowedAsync(request.Language, word)) continue;
 
             if (currentVocabulary.Any(v =>
                     v.Language.Equals(request.Language, StringComparison.OrdinalIgnoreCase) &&
