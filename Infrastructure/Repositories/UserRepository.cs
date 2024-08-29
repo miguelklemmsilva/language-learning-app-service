@@ -1,10 +1,10 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using AWS.Factories;
 using Core.Interfaces;
 using Core.Models.DataModels;
+using Infrastructure.Factories;
 
-namespace AWS.Repositories;
+namespace Infrastructure.Repositories;
 
 public class UserRepository(IAmazonDynamoDB client) : IUserRepository
 {

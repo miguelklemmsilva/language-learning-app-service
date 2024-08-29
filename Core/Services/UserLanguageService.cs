@@ -7,7 +7,6 @@ namespace Core.Services;
 
 public class UserLanguageService(IUserLanguageRepository userLanguageRepository, IUserService userService) : IUserLanguageService
 {
-    
     public async Task<UserLanguage> UpdateUserLanguageAsync(UserLanguage userLanguage)
     {
         var user = await userService.GetUserAsync(userLanguage.UserId);
@@ -37,5 +36,10 @@ public class UserLanguageService(IUserLanguageRepository userLanguageRepository,
         var newActiveLanguage = userLanguages.FirstOrDefault()?.Language;
         await userService.UpdateUserAsync(new User { UserId = userId, ActiveLanguage = newActiveLanguage });
         return newActiveLanguage;
+    }
+    
+    public async Task<UserLanguage> GetUserLanguageAsync(string userId, string language)
+    {
+        return await userLanguageRepository.GetUserLanguageAsync(userId, language);
     }
 }

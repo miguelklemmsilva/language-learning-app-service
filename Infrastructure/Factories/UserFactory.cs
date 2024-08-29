@@ -1,7 +1,7 @@
 using Amazon.DynamoDBv2.Model;
 using Core.Models.DataModels;
 
-namespace AWS.Factories;
+namespace Infrastructure.Factories;
 
 public class UserFactory
 {

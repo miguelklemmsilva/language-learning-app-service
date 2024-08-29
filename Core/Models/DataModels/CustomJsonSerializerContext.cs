@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using Amazon.Lambda.Annotations.APIGateway;
 using Amazon.Lambda.APIGatewayEvents;
+using Core.Models.ApiModels;
 using Core.Models.DataTransferModels;
 
 namespace Core.Models.DataModels;
@@ -17,11 +18,13 @@ namespace Core.Models.DataModels;
 [JsonSerializable(typeof(RemoveUserLanguageResponse))]
 [JsonSerializable(typeof(IEnumerable<UserLanguage>))]
 [JsonSerializable(typeof(IEnumerable<string>))]
-[JsonSerializable(typeof(IEnumerable<GetVocabularyResponse>))]
+[JsonSerializable(typeof(IEnumerable<Word>))]
 [JsonSerializable(typeof(IHttpResult))]
 [JsonSerializable(typeof(HttpResults))]
 [JsonSerializable(typeof(UserLanguageRequest))]
 [JsonSerializable(typeof(AddVocabularyRequest))]
+[JsonSerializable(typeof(ChatGpt.ChatGptRequest))]
+[JsonSerializable(typeof(ChatGpt.ChatGptResponse))]
 public partial class CustomJsonSerializerContext : JsonSerializerContext
 {
 }

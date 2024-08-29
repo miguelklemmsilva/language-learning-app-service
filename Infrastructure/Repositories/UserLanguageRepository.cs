@@ -1,14 +1,33 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using AWS.Factories;
 using Core.Interfaces;
 using Core.Models.DataModels;
+using Infrastructure.Factories;
 
-namespace AWS.Repositories;
+namespace Infrastructure.Repositories;
 
 public class UserLanguageRepository(IAmazonDynamoDB client) : IUserLanguageRepository
 {
     private const string TableName = "user_languages";
+    
+    public async Task<UserLanguage> GetUserLanguageAsync(string userId, string language)
+    {
+        var key = new Dictionary<string, AttributeValue>
+        {
+            { "UserId", new AttributeValue { S = userId } },
+            { "Language", new AttributeValue { S = language } }
+        };
+
+        var request = new GetItemRequest
+        {
+            TableName = TableName,
+            Key = key
+        };
+
+        var response = await client.GetItemAsync(request);
+
+        return UserLanguageFactory.Build(response.Item);
+    }
     
     public async Task<IEnumerable<UserLanguage>> GetUserLanguagesAsync(string userId)
     {

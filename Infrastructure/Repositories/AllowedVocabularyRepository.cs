@@ -3,7 +3,7 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Core.Interfaces;
 
-namespace AWS.Repositories;
+namespace Infrastructure.Repositories;
 
 public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocabularyRepository
 {

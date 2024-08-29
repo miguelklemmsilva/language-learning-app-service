@@ -55,7 +55,7 @@ public class VocabularyService(
         return newWords;
     }
 
-    public async Task<IEnumerable<GetVocabularyResponse>> GetVocabularyAsync(string userId, string language)
+    public async Task<IEnumerable<Word>> GetVocabularyAsync(string userId, string language)
     {
         var vocabularies = await vocabularyRepository.GetUserVocabularyAsync(userId, language);
 
@@ -80,14 +80,13 @@ public class VocabularyService(
                 _ => 0
             };
 
-            return new GetVocabularyResponse
+            return new Word
             {
                 UserId = v.UserId,
                 Language = v.Language,
                 Word = v.Word,
                 LastPracticed = v.LastPracticed,
                 BoxNumber = v.BoxNumber,
-
                 MinutesUntilDue = minutesUntilDue,
                 LastSeen = lastSeen
             };
@@ -114,5 +113,38 @@ public class VocabularyService(
             throw new Exception("Vocabulary not found");
 
         await vocabularyRepository.RemoveVocabularyAsync(userId, language, word);
+    }
+    
+    public async Task<IEnumerable<Word>> GetWordsToStudyAsync(string userId, string language, int count)
+    {
+        var allVocabulary = await GetVocabularyAsync(userId, language);
+        var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        var wordsToStudy = allVocabulary
+            .Where(v => IsWordDueForStudy(v, now))
+            .OrderBy(v => v.LastPracticed)
+            .Take(count);
+        
+        return wordsToStudy;
+    }
+
+    private bool IsWordDueForStudy(Word vocabulary, long currentTime)
+    {
+        var lastPracticed = vocabulary.LastPracticed;
+        var timeSinceLastPractice = currentTime - lastPracticed;
+
+        return vocabulary.BoxNumber switch
+        {
+            1 => true, // Always due
+            2 => timeSinceLastPractice >= 10 * 60, // 10 minutes
+            3 => timeSinceLastPractice >= 60 * 60, // 1 hour
+            4 => timeSinceLastPractice >= 24 * 60 * 60, // 1 day
+            5 => timeSinceLastPractice >= 3 * 24 * 60 * 60, // 3 days
+            6 => timeSinceLastPractice >= 7 * 24 * 60 * 60, // 7 days
+            7 => timeSinceLastPractice >= 14 * 24 * 60 * 60, // 14 days
+            8 => timeSinceLastPractice >= 28 * 24 * 60 * 60, // 28 days
+            9 => timeSinceLastPractice >= 56 * 24 * 60 * 60, // 56 days
+            _ => false
+        };
     }
 }

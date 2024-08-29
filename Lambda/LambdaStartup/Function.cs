@@ -4,6 +4,7 @@ using Amazon.Lambda.Annotations.APIGateway;
 using Amazon.Lambda.APIGatewayEvents;
 using AWS.Services;
 using Core.Helpers;
+using Core.Interfaces;
 using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
 using Core.Services;
@@ -16,7 +17,8 @@ namespace Lambda.LambdaStartup;
 public class Function(
     IUserService userService,
     IUserLanguageService userLanguageService,
-    IVocabularyService vocabularyService)
+    IVocabularyService vocabularyService,
+    IAiService aiService)
 {
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/user")]
@@ -133,7 +135,7 @@ public class Function(
 
             var vocabularies = await vocabularyService.GetVocabularyAsync(userId, language);
 
-            return ResponseHelper.CreateSuccessResponse(vocabularies, typeof(IEnumerable<GetVocabularyResponse>));
+            return ResponseHelper.CreateSuccessResponse(vocabularies, typeof(IEnumerable<Word>));
         }
         catch (Exception e)
         {
@@ -174,6 +176,24 @@ public class Function(
             return ResponseHelper.CreateSuccessResponse(
                 new Dictionary<string, string> { { "message", "Vocabulary removed successfully" } },
                 typeof(Dictionary<string, string>));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
+    }
+    
+    [LambdaFunction]
+    [HttpApi(LambdaHttpMethod.Get, "/generatesentences")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> GenerateSentences([FromHeader] string authorization)
+    {
+        try
+        {
+            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+
+            var sentences = await aiService.GenerateSentencesAsync(userId);
+
+            return ResponseHelper.CreateSuccessResponse(sentences, typeof(IEnumerable<Sentence>));
         }
         catch (Exception e)
         {
