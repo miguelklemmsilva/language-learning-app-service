@@ -6,9 +6,6 @@ public class ChatGpt
     {
         public required string Model { get; set; }
         public required ChatGptMessage[] Messages { get; set; }
-        public int MaxTokens { get; set; }
-        public int N { get; set; }
-        public double Temperature { get; set; }
     }
 
     public class ChatGptMessage
