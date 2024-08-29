@@ -53,7 +53,7 @@ public class AiRepository(HttpClient httpClient) : IAiRepository
 
         var requestJson = JsonSerializer.Serialize(requestBody, CustomJsonSerializerContext.Default.ChatGptRequest);
         
-        var request = new HttpRequestMessage(HttpMethod.Post, "")
+        var request = new HttpRequestMessage(HttpMethod.Post, "/v1/chat/completions")
         {
             Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
         };

@@ -33,7 +33,7 @@ public class Startup
         services.AddSingleton<IAllowedVocabularyService, AllowedVocabularyService>();
         services.AddHttpClient<IAiRepository, AiRepository>(client =>
         {
-            client.BaseAddress = new Uri("https://api.openai.com/v1/chat/completions");
+            client.BaseAddress = new Uri("https://api.openai.com");
             
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var key = secretsManager.GetSecretValueAsync(new GetSecretValueRequest
