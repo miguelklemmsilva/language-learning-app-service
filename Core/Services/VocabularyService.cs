@@ -121,30 +121,10 @@ public class VocabularyService(
         var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
         var wordsToStudy = allVocabulary
-            .Where(v => IsWordDueForStudy(v, now))
+            .Where(v => v.MinutesUntilDue <= 0)
             .OrderBy(v => v.LastPracticed)
             .Take(count);
         
         return wordsToStudy;
-    }
-
-    private bool IsWordDueForStudy(Word vocabulary, long currentTime)
-    {
-        var lastPracticed = vocabulary.LastPracticed;
-        var timeSinceLastPractice = currentTime - lastPracticed;
-
-        return vocabulary.BoxNumber switch
-        {
-            1 => true, // Always due
-            2 => timeSinceLastPractice >= 10 * 60, // 10 minutes
-            3 => timeSinceLastPractice >= 60 * 60, // 1 hour
-            4 => timeSinceLastPractice >= 24 * 60 * 60, // 1 day
-            5 => timeSinceLastPractice >= 3 * 24 * 60 * 60, // 3 days
-            6 => timeSinceLastPractice >= 7 * 24 * 60 * 60, // 7 days
-            7 => timeSinceLastPractice >= 14 * 24 * 60 * 60, // 14 days
-            8 => timeSinceLastPractice >= 28 * 24 * 60 * 60, // 28 days
-            9 => timeSinceLastPractice >= 56 * 24 * 60 * 60, // 56 days
-            _ => false
-        };
     }
 }
