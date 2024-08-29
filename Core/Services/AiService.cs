@@ -36,7 +36,7 @@ public class AiService(
         if (activeStudyTypes.Count == 0)
             throw new Exception("User has no active exercises");
 
-        var wordsToFetch = (int)Math.Ceiling(6.0 / activeStudyTypes.Count);
+        var wordsToFetch = (int)Math.Ceiling(3f / activeStudyTypes.Count);
         var wordsToStudy = (await vocabularyService.GetWordsToStudyAsync(userId, user.ActiveLanguage, wordsToFetch)).ToList();
         
         if (wordsToStudy.Count == 0)
