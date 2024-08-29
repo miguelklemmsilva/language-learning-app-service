@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text.Json;
 using Amazon;
@@ -37,17 +36,10 @@ public class Startup
         {
             client.BaseAddress = new Uri("https://api.openai.com");
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var resultSecretString = secretsManager.GetSecretValueAsync(new GetSecretValueRequest
+            var key = secretsManager.GetSecretValueAsync(new GetSecretValueRequest
             {
                 SecretId = "ChatGptKey"
             }).Result.SecretString;
-
-            var keyDictionary = JsonSerializer.Deserialize(resultSecretString, CustomJsonSerializerContext.Default.DictionaryStringString);
-            Debug.Assert(keyDictionary != null, nameof(keyDictionary) + " != null");
-            
-            var key = keyDictionary.TryGetValue("ChatGptKey", out resultSecretString);
-            
-            Console.WriteLine(key);
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {key}");
         });
 
