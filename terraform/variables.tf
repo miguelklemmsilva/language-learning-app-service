@@ -45,6 +45,11 @@ variable "api_routes" {
       path            = "vocabulary"
       http_method     = "DELETE"
       lambda_function = "removevocabulary_function"
+    },
+    {
+      path            = "generatesentences"
+      http_method     = "GET"
+      lambda_function = "generate_sentences_function"
     }
   ]
 }
@@ -59,6 +64,7 @@ locals {
     "addvocabulary_function"      = data.aws_lambda_function.add_vocabulary.invoke_arn
     "getvocabulary_function"      = data.aws_lambda_function.get_vocabulary.invoke_arn
     "removevocabulary_function"   = data.aws_lambda_function.remove_vocabulary.invoke_arn
+    "generate_sentences_function" = data.aws_lambda_function.generate_sentences.invoke_arn
   }
 
   lambda_arn_map = {
@@ -70,5 +76,6 @@ locals {
     "addvocabulary_function"      = data.aws_lambda_function.add_vocabulary.arn
     "getvocabulary_function"      = data.aws_lambda_function.get_vocabulary.arn
     "removevocabulary_function"   = data.aws_lambda_function.remove_vocabulary.arn
+    "generate_sentences_function" = data.aws_lambda_function.generate_sentences.arn
   }
 }

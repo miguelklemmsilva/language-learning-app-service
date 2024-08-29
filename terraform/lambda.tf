@@ -70,6 +70,14 @@ data "aws_iam_role" "remove_vocabulary_lambda_role" {
   name = "language-learning-app-RemoveVocabularyFunctionRole-CLnFWW0IiJmc"
 }
 
+data "aws_lambda_function" "generate_sentences" {
+    function_name = "language-learning-app-GenerateSentencesFunction-LS6YuQpN2xB5"
+}
+
+data "aws_iam_role" "generate_sentences_lambda_role" {
+    name = "language-learning-app-GenerateSentencesFunctionRole-Jyqr1L3x6P0w"
+}
+
 resource "aws_lambda_permission" "allow_cognito_preSignUp" {
   statement_id  = "AllowPreSignUpExecutionFromCognito"
   action        = "lambda:InvokeFunction"
@@ -145,4 +153,8 @@ resource "aws_iam_role_policy_attachment" "attach_remove_vocabulary_policy" {
   policy_arn = aws_iam_policy.lambda_policy.arn
 }
 
+resource "aws_iam_role_policy_attachment" "attach_generate_sentences_policy" {
+  role       = data.aws_iam_role.generate_sentences_lambda_role.name
+  policy_arn = aws_iam_policy.lambda_policy.arn
+}
 
