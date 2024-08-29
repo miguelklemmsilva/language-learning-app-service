@@ -55,11 +55,10 @@ public class AiRepository(HttpClient httpClient) : IAiRepository
             Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
         };
         
-        Console.WriteLine($"Model: {requestBody.Model}");
-        Console.WriteLine($"Messages: {requestBody.Messages}");
-        Console.WriteLine($"Request: {requestJson}");
-
         var response = await httpClient.SendAsync(request);
+        Console.WriteLine($"response: {response.StatusCode}");
+        Console.WriteLine($"content: {await response.Content.ReadAsStringAsync()}");
+        
         response.EnsureSuccessStatusCode();
         var responseBody = await response.Content.ReadAsStringAsync();
         

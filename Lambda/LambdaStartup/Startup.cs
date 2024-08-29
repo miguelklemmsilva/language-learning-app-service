@@ -40,6 +40,7 @@ public class Startup
             {
                 SecretId = "ChatGptKey"
             }).Result.SecretString;
+            Console.WriteLine(key);
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {key}");
         });
 
