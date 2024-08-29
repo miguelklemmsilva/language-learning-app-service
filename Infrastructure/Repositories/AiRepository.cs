@@ -45,18 +45,19 @@ public class AiRepository(HttpClient httpClient) : IAiRepository
             [
                 new ChatGpt.ChatGptMessage { Role = "system", Content = systemPrompt },
                 new ChatGpt.ChatGptMessage { Role = "user", Content = word }
-            ],
-            MaxTokens = 100,
-            N = 1,
-            Temperature = 0.7
+            ]
         };
-
+        
         var requestJson = JsonSerializer.Serialize(requestBody, CustomJsonSerializerContext.Default.ChatGptRequest);
         
         var request = new HttpRequestMessage(HttpMethod.Post, "/v1/chat/completions")
         {
             Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
         };
+        
+        Console.WriteLine($"Model: {requestBody.Model}");
+        Console.WriteLine($"Messages: {requestBody.Messages}");
+        Console.WriteLine($"Request: {requestJson}");
 
         var response = await httpClient.SendAsync(request);
         response.EnsureSuccessStatusCode();
