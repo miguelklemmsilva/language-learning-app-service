@@ -31,10 +31,10 @@ public class Startup
         services.AddSingleton<IVocabularyService, VocabularyService>();
         services.AddSingleton<IAllowedVocabularyRepository, AllowedVocabularyRepository>();
         services.AddSingleton<IAllowedVocabularyService, AllowedVocabularyService>();
-        services.AddHttpClient<IAiRepository, AiRepository>(client =>
+        services.AddSingleton<IAiRepository, AiRepository>();
+        services.AddHttpClient<AiRepository>(client =>
         {
             client.BaseAddress = new Uri("https://api.openai.com");
-            
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var key = secretsManager.GetSecretValueAsync(new GetSecretValueRequest
             {
@@ -42,7 +42,8 @@ public class Startup
             }).Result.SecretString;
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {key}");
         });
-        services.AddSingleton<IAiRepository, AiRepository>();
+
+        services.AddSingleton<IAiRepository>(sp => sp.GetRequiredService<AiRepository>());
         services.AddSingleton<IAiService, AiService>();
     }
 }
