@@ -45,7 +45,8 @@ public class AiRepository(HttpClient httpClient) : IAiRepository
             [
                 new ChatGpt.ChatGptMessage { Role = "system", Content = systemPrompt },
                 new ChatGpt.ChatGptMessage { Role = "user", Content = word }
-            ]
+            ],
+            Temperature = 0.8
         };
         
         var requestJson = JsonSerializer.Serialize(requestBody, CustomJsonSerializerContext.Default.ChatGptRequest);

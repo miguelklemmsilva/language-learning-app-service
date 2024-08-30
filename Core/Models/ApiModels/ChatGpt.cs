@@ -6,6 +6,7 @@ public class ChatGpt
     {
         public required string Model { get; set; }
         public required ChatGptMessage[] Messages { get; set; }
+        public double Temperature { get; set; }
     }
 
     public class ChatGptMessage

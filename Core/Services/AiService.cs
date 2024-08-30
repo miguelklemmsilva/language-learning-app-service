@@ -45,10 +45,7 @@ public class AiService(
         var sentenceTasks = new List<Task<Sentence>>();
 
         foreach (var word in wordsToStudy)
-        {
-            sentenceTasks.AddRange(activeStudyTypes.Select(studyType =>
-                GenerateSentenceAsync(word, studyType, activeLanguage)));
-        }
+            sentenceTasks.Add(GenerateSentenceAsync(word, activeLanguage));
 
         var sentences = await Task.WhenAll(sentenceTasks);
 
@@ -64,7 +61,7 @@ public class AiService(
         return activeTypes;
     }
 
-    private async Task<Sentence> GenerateSentenceAsync(Word word, StudyType studyType, UserLanguage activeLanguage)
+    private async Task<Sentence> GenerateSentenceAsync(Word word, UserLanguage activeLanguage)
     {
         // Step 1: Generate the sentence
         var sentenceText = await aiRepository.GenerateSentenceAsync(word.Word, activeLanguage.Language, activeLanguage.Country);
@@ -81,7 +78,6 @@ public class AiService(
             Original = sentenceText,
             // Translation = translatedText,
             Word = word.Word,
-            Type = studyType.ToString().ToLower(),
             // Voice = voiceData,
             Language = activeLanguage.Language
         };
