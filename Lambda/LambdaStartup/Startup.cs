@@ -7,6 +7,8 @@ using Amazon.Runtime;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
 using AWS.Services;
+using Azure;
+using Azure.AI.Translation.Text;
 using Infrastructure.Repositories;
 using Core.Interfaces;
 using Core.Models.DataModels;
@@ -21,7 +23,7 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         IAmazonSecretsManager secretsManager = new AmazonSecretsManagerClient(RegionEndpoint.EUWest2);
-        
+
         services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(RegionEndpoint.EUWest2));
         services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IUserService, UserService>();
@@ -41,6 +43,18 @@ public class Startup
                 SecretId = "ChatGptKey"
             }).Result.SecretString;
             client.DefaultRequestHeaders.Add("Authorization", $"Bearer {key}");
+        });
+
+        services.AddSingleton<TextTranslationClient>(_ =>
+        {
+            var translatorKey = secretsManager.GetSecretValueAsync(new GetSecretValueRequest
+            {
+                SecretId = "TranslatorKey"
+            }).Result.SecretString;
+            const string translatorRegion = "uksouth";
+
+            var credential = new AzureKeyCredential(translatorKey);
+            return new TextTranslationClient(credential, translatorRegion);
         });
 
         services.AddSingleton<IAiRepository>(sp => sp.GetRequiredService<AiRepository>());

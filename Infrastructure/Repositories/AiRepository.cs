@@ -1,14 +1,14 @@
 using System.Text;
 using System.Text.Json;
-using Amazon.SecretsManager;
-using Amazon.SecretsManager.Model;
+using Azure;
+using Azure.AI.Translation.Text;
 using Core.Interfaces;
 using Core.Models.ApiModels;
 using Core.Models.DataModels;
 
 namespace Infrastructure.Repositories;
 
-public class AiRepository(HttpClient httpClient) : IAiRepository
+public class AiRepository(HttpClient httpClient, TextTranslationClient textTranslationClient) : IAiRepository
 {
     private string LocalizedSystemPrompt(string language, string region)
     {
@@ -38,13 +38,13 @@ public class AiRepository(HttpClient httpClient) : IAiRepository
     {
         var systemPrompt = LocalizedSystemPrompt(language, country);
         
-        var requestBody = new ChatGpt.ChatGptRequest
+        var requestBody = new ChatGptRequest
         {
             Model = "gpt-4o-mini",
             Messages =
             [
-                new ChatGpt.ChatGptMessage { Role = "system", Content = systemPrompt },
-                new ChatGpt.ChatGptMessage { Role = "user", Content = word }
+                new ChatGptMessage { Role = "system", Content = systemPrompt },
+                new ChatGptMessage { Role = "user", Content = word }
             ],
             Temperature = 0.8
         };
@@ -57,7 +57,6 @@ public class AiRepository(HttpClient httpClient) : IAiRepository
         };
         
         var response = await httpClient.SendAsync(request);
-        Console.WriteLine($"response: {response.StatusCode}");
         Console.WriteLine($"content: {await response.Content.ReadAsStringAsync()}");
         
         response.EnsureSuccessStatusCode();
@@ -66,5 +65,28 @@ public class AiRepository(HttpClient httpClient) : IAiRepository
         var jsonResponse = JsonSerializer.Deserialize(responseBody, CustomJsonSerializerContext.Default.ChatGptResponse);
         
         return jsonResponse?.Choices[0].Message.Content ?? string.Empty;
+    }
+    
+    public async Task<TranslatedTextItem?> TranslateSentenceAsync(string sentence, string sourceLanguage)
+    {
+        var sourceLanguageCode = sourceLanguage switch
+        {
+            "Spanish" => "es",
+            "Portuguese" => "pt",
+            "Japanese" => "ja",
+            "German" => "de",
+            "Italian" => "it",
+            "French" => "fr",
+            _ => throw new ArgumentException($"Unsupported language: {sourceLanguage}")
+        };
+
+        Response<IReadOnlyList<TranslatedTextItem>> response =
+            await textTranslationClient.TranslateAsync("en", sentence, sourceLanguageCode);
+        IReadOnlyList<TranslatedTextItem?> translations = response.Value;
+        var translation = translations.FirstOrDefault();
+        
+        Console.WriteLine($"Text was translated to: '{translation?.Translations?.FirstOrDefault()?.TargetLanguage}' and the result is: '{translation?.Translations?.FirstOrDefault()?.Text}'.");
+
+        return translation;
     }
 }

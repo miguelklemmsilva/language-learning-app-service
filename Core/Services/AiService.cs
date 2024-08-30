@@ -67,7 +67,7 @@ public class AiService(
         var sentenceText = await aiRepository.GenerateSentenceAsync(word.Word, activeLanguage.Language, activeLanguage.Country);
 
         // // Step 2: Translate the sentence
-        // var translatedText = aiRepository.TranslateSentenceAsync(sentenceText, activeLanguage.Language, "en");
+        var translatedText = aiRepository.TranslateSentenceAsync(sentenceText, activeLanguage.Language);
         //
         // // Step 3: Generate voice
         // var voiceData = aiRepository.GenerateVoiceAsync(sentenceText, activeLanguage.Language);
@@ -76,7 +76,7 @@ public class AiService(
         return new Sentence
         {
             Original = sentenceText,
-            // Translation = translatedText,
+            Translation = await translatedText,
             Word = word.Word,
             // Voice = voiceData,
             Language = activeLanguage.Language
