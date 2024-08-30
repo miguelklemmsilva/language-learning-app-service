@@ -7,6 +7,7 @@ using Core.Interfaces;
 using Core.Models.ApiModels;
 using Core.Models.DataModels;
 using Microsoft.CognitiveServices.Speech;
+using Microsoft.CognitiveServices.Speech.Audio;
 
 namespace Core.Services;
 
@@ -105,7 +106,10 @@ public class SpeechService(SpeechConfig speechConfig) : ISpeechService
     {
         var voice = VoiceMapping.GetRandomVoice(country);
         speechConfig.SpeechSynthesisVoiceName = voice;
-        using var synthesizer = new SpeechSynthesizer(speechConfig);
+        
+        var audioConfig = AudioConfig.FromStreamOutput(new PullAudioOutputStream());
+        
+        var synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
         return await synthesizer.SpeakTextAsync(text);
     }
 }

@@ -86,6 +86,10 @@ data "aws_secretsmanager_secret" "translator_key" {
   name = "TranslatorKey"
 }
 
+data "aws_secretsmanager_secret" "speech_key" {
+  name = "SpeechKey"
+}
+
 resource "aws_lambda_permission" "allow_cognito_preSignUp" {
   statement_id  = "AllowPreSignUpExecutionFromCognito"
   action        = "lambda:InvokeFunction"
@@ -108,7 +112,7 @@ data "aws_iam_policy_document" "lambda_policy" {
     resources = [
       aws_dynamodb_table.users.arn, aws_dynamodb_table.user_languages.arn, aws_dynamodb_table.vocabulary.arn,
       aws_dynamodb_table.allowed_vocabulary.arn, data.aws_secretsmanager_secret.chat_gpt_key.arn,
-      data.aws_secretsmanager_secret.translator_key.arn
+      data.aws_secretsmanager_secret.translator_key.arn, data.aws_secretsmanager_secret.speech_key.arn
     ]
   }
 }
