@@ -71,15 +71,19 @@ data "aws_iam_role" "remove_vocabulary_lambda_role" {
 }
 
 data "aws_lambda_function" "generate_sentences" {
-    function_name = "language-learning-app-GenerateSentencesFunction-LS6YuQpN2xB5"
+  function_name = "language-learning-app-GenerateSentencesFunction-LS6YuQpN2xB5"
 }
 
 data "aws_iam_role" "generate_sentences_lambda_role" {
-    name = "language-learning-app-GenerateSentencesFunctionRole-Jyqr1L3x6P0w"
+  name = "language-learning-app-GenerateSentencesFunctionRole-Jyqr1L3x6P0w"
 }
 
 data "aws_secretsmanager_secret" "chat_gpt_key" {
   name = "ChatGptKey"
+}
+
+data "aws_secretsmanager_secret" "translator_key" {
+  name = "TranslatorKey"
 }
 
 resource "aws_lambda_permission" "allow_cognito_preSignUp" {
@@ -103,7 +107,8 @@ data "aws_iam_policy_document" "lambda_policy" {
     effect = "Allow"
     resources = [
       aws_dynamodb_table.users.arn, aws_dynamodb_table.user_languages.arn, aws_dynamodb_table.vocabulary.arn,
-      aws_dynamodb_table.allowed_vocabulary.arn, data.aws_secretsmanager_secret.chat_gpt_key.arn
+      aws_dynamodb_table.allowed_vocabulary.arn, data.aws_secretsmanager_secret.chat_gpt_key.arn,
+      data.aws_secretsmanager_secret.translator_key.arn
     ]
   }
 }
