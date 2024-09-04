@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AWS.Services;
 using Core.Interfaces;
 using Core.Models.DataModels;
+using Microsoft.CognitiveServices.Speech;
 
 namespace Core.Services;
 
