@@ -108,9 +108,9 @@ public class SpeechService(SpeechConfig speechConfig) : ISpeechService
         var voice = VoiceMapping.GetRandomVoice(country);
         speechConfig.SpeechSynthesisVoiceName = voice;
         
-        var fileConfig = AudioConfig.FromWavFileOutput("output.wav");
+        var audioConfig = AudioConfig.FromStreamOutput(new PullAudioOutputStream());
         
-        var synthesizer = new SpeechSynthesizer(speechConfig, fileConfig);
+        var synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
         return await synthesizer.SpeakTextAsync(text);
     }
 }

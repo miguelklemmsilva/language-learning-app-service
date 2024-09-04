@@ -71,7 +71,7 @@ public class AiService(
         //
         // // Step 3: Generate voice
         var voiceData = await aiRepository.SynthesizeSpeechAsync(sentenceText, activeLanguage.Country);
-        Console.WriteLine(voiceData.AudioData.ToString());
+        Console.WriteLine($"Audio data: {voiceData.AudioData.Length}");
         Console.WriteLine(voiceData.Reason);
         Console.WriteLine(voiceData.ResultId);
 
