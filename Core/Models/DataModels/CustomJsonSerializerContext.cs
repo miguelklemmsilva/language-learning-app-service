@@ -13,7 +13,7 @@ namespace Core.Models.DataModels;
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
 [JsonSerializable(typeof(UpdateUserRequest))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
-[JsonSerializable(typeof(User))]
+[JsonSerializable(typeof(UserResponse))]
 [JsonSerializable(typeof(UserLanguage))]
 [JsonSerializable(typeof(RemoveUserLanguageResponse))]
 [JsonSerializable(typeof(IEnumerable<UserLanguage>))]

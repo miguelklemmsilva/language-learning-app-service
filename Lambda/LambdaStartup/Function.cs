@@ -50,7 +50,7 @@ public class Function(
 
             var user = await userService.GetUserAsync(userId);
 
-            return ResponseHelper.CreateSuccessResponse(user, typeof(User));
+            return ResponseHelper.CreateSuccessResponse(user, typeof(UserResponse));
         }
         catch (Exception e)
         {
@@ -70,7 +70,7 @@ public class Function(
             var user = await userService.UpdateUserAsync(new User
                 { UserId = username, ActiveLanguage = updateRequest.ActiveLanguage });
 
-            return ResponseHelper.CreateSuccessResponse(user, typeof(User));
+            return ResponseHelper.CreateSuccessResponse(user, typeof(UserResponse));
         }
         catch (Exception e)
         {
