@@ -1,10 +1,11 @@
 using Core.Models.DataModels;
+using Core.Models.DataTransferModels;
 
-namespace AWS.Services;
+namespace Core.Interfaces;
 
 public interface IUserService
 {
     Task<User> CreateUserAsync(User user);
-    Task<User> GetUserAsync(string userId);
-    Task<User> UpdateUserAsync(User user);
+    Task<UserResponse> GetUserAsync(string userId);
+    Task<UserResponse> UpdateUserAsync(User user);
 }

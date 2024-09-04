@@ -6,7 +6,6 @@ using Amazon.Lambda.Annotations;
 using Amazon.Runtime;
 using Amazon.SecretsManager;
 using Amazon.SecretsManager.Model;
-using AWS.Services;
 using Azure;
 using Azure.AI.Translation.Text;
 using Infrastructure.Repositories;

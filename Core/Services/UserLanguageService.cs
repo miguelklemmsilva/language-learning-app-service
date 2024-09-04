@@ -1,4 +1,3 @@
-using AWS.Services;
 using Core.Interfaces;
 using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
@@ -12,7 +11,7 @@ public class UserLanguageService(IUserLanguageRepository userLanguageRepository,
         var user = await userService.GetUserAsync(userLanguage.UserId);
         
         // If the user doesn't already have an active language set, set it to the new language
-        if (user.ActiveLanguage == null)
+        if (user.User.ActiveLanguage == null)
             await userService.UpdateUserAsync(new User { UserId = userLanguage.UserId, ActiveLanguage = userLanguage.Language });
         
         return await userLanguageRepository.CreateUserLanguageAsync(userLanguage);
@@ -30,7 +29,7 @@ public class UserLanguageService(IUserLanguageRepository userLanguageRepository,
 
         var user = await userService.GetUserAsync(userId);
 
-        if (language != user.ActiveLanguage) return language;
+        if (language != user.User.ActiveLanguage) return language;
         
         var userLanguages = await GetUserLanguagesAsync(userId);
         var newActiveLanguage = userLanguages.FirstOrDefault()?.Language;

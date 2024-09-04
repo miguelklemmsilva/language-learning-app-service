@@ -3,7 +3,6 @@ using System.Text.Json.Nodes;
 using Amazon.Lambda.Annotations;
 using Amazon.Lambda.Annotations.APIGateway;
 using Amazon.Lambda.APIGatewayEvents;
-using AWS.Services;
 using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.DataModels;

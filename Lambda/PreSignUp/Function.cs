@@ -5,7 +5,6 @@ using Amazon.DynamoDBv2;
 using Amazon.Lambda.Core;
 using Amazon.Lambda.RuntimeSupport;
 using Amazon.Lambda.Serialization.SystemTextJson;
-using AWS.Services;
 using Infrastructure.Repositories;
 using Core.Interfaces;
 using Core.Models.DataModels;
@@ -31,19 +30,6 @@ public class Function
         var email = input["request"]!["userAttributes"]!["email"]!.ToString().ToLower();
         var sub = input["userName"]!.ToString();
 
-        if (string.IsNullOrEmpty(email))
-            throw new ArgumentException("Email not provided in the request.");
-
-        IUserRepository userRepository = new UserRepository(DynamoDbClient);
-        IUserService userService = new UserService(userRepository);
-        
-        var newUser = new User
-        {
-            UserId = sub,
-            Email = email
-        };
-        
-        await userService.CreateUserAsync(newUser);
 
         return input;
     }

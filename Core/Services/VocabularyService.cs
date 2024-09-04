@@ -1,4 +1,3 @@
-using AWS.Services;
 using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.DataModels;

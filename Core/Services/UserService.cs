@@ -1,37 +1,49 @@
-using AWS.Services;
 using Core.Interfaces;
 using Core.Models.DataModels;
+using Core.Models.DataTransferModels;
 
 namespace Core.Services;
 
-public class UserService(IUserRepository userRepository) : IUserService
+public class UserService(
+    IUserRepository userRepository,
+    IUserLanguageService userLanguageService,
+    IVocabularyService vocabularyService) : IUserService
 {
     public async Task<User> CreateUserAsync(User user)
     {
         return await userRepository.CreateUserAsync(user);
     }
-    
-    public async Task<User> GetUserAsync(string userId)
+
+    public async Task<UserResponse> GetUserAsync(string userId)
     {
         var user = await userRepository.GetUserAsync(userId);
-        
+
         if (user == null)
         {
             throw new Exception("User not found");
         }
+
+        if (user.ActiveLanguage != null)
+            return new UserResponse
+            {
+                User = user,
+                UserLanguages = await userLanguageService.GetUserLanguagesAsync(userId),
+                Vocabulary = await vocabularyService.GetVocabularyAsync(userId, user.ActiveLanguage)
+            };
         
-        return user;
-    }
-    
-    public async Task<User> UpdateUserAsync(User user)
-    {
-        var existingUser = await GetUserAsync(user.UserId);
-        
-        if (existingUser == null)
+        return new UserResponse
         {
-            throw new Exception("User not found");
-        }
-        
-        return await userRepository.UpdateUserAsync(user);
+            User = user,
+            UserLanguages = await userLanguageService.GetUserLanguagesAsync(userId)
+        };
+    }
+
+    public async Task<UserResponse> UpdateUserAsync(User user)
+    {
+        await GetUserAsync(user.UserId);
+
+        await userRepository.UpdateUserAsync(user);
+
+        return await GetUserAsync(user.UserId);
     }
 }

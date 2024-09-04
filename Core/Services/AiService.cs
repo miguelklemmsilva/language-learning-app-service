@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AWS.Services;
 using Core.Interfaces;
 using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
@@ -30,10 +29,10 @@ public class AiService(
     {
         var user = await userService.GetUserAsync(userId);
 
-        if (user.ActiveLanguage == null)
+        if (user.User.ActiveLanguage == null)
             throw new Exception("User has no active language");
 
-        var activeLanguage = await userLanguageService.GetUserLanguageAsync(userId, user.ActiveLanguage);
+        var activeLanguage = await userLanguageService.GetUserLanguageAsync(userId, user.User.ActiveLanguage);
 
         var activeStudyTypes = GetActiveStudyTypes(activeLanguage);
 
@@ -41,7 +40,7 @@ public class AiService(
             throw new Exception("User has no active exercises");
 
         var wordsToFetch = (int)Math.Ceiling(3f / activeStudyTypes.Count);
-        var wordsToStudy = (await vocabularyService.GetWordsToStudyAsync(userId, user.ActiveLanguage, wordsToFetch)).ToList();
+        var wordsToStudy = (await vocabularyService.GetWordsToStudyAsync(userId, user.User.ActiveLanguage, wordsToFetch)).ToList();
         
         if (wordsToStudy.Count == 0)
             throw new Exception("No words to study");
