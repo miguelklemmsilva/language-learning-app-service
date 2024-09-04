@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Nodes;
 using Amazon.Lambda.Annotations;
 using Amazon.Lambda.Annotations.APIGateway;
 using Amazon.Lambda.APIGatewayEvents;
@@ -20,6 +21,26 @@ public class Function(
     IVocabularyService vocabularyService,
     IAiService aiService)
 {
+    [LambdaFunction]
+    public async Task<JsonObject> PreSignUpTrigger(JsonObject request)
+    {
+        var email = request["request"]!["userAttributes"]!["email"]!.ToString().ToLower();
+        var sub = request["userName"]!.ToString();
+
+        if (string.IsNullOrEmpty(email))
+            throw new ArgumentException("Email not provided in the request.");
+        
+        var newUser = new User
+        {
+            UserId = sub,
+            Email = email
+        };
+        
+        await userService.CreateUserAsync(newUser);
+
+        return request;
+    }
+    
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/user")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> GetUser([FromHeader] string authorization)
