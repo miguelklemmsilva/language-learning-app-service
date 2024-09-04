@@ -111,8 +111,6 @@ public class SpeechService(SpeechConfig speechConfig) : ISpeechService
         var audioConfig = AudioConfig.FromStreamOutput(new PullAudioOutputStream());
         
         var synthesizer = new SpeechSynthesizer(speechConfig, audioConfig);
-        var result = await synthesizer.SpeakTextAsync(text);
-        synthesizer.Dispose();
-        return result;
+        return await synthesizer.SpeakTextAsync(text);
     }
 }

@@ -68,7 +68,7 @@ public class AiService(
         var sentenceText = await aiRepository.GenerateSentenceAsync(word.Word, activeLanguage.Language, activeLanguage.Country);
 
         // // Step 2: Translate the sentence
-        var translatedText = aiRepository.TranslateSentenceAsync(sentenceText, activeLanguage.Language);
+        var translatedText = await aiRepository.TranslateSentenceAsync(sentenceText, activeLanguage.Language);
         //
         // // Step 3: Generate voice
         var voiceData = await aiRepository.SynthesizeSpeechAsync(sentenceText, activeLanguage.Country);
@@ -80,9 +80,9 @@ public class AiService(
         return new Sentence
         {
             Original = sentenceText,
-            Translation = await translatedText,
+            Translation = translatedText,
             Word = word.Word,
-            Voice = (voiceData).AudioData,
+            Voice = voiceData.AudioData,
             Language = activeLanguage.Language
         };
     }
