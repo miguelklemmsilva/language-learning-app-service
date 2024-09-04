@@ -71,10 +71,26 @@ public class AiService(
         var translatedText = await aiRepository.TranslateSentenceAsync(sentenceText, activeLanguage.Language);
         //
         // // Step 3: Generate voice
-        var voiceData = await aiRepository.SynthesizeSpeechAsync(sentenceText, activeLanguage.Country);
-        Console.WriteLine($"Audio data: {voiceData.AudioData.Length}");
-        Console.WriteLine(voiceData.Reason);
-        Console.WriteLine(voiceData.ResultId);
+        var speechSynthesisResult = await aiRepository.SynthesizeSpeechAsync(sentenceText, activeLanguage.Country);
+        
+        switch (speechSynthesisResult.Reason)
+        {
+            case ResultReason.SynthesizingAudioCompleted:
+                Console.WriteLine($"Speech synthesized for text: [{sentenceText}]");
+                break;
+            case ResultReason.Canceled:
+                var cancellation = SpeechSynthesisCancellationDetails.FromResult(speechSynthesisResult);
+                Console.WriteLine($"CANCELED: Reason={cancellation.Reason}");
+
+                if (cancellation.Reason == CancellationReason.Error)
+                {
+                    Console.WriteLine($"CANCELED: ErrorCode={cancellation.ErrorCode}");
+                    Console.WriteLine($"CANCELED: ErrorDetails=[{cancellation.ErrorDetails}]");
+                    Console.WriteLine("CANCELED: Did you set the speech resource key and region values?");
+                }
+                break;
+        }
+
 
         // Create and return the Sentence object
         return new Sentence
@@ -82,7 +98,7 @@ public class AiService(
             Original = sentenceText,
             Translation = translatedText,
             Word = word.Word,
-            Voice = voiceData.AudioData,
+            Voice = speechSynthesisResult.AudioData,
             Language = activeLanguage.Language
         };
     }
