@@ -4,15 +4,15 @@ using Core.Models.DataTransferModels;
 
 namespace Core.Services;
 
-public class UserLanguageService(IUserLanguageRepository userLanguageRepository, IUserService userService) : IUserLanguageService
+public class UserLanguageService(IUserLanguageRepository userLanguageRepository, IUserRepository userRepository) : IUserLanguageService
 {
     public async Task<UserLanguage> UpdateUserLanguageAsync(UserLanguage userLanguage)
     {
-        var user = await userService.GetUserAsync(userLanguage.UserId);
+        var user = await userRepository.GetUserAsync(userLanguage.UserId);
         
         // If the user doesn't already have an active language set, set it to the new language
-        if (user.User.ActiveLanguage == null)
-            await userService.UpdateUserAsync(new User { UserId = userLanguage.UserId, ActiveLanguage = userLanguage.Language });
+        if (user.ActiveLanguage == null)
+            await userRepository.UpdateUserAsync(new User { UserId = userLanguage.UserId, ActiveLanguage = userLanguage.Language });
         
         return await userLanguageRepository.CreateUserLanguageAsync(userLanguage);
     }
@@ -27,13 +27,13 @@ public class UserLanguageService(IUserLanguageRepository userLanguageRepository,
     {
         await userLanguageRepository.RemoveUserLanguageAsync(userId, language);
 
-        var user = await userService.GetUserAsync(userId);
+        var user = await userRepository.GetUserAsync(userId);
 
-        if (language != user.User.ActiveLanguage) return language;
+        if (language != user.ActiveLanguage) return language;
         
         var userLanguages = await GetUserLanguagesAsync(userId);
         var newActiveLanguage = userLanguages.FirstOrDefault()?.Language;
-        await userService.UpdateUserAsync(new User { UserId = userId, ActiveLanguage = newActiveLanguage });
+        await userRepository.UpdateUserAsync(new User { UserId = userId, ActiveLanguage = newActiveLanguage });
         return newActiveLanguage;
     }
     
