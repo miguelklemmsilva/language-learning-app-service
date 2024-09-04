@@ -81,10 +81,7 @@ public class Startup
     {
         var speechKey = await GetSecretAsync(secretsManager, "SpeechKey");
         const string speechRegion = "uksouth";
-
-        var speechConfig = SpeechConfig.FromSubscription(speechKey, speechRegion);
-        speechConfig.SetProperty("OPENSSL_DISABLE_CRL_CHECK", "true");
-        return speechConfig;
+        return SpeechConfig.FromSubscription(speechKey, speechRegion);
     }
 
     private static async Task<string> GetSecretAsync(IAmazonSecretsManager secretsManager, string secretId)
