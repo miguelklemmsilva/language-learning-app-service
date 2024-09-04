@@ -74,15 +74,18 @@ public class AiService(
         var sentenceText = await chatGptService.GenerateSentenceAsync(word.Word, activeLanguage.Language, activeLanguage.Country);
 
         // Step 2: Translate the sentence
-        var translatedText = translationService.TranslateSentenceAsync(sentenceText, activeLanguage.Language);
+        var translatedText = await translationService.TranslateSentenceAsync(sentenceText, activeLanguage.Language);
+        var translation = translatedText?.Translations.FirstOrDefault();
         
         // Create and return the Sentence object
         return new Sentence
         {
             Original = sentenceText,
-            Translation = await translatedText,
+            Translation = translation?.Text,
+            Alignment = translation?.Alignment.Projections,
             Word = word.Word,
-            Language = activeLanguage.Language
+            Language = activeLanguage.Language,
+            Country = activeLanguage.Country
         };
     }
 }

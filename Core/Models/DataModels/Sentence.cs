@@ -8,8 +8,9 @@ public class Sentence
     public required string Word { get; set; }
     public string? Correct { get; set; }
     public int Mistakes { get; set; }
-    public TranslatedTextItem? Translation { get; set; }
+    public string? Translation { get; set; }
     public byte[]? Voice { get; set; }
     public required string Language { get; set; }
     public string? Alignment { get; set; }
+    public string? Country { get; set; }
 }
