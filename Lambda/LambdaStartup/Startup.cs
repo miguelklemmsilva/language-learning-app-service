@@ -81,6 +81,8 @@ public class Startup
     {
         var speechKey = await GetSecretAsync(secretsManager, "SpeechKey");
         const string speechRegion = "uksouth";
+        Console.WriteLine($"Speech key: {speechKey}");
+        Console.WriteLine($"Speech region: {speechRegion}");
         return SpeechConfig.FromSubscription(speechKey, speechRegion);
     }
 

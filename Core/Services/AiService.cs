@@ -72,6 +72,7 @@ public class AiService(
         //
         // // Step 3: Generate voice
         var speechSynthesisResult = await aiRepository.SynthesizeSpeechAsync(sentenceText, activeLanguage.Country);
+        var stream = AudioDataStream.FromResult(speechSynthesisResult);
         
         switch (speechSynthesisResult.Reason)
         {
