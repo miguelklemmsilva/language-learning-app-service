@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AWS.Services;
 using Core.Interfaces;
 using Core.Models.DataModels;
+using Core.Models.DataTransferModels;
 using Microsoft.CognitiveServices.Speech;
 
 namespace Core.Services;
@@ -17,13 +18,15 @@ public enum StudyType
 }
 
 public class AiService(
-    IAiRepository aiRepository,
+    IChatGptService chatGptService,
+    ITranslationService translationService,
+    ITokenService tokenService,
     IUserService userService,
     IUserLanguageService userLanguageService,
     IVocabularyService vocabularyService)
     : IAiService
 {
-    public async Task<IEnumerable<Sentence>> GenerateSentencesAsync(string userId)
+    public async Task<SentencesResponse> GenerateSentencesAsync(string userId)
     {
         var user = await userService.GetUserAsync(userId);
 
@@ -43,14 +46,17 @@ public class AiService(
         if (wordsToStudy.Count == 0)
             throw new Exception("No words to study");
 
-        var sentenceTasks = new List<Task<Sentence>>();
-
-        foreach (var word in wordsToStudy)
-            sentenceTasks.Add(GenerateSentenceAsync(word, activeLanguage));
+        var sentenceTasks = wordsToStudy.Select(word => GenerateSentenceAsync(word, activeLanguage)).ToList();
 
         var sentences = await Task.WhenAll(sentenceTasks);
+        
+        var issueToken = await tokenService.GetIssueTokenAsync();
 
-        return sentences;
+        return new SentencesResponse
+        {
+            Sentences = sentences,
+            IssueToken = issueToken
+        };
     }
 
     private List<StudyType> GetActiveStudyTypes(UserLanguage activeLanguage)
@@ -65,41 +71,17 @@ public class AiService(
     private async Task<Sentence> GenerateSentenceAsync(Word word, UserLanguage activeLanguage)
     {
         // Step 1: Generate the sentence
-        var sentenceText = await aiRepository.GenerateSentenceAsync(word.Word, activeLanguage.Language, activeLanguage.Country);
+        var sentenceText = await chatGptService.GenerateSentenceAsync(word.Word, activeLanguage.Language, activeLanguage.Country);
 
-        // // Step 2: Translate the sentence
-        var translatedText = await aiRepository.TranslateSentenceAsync(sentenceText, activeLanguage.Language);
-        //
-        // // Step 3: Generate voice
-        var speechSynthesisResult = await aiRepository.SynthesizeSpeechAsync(sentenceText, activeLanguage.Country);
-        var stream = AudioDataStream.FromResult(speechSynthesisResult);
+        // Step 2: Translate the sentence
+        var translatedText = translationService.TranslateSentenceAsync(sentenceText, activeLanguage.Language);
         
-        switch (speechSynthesisResult.Reason)
-        {
-            case ResultReason.SynthesizingAudioCompleted:
-                Console.WriteLine($"Speech synthesized for text: [{sentenceText}]");
-                break;
-            case ResultReason.Canceled:
-                var cancellation = SpeechSynthesisCancellationDetails.FromResult(speechSynthesisResult);
-                Console.WriteLine($"CANCELED: Reason={cancellation.Reason}");
-
-                if (cancellation.Reason == CancellationReason.Error)
-                {
-                    Console.WriteLine($"CANCELED: ErrorCode={cancellation.ErrorCode}");
-                    Console.WriteLine($"CANCELED: ErrorDetails=[{cancellation.ErrorDetails}]");
-                    Console.WriteLine("CANCELED: Did you set the speech resource key and region values?");
-                }
-                break;
-        }
-
-
         // Create and return the Sentence object
         return new Sentence
         {
             Original = sentenceText,
-            Translation = translatedText,
+            Translation = await translatedText,
             Word = word.Word,
-            Voice = speechSynthesisResult.AudioData,
             Language = activeLanguage.Language
         };
     }

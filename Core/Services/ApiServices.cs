@@ -37,7 +37,6 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
         };
 
         var response = await httpClient.SendAsync(request);
-        Console.WriteLine($"content: {await response.Content.ReadAsStringAsync()}");
 
         response.EnsureSuccessStatusCode();
         var responseBody = await response.Content.ReadAsStringAsync();
@@ -93,24 +92,17 @@ public class TranslationService(TextTranslationClient textTranslationClient) : I
         Response<IReadOnlyList<TranslatedTextItem>> response = await textTranslationClient.TranslateAsync(options);
         IReadOnlyList<TranslatedTextItem?> translations = response.Value;
         var translation = translations.FirstOrDefault();
-
-        Console.WriteLine(
-            $"Text was translated to: '{translation?.Translations?.FirstOrDefault()?.TargetLanguage}' and the result is: '{translation?.Translations?.FirstOrDefault()?.Text}'.");
-
+        
         return translation;
     }
 }
 
-public class SpeechService(SpeechConfig speechConfig) : ISpeechService
+public class TokenService(HttpClient httpClient) : ITokenService
 {
-    public async Task<SpeechSynthesisResult> SynthesizeSpeechAsync(string text, string country)
+    public async Task<string> GetIssueTokenAsync()
     {
-        var voice = VoiceMapping.GetRandomVoice(country);
-        speechConfig.SpeechSynthesisVoiceName = voice;
-        
-        var audioConfig = AudioConfig.FromStreamOutput(new PullAudioOutputStream());
-        
-        var synthesizer = new SpeechSynthesizer(speechConfig, null);
-        return await synthesizer.SpeakTextAsync(text);
+        var request = new HttpRequestMessage(HttpMethod.Post, "/sts/v1.0/issueToken");
+        var response = await httpClient.SendAsync(request);
+        return await response.Content.ReadAsStringAsync();
     }
 }

@@ -3,9 +3,9 @@ using Microsoft.CognitiveServices.Speech;
 
 namespace Core.Interfaces;
 
-public interface ISpeechService
+public interface ITokenService
 {
-    Task<SpeechSynthesisResult> SynthesizeSpeechAsync(string text, string country);
+    Task<string> GetIssueTokenAsync();
 }
 
 public interface ITranslationService

@@ -1,9 +1,9 @@
 using Core.Models.DataModels;
+using Core.Models.DataTransferModels;
 
 namespace Core.Interfaces;
 
 public interface IAiService
 {
-    Task<IEnumerable<Sentence>> GenerateSentencesAsync(string userId);
-    
+    Task<SentencesResponse> GenerateSentencesAsync(string userId);
 }

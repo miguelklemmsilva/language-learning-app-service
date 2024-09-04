@@ -214,7 +214,7 @@ public class Function(
 
             var sentences = await aiService.GenerateSentencesAsync(userId);
 
-            return ResponseHelper.CreateSuccessResponse(sentences, typeof(IEnumerable<Sentence>));
+            return ResponseHelper.CreateSuccessResponse(sentences, typeof(SentencesResponse));
         }
         catch (Exception e)
         {

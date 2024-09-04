@@ -23,7 +23,7 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<IAmazonSecretsManager>(_ => new AmazonSecretsManagerClient(RegionEndpoint.EUWest2));
+        services.AddSingleton<IAmazonSecretsManager>(new AmazonSecretsManagerClient(RegionEndpoint.EUWest2));
         services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(RegionEndpoint.EUWest2));
         services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IUserService, UserService>();
@@ -35,11 +35,11 @@ public class Startup
         services.AddSingleton<IAllowedVocabularyService, AllowedVocabularyService>();
         services.AddSingleton<IChatGptService, ChatGptService>();
         services.AddSingleton<ITranslationService, TranslationService>();
-        services.AddSingleton<ISpeechService, SpeechService>();
+        services.AddSingleton<ITokenService, TokenService>();
 
         services.AddHttpClient<IChatGptService, ChatGptService>((provider, client) =>
         {
-            ConfigureHttpClientAsync(provider, client).GetAwaiter().GetResult();
+            ConfigureChatGptHttpClientAsync(provider, client).GetAwaiter().GetResult();
         });
 
         services.AddSingleton(provider =>
@@ -48,23 +48,31 @@ public class Startup
             return CreateTextTranslationClientAsync(secretsManager).GetAwaiter().GetResult();
         });
 
-        services.AddSingleton(provider =>
+        services.AddHttpClient<ITokenService, TokenService>((provider, client) =>
         {
-            var secretsManager = provider.GetRequiredService<IAmazonSecretsManager>();
-            return CreateSpeechConfigAsync(secretsManager).GetAwaiter().GetResult();
+            ConfigureSpeechServiceHttpClientAsync(provider, client).GetAwaiter().GetResult();
         });
 
-        services.AddSingleton<IAiRepository, AiRepository>();
         services.AddSingleton<IAiService, AiService>();
     }
 
-    private static async Task ConfigureHttpClientAsync(IServiceProvider provider, HttpClient client)
+    private static async Task ConfigureChatGptHttpClientAsync(IServiceProvider provider, HttpClient client)
     {
         client.BaseAddress = new Uri("https://api.openai.com");
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         var secretsManager = provider.GetRequiredService<IAmazonSecretsManager>();
         var key = await GetSecretAsync(secretsManager, "ChatGptKey");
         client.DefaultRequestHeaders.Add("Authorization", $"Bearer {key}");
+    }
+
+    private static async Task ConfigureSpeechServiceHttpClientAsync(IServiceProvider provider, HttpClient client)
+    {
+        client.BaseAddress = new Uri("https://uksouth.api.cognitive.microsoft.com");
+        client.DefaultRequestHeaders.Accept.Add(
+            new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
+        var secretsManager = provider.GetRequiredService<IAmazonSecretsManager>();
+        var key = await GetSecretAsync(secretsManager, "SpeechKey");
+        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", key);
     }
 
     private static async Task<TextTranslationClient> CreateTextTranslationClientAsync(
@@ -75,15 +83,6 @@ public class Startup
 
         var credential = new AzureKeyCredential(translatorKey);
         return new TextTranslationClient(credential, translatorRegion);
-    }
-
-    private static async Task<SpeechConfig> CreateSpeechConfigAsync(IAmazonSecretsManager secretsManager)
-    {
-        var speechKey = await GetSecretAsync(secretsManager, "SpeechKey");
-        const string speechRegion = "uksouth";
-        Console.WriteLine($"Speech key: {speechKey}");
-        Console.WriteLine($"Speech region: {speechRegion}");
-        return SpeechConfig.FromSubscription(speechKey, speechRegion);
     }
 
     private static async Task<string> GetSecretAsync(IAmazonSecretsManager secretsManager, string secretId)
