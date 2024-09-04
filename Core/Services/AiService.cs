@@ -70,7 +70,10 @@ public class AiService(
         var translatedText = aiRepository.TranslateSentenceAsync(sentenceText, activeLanguage.Language);
         //
         // // Step 3: Generate voice
-        var voiceData = aiRepository.SynthesizeSpeechAsync(sentenceText, activeLanguage.Country);
+        var voiceData = await aiRepository.SynthesizeSpeechAsync(sentenceText, activeLanguage.Country);
+        Console.WriteLine(voiceData.AudioData);
+        Console.WriteLine(voiceData.Reason);
+        Console.WriteLine(voiceData.ResultId);
 
         // Create and return the Sentence object
         return new Sentence
@@ -78,7 +81,7 @@ public class AiService(
             Original = sentenceText,
             Translation = await translatedText,
             Word = word.Word,
-            Voice = (await voiceData).AudioData,
+            Voice = (voiceData).AudioData,
             Language = activeLanguage.Language
         };
     }
