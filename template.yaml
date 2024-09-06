@@ -146,3 +146,16 @@ Resources:
       Architectures:
         - x86_64
       MemorySize: 512
+      
+  VerifySentenceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./Lambda/LambdaStartup/
+      Handler: bootstrap
+      Environment:
+        Variables:
+          ANNOTATIONS_HANDLER: "VerifySentence"
+      Runtime: dotnet8
+      Architectures:
+        - x86_64
+      MemorySize: 512
