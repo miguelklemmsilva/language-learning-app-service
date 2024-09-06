@@ -21,7 +21,7 @@ public class ResponseFormat
 public class JsonSchema
 {
     public string Name { get; set; } = "ChatGptResponse";
-    public string Strict { get; set; } = "true";
+    public bool Strict { get; set; } = true;
     public required Schema Schema { get; set; }
 }
 
