@@ -26,7 +26,12 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
                 {
                     Role = "system",
                     Content =
-                        "Evaluate whether a user translation is correct or not. If not, explain why to the user. If it is correct return null."
+                        "Evaluate whether a translation is correct or not. If not, explain why to the user. If it is correct return null."
+                },
+                new ChatGptMessage
+                {
+                    Role  = "user",
+                    Content = $"English to {request.Language}"
                 },
                 new ChatGptMessage
                 {
@@ -36,7 +41,7 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
                 new ChatGptMessage
                 {
                     Role = "user",
-                    Content = $"User translation: {request.Translation}"
+                    Content = $"Translation: {request.Translation}"
                 }
             ],
             Temperature = 0.2,
