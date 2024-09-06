@@ -15,10 +15,17 @@ public class ResponseFormat
 {
     public string Type { get; set; } = "json_schema";
     [JsonPropertyName("json_schema")]
-    public JsonSchema? Schema { get; set; }
+    public JsonSchema? JsonSchema { get; set; }
 }
 
 public class JsonSchema
+{
+    public string Name { get; set; } = "ChatGptResponse";
+    public string Strict { get; set; } = "true";
+    public required Schema Schema { get; set; }
+}
+
+public class Schema
 {
     public string Type { get; set; } = "object";
     public Dictionary<string, JsonSchemaProperty> Properties { get; set; } = new();

@@ -42,20 +42,25 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
             ResponseFormat = new ResponseFormat
             {
                 Type = "json_schema",
-                Schema = new JsonSchema
+                JsonSchema = new JsonSchema
                 {
-                    Type = "object",
-                    Properties = new Dictionary<string, JsonSchemaProperty>
+                    Schema = new Schema
                     {
-                        ["isCorrect"] = new() { Type = "boolean" },
-                        ["explanation"] = new() { Type = "string" }
-                    },
-                    Required = ["isCorrect"]
+                        Type = "object",
+                        Properties = new Dictionary<string, JsonSchemaProperty>
+                        {
+                            ["isCorrect"] = new() { Type = "boolean" },
+                            ["explanation"] = new() { Type = "string" }
+                        },
+                        Required = ["isCorrect"]
+                    }
                 }
             }
         };
         
         var requestJson = JsonSerializer.Serialize(requestBody, CustomJsonSerializerContext.Default.ChatGptRequest);
+
+        Console.WriteLine(requestJson);
         
         var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/v1/chat/completions")
         {
