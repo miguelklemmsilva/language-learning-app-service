@@ -79,11 +79,11 @@ data "aws_iam_role" "generate_sentences_lambda_role" {
 }
 
 data "aws_lambda_function" "verify_sentence" {
-    function_name = "ServerlessHuggingFaceStack-verifysentence747B9F22-yKn0hnTZ80Wb"
+    function_name = "language-learning-app-VerifySentenceFunction-E0BWpZ9hWCch"
 }
 
 data "aws_iam_role" "verify_sentence_lambda_role" {
-    name = "ServerlessHuggingFaceStac-verifysentenceServiceRole-nvNUOABu3YCz"
+    name = "language-learning-app-VerifySentenceFunctionRole-holS3P2Shbds"
 }
 
 data "aws_secretsmanager_secret" "chat_gpt_key" {
@@ -177,6 +177,11 @@ resource "aws_iam_role_policy_attachment" "attach_remove_vocabulary_policy" {
 
 resource "aws_iam_role_policy_attachment" "attach_generate_sentences_policy" {
   role       = data.aws_iam_role.generate_sentences_lambda_role.name
+  policy_arn = aws_iam_policy.lambda_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach_verify_sentence_policy" {
+  role       = data.aws_iam_role.verify_sentence_lambda_role.name
   policy_arn = aws_iam_policy.lambda_policy.arn
 }
 

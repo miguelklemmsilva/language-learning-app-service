@@ -47,8 +47,8 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
                     Type = "object",
                     Properties = new Dictionary<string, JsonSchemaProperty>
                     {
-                        ["isCorrect"] = new JsonSchemaProperty { Type = "boolean" },
-                        ["explanation"] = new JsonSchemaProperty { Type = "string" }
+                        ["isCorrect"] = new() { Type = "boolean" },
+                        ["explanation"] = new() { Type = "string" }
                     },
                     Required = ["isCorrect"]
                 }

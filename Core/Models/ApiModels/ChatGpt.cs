@@ -14,6 +14,7 @@ public class ChatGptRequest
 public class ResponseFormat
 {
     public string Type { get; set; } = "json_schema";
+    [JsonPropertyName("json_schema")]
     public JsonSchema? Schema { get; set; }
 }
 
