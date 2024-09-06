@@ -52,7 +52,7 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
                             ["isCorrect"] = new() { Type = "boolean" },
                             ["explanation"] = new() { Type = "string" }
                         },
-                        Required = ["isCorrect"]
+                        Required = ["isCorrect", "explanation"]
                     }
                 }
             }
