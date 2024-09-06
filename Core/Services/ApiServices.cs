@@ -39,6 +39,7 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
                     Content = $"User translation: {request.Translation}"
                 }
             ],
+            Temperature = 0.2,
             ResponseFormat = new ResponseFormat
             {
                 Type = "json_schema",
@@ -75,11 +76,8 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
 
         var jsonResponse =
             JsonSerializer.Deserialize(responseBody, CustomJsonSerializerContext.Default.ChatGptResponse);
-
-        if (jsonResponse == null)
-            return new VerifySentenceResponse { IsCorrect = false, Explanation = "No response from AI" };
-
-        var messageResponse = JsonSerializer.Deserialize(jsonResponse.Choices[0].Message.Content,
+        
+        var messageResponse = JsonSerializer.Deserialize(jsonResponse!.Choices.First().Message.Content,
             CustomJsonSerializerContext.Default.VerifySentenceResponse);
         
         return messageResponse ?? new VerifySentenceResponse { IsCorrect = false, Explanation = "No response from AI" };
@@ -115,7 +113,7 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
         var jsonResponse =
             JsonSerializer.Deserialize(responseBody, CustomJsonSerializerContext.Default.ChatGptResponse);
 
-        return jsonResponse?.Choices[0].Message.Content ?? string.Empty;
+        return jsonResponse!.Choices.First().Message.Content;
     }
 
     private string LocalizedSystemPrompt(string language, string region)
