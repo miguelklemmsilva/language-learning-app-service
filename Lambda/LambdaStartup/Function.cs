@@ -229,6 +229,9 @@ public class Function(
         {
             var result = await aiService.VerifySentenceAsync(verifyRequest);
 
+            Console.WriteLine(verifyRequest.Original);
+            Console.WriteLine(verifyRequest.Translation);
+
             return ResponseHelper.CreateSuccessResponse(result, typeof(VerifySentenceResponse));
         }
         catch (Exception e)

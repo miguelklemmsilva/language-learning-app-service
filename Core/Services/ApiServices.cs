@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading.Channels;
 using Azure;
 using Azure.AI.Translation.Text;
@@ -13,10 +14,16 @@ using Microsoft.CognitiveServices.Speech.Audio;
 
 namespace Core.Services;
 
-public class ChatGptService(HttpClient httpClient) : IChatGptService
+public partial class ChatGptService(HttpClient httpClient) : IChatGptService
 {
     public async Task<VerifySentenceResponse> VerifySentenceAsync(VerifySentenceRequest request)
     {
+        request.Original = SanitizeInput(request.Original);
+        request.Translation = SanitizeInput(request.Translation);
+
+        Console.WriteLine(request.Original);
+        Console.WriteLine(request.Translation);
+        
         var requestBody = new ChatGptRequest
         {
             Model = "gpt-4o-mini",
@@ -87,6 +94,12 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
         
         return messageResponse ?? new VerifySentenceResponse { IsCorrect = false, Explanation = "No response from AI" };
     }
+    
+    private string SanitizeInput(string input)
+    {
+        // Convert special characters to Unicode escape sequences
+        return MyRegex().Replace(input, m => $"\\u{(int)m.Value[0]:X4}");
+    }
 
     public async Task<string> GenerateSentenceAsync(string word, string language, string country)
     {
@@ -139,6 +152,9 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
             _ => throw new ArgumentException($"Unsupported language: {language}")
         };
     }
+
+    [GeneratedRegex(@"[^\u0000-\u007F]")]
+    private static partial Regex MyRegex();
 }
 
 public class TranslationService(TextTranslationClient textTranslationClient) : ITranslationService
