@@ -228,11 +228,34 @@ public class Function(
         try
         {
             var result = await aiService.VerifySentenceAsync(verifyRequest);
-
-            Console.WriteLine(verifyRequest.Original);
-            Console.WriteLine(verifyRequest.Translation);
-
+            
             return ResponseHelper.CreateSuccessResponse(result, typeof(VerifySentenceResponse));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
+    }
+    
+    [LambdaFunction]
+    [HttpApi(LambdaHttpMethod.Post, "/finishlesson")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> FinishLesson([FromHeader] string authorization,
+        [FromBody] FinishLessonRequest finishRequest)
+    {
+        try
+        {
+            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+
+            var user = await userService.GetUserAsync(userId);
+            
+            if (user.User.ActiveLanguage == null)
+                throw new Exception("Active language not set");
+
+            await vocabularyService.FinishLessonAsync(userId, finishRequest.Sentences, user.User.ActiveLanguage);
+
+            return ResponseHelper.CreateSuccessResponse(
+                new Dictionary<string, string> { { "message", "Lesson finished successfully" } },
+                typeof(Dictionary<string, string>));
         }
         catch (Exception e)
         {

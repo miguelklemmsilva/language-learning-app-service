@@ -13,10 +13,10 @@ public class VocabularyService(
     {
         if (language.Equals("Japanese"))
             return true;
-        
+
         return await allowedVocabularyService.IsVocabularyAllowedAsync(language, word);
     }
-    
+
     public async Task<IEnumerable<string>> AddVocabularyAsync(string userId, AddVocabularyRequest request)
     {
         var currentVocabulary = (await GetVocabularyAsync(userId, request.Language)).ToList();
@@ -41,14 +41,13 @@ public class VocabularyService(
                     Word = word,
                     LastPracticed = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
                 });
-            
+
                 newWords.Add(word);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error processing word '{word}': {ex.Message}");
             }
-
         }
 
         return newWords;
@@ -113,7 +112,7 @@ public class VocabularyService(
 
         await vocabularyRepository.RemoveVocabularyAsync(userId, language, word);
     }
-    
+
     public async Task<IEnumerable<Word>> GetWordsToStudyAsync(string userId, string language, int count)
     {
         var allVocabulary = await GetVocabularyAsync(userId, language);
@@ -123,7 +122,56 @@ public class VocabularyService(
             .Where(v => v.MinutesUntilDue <= 0)
             .OrderBy(v => v.LastPracticed)
             .Take(count);
-        
+
         return wordsToStudy;
+    }
+
+    public async Task FinishLessonAsync(string userId, IEnumerable<Sentence> sentences, string language)
+    {
+        var groupedSentences = sentences.GroupBy(s => s.Word);
+
+        foreach (var group in groupedSentences)
+        {
+            var word = group.Key;
+            var wordScore = CalculateWordScore(group);
+
+            var vocabulary = await vocabularyRepository.GetVocabularyAsync(userId, language, word);
+            // Update existing vocabulary
+            vocabulary.BoxNumber = Math.Max(1, Math.Min(9, vocabulary.BoxNumber + wordScore));
+            vocabulary.LastPracticed = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+            await vocabularyRepository.UpdateVocabularyAsync(vocabulary);
+        }
+    }
+
+    private int CalculateWordScore(IGrouping<string, Sentence> sentenceGroup)
+    {
+        var wordScore = 0;
+
+        foreach (var sentence in sentenceGroup)
+        {
+            wordScore += sentence.Type switch
+            {
+                "translation" => sentence.Mistakes switch
+                {
+                    0 => 3,
+                    1 => 2,
+                    2 => 0,
+                    3 => -1,
+                    _ => -2
+                },
+                "listening" => sentence.Mistakes switch
+                {
+                    0 => 1,
+                    1 => 1,
+                    2 => 0,
+                    3 => -1,
+                    _ => -2
+                },
+                _ => 1
+            };
+        }
+
+        return wordScore;
     }
 }

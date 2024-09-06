@@ -1,16 +1,12 @@
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Channels;
 using Azure;
 using Azure.AI.Translation.Text;
-using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.ApiModels;
 using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
-using Microsoft.CognitiveServices.Speech;
-using Microsoft.CognitiveServices.Speech.Audio;
 
 namespace Core.Services;
 
@@ -18,12 +14,6 @@ public partial class ChatGptService(HttpClient httpClient) : IChatGptService
 {
     public async Task<VerifySentenceResponse> VerifySentenceAsync(VerifySentenceRequest request)
     {
-        request.Original = SanitizeInput(request.Original);
-        request.Translation = SanitizeInput(request.Translation);
-
-        Console.WriteLine(request.Original);
-        Console.WriteLine(request.Translation);
-        
         var requestBody = new ChatGptRequest
         {
             Model = "gpt-4o-mini",
@@ -95,12 +85,6 @@ public partial class ChatGptService(HttpClient httpClient) : IChatGptService
         return messageResponse ?? new VerifySentenceResponse { IsCorrect = false, Explanation = "No response from AI" };
     }
     
-    private string SanitizeInput(string input)
-    {
-        // Convert special characters to Unicode escape sequences
-        return MyRegex().Replace(input, m => $"\\u{(int)m.Value[0]:X4}");
-    }
-
     public async Task<string> GenerateSentenceAsync(string word, string language, string country)
     {
         var systemPrompt = LocalizedSystemPrompt(language, country);

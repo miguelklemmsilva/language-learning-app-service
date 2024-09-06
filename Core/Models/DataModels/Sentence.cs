@@ -13,4 +13,5 @@ public class Sentence
     public required string Language { get; set; }
     public string? Alignment { get; set; }
     public string? Country { get; set; }
+    public string? Type { get; set; }
 }
