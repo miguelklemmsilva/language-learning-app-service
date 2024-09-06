@@ -26,6 +26,8 @@ namespace Core.Models.DataModels;
 [JsonSerializable(typeof(ChatGptRequest))]
 [JsonSerializable(typeof(ChatGptResponse))]
 [JsonSerializable(typeof(SentencesResponse))]
+[JsonSerializable(typeof(VerifySentenceResponse))]
+[JsonSerializable(typeof(VerifySentenceRequest))]
 public partial class CustomJsonSerializerContext : JsonSerializerContext
 {
 }

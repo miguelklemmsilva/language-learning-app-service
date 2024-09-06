@@ -78,6 +78,14 @@ data "aws_iam_role" "generate_sentences_lambda_role" {
   name = "language-learning-app-GenerateSentencesFunctionRole-Jyqr1L3x6P0w"
 }
 
+data "aws_lambda_function" "verify_sentence" {
+    function_name = "ServerlessHuggingFaceStack-verifysentence747B9F22-yKn0hnTZ80Wb"
+}
+
+data "aws_iam_role" "verify_sentence_lambda_role" {
+    name = "ServerlessHuggingFaceStac-verifysentenceServiceRole-nvNUOABu3YCz"
+}
+
 data "aws_secretsmanager_secret" "chat_gpt_key" {
   name = "ChatGptKey"
 }

@@ -220,4 +220,20 @@ public class Function(
             return ResponseHelper.CreateErrorResponse(e.Message);
         }
     }
+
+    [LambdaFunction]
+    [HttpApi(LambdaHttpMethod.Post, "/verifysentence")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> VerifySentence([FromBody] VerifySentenceRequest verifyRequest)
+    {
+        try
+        {
+            var result = await aiService.VerifySentenceAsync(verifyRequest);
+
+            return ResponseHelper.CreateSuccessResponse(result, typeof(VerifySentenceResponse));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
+    }
 }

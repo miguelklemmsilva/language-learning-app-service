@@ -50,6 +50,11 @@ variable "api_routes" {
       path            = "generatesentences"
       http_method     = "GET"
       lambda_function = "generate_sentences_function"
+    },
+    {
+      path            = "verifysentence"
+      http_method     = "POST"
+      lambda_function = "verify_sentence_function"
     }
   ]
 }
@@ -65,6 +70,7 @@ locals {
     "getvocabulary_function"      = data.aws_lambda_function.get_vocabulary.invoke_arn
     "removevocabulary_function"   = data.aws_lambda_function.remove_vocabulary.invoke_arn
     "generate_sentences_function" = data.aws_lambda_function.generate_sentences.invoke_arn
+    "verify_sentence_function"    = data.aws_lambda_function.verify_sentence.invoke_arn
   }
 
   lambda_arn_map = {
@@ -77,5 +83,6 @@ locals {
     "getvocabulary_function"      = data.aws_lambda_function.get_vocabulary.arn
     "removevocabulary_function"   = data.aws_lambda_function.remove_vocabulary.arn
     "generate_sentences_function" = data.aws_lambda_function.generate_sentences.arn
+    "verify_sentence_function"    = data.aws_lambda_function.verify_sentence.arn
   }
 }

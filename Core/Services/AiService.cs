@@ -25,13 +25,24 @@ public class AiService(
     IVocabularyService vocabularyService)
     : IAiService
 {
+    public async Task<VerifySentenceResponse> VerifySentenceAsync(VerifySentenceRequest request)
+    {
+        return await chatGptService.VerifySentenceAsync(request);
+    }
+
     public async Task<SentencesResponse> GenerateSentencesAsync(string userId)
     {
-        var user = await userService.GetUserAsync(userId);
+        var userTask = userService.GetUserAsync(userId);
+        var issueTokenTask = tokenService.GetIssueTokenAsync();
+
+        await Task.WhenAll(userTask, issueTokenTask);
+
+        var user = await userTask;
+        var issueToken = await issueTokenTask;
 
         if (user.User.ActiveLanguage == null)
             throw new Exception("User has no active language");
-
+        
         var activeLanguage = await userLanguageService.GetUserLanguageAsync(userId, user.User.ActiveLanguage);
 
         var activeStudyTypes = GetActiveStudyTypes(activeLanguage);
@@ -40,16 +51,11 @@ public class AiService(
             throw new Exception("User has no active exercises");
 
         var wordsToFetch = (int)Math.Ceiling(3f / activeStudyTypes.Count);
-        var wordsToStudy = (await vocabularyService.GetWordsToStudyAsync(userId, user.User.ActiveLanguage, wordsToFetch)).ToList();
-        
-        if (wordsToStudy.Count == 0)
-            throw new Exception("No words to study");
+        var wordsToStudy = await vocabularyService.GetWordsToStudyAsync(userId, user.User.ActiveLanguage, wordsToFetch);
 
         var sentenceTasks = wordsToStudy.Select(word => GenerateSentenceAsync(word, activeLanguage)).ToList();
 
         var sentences = await Task.WhenAll(sentenceTasks);
-        
-        var issueToken = await tokenService.GetIssueTokenAsync();
 
         return new SentencesResponse
         {
@@ -69,17 +75,15 @@ public class AiService(
 
     private async Task<Sentence> GenerateSentenceAsync(Word word, UserLanguage activeLanguage)
     {
-        // Step 1: Generate the sentence
-        var sentenceText = await chatGptService.GenerateSentenceAsync(word.Word, activeLanguage.Language, activeLanguage.Country);
+        var sentenceTask = chatGptService.GenerateSentenceAsync(word.Word, activeLanguage.Language, activeLanguage.Country);
+        var translationTask = translationService.TranslateSentenceAsync(await sentenceTask, activeLanguage.Language);
 
-        // Step 2: Translate the sentence
-        var translatedText = await translationService.TranslateSentenceAsync(sentenceText, activeLanguage.Language);
+        var translatedText = await translationTask;
         var translation = translatedText?.Translations.FirstOrDefault();
-        
-        // Create and return the Sentence object
+
         return new Sentence
         {
-            Original = sentenceText,
+            Original = await sentenceTask,
             Translation = translation?.Text,
             Alignment = translation?.Alignment.Projections,
             Word = word.Word,

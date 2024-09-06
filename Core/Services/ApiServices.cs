@@ -7,6 +7,7 @@ using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.ApiModels;
 using Core.Models.DataModels;
+using Core.Models.DataTransferModels;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
 
@@ -14,6 +15,67 @@ namespace Core.Services;
 
 public class ChatGptService(HttpClient httpClient) : IChatGptService
 {
+    public async Task<VerifySentenceResponse> VerifySentenceAsync(VerifySentenceRequest request)
+    {
+        var requestBody = new ChatGptRequest
+        {
+            Model = "gpt-4o-mini",
+            Messages =
+            [
+                new ChatGptMessage
+                {
+                    Role = "system",
+                    Content =
+                        "Evaluate whether a user translation is correct or not. If not, explain why to the user. If it is correct return null."
+                },
+                new ChatGptMessage
+                {
+                    Role = "user",
+                    Content = $"Original sentence: {request.Original}"
+                },
+                new ChatGptMessage
+                {
+                    Role = "user",
+                    Content = $"User translation: {request.Translation}"
+                }
+            ],
+            ResponseFormat = new ResponseFormat
+            {
+                Type = "json_schema",
+                Schema = new JsonSchema
+                {
+                    Type = "object",
+                    Properties = new Dictionary<string, JsonSchemaProperty>
+                    {
+                        ["isCorrect"] = new JsonSchemaProperty { Type = "boolean" },
+                        ["explanation"] = new JsonSchemaProperty { Type = "string" }
+                    },
+                    Required = ["isCorrect"]
+                }
+            }
+        };
+        
+        var requestJson = JsonSerializer.Serialize(requestBody, CustomJsonSerializerContext.Default.ChatGptRequest);
+        
+        var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/v1/chat/completions")
+        {
+            Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
+        };
+        
+        var response = await httpClient.SendAsync(httpRequest);
+        Console.WriteLine(await response.Content.ReadAsStringAsync());
+        
+        response.EnsureSuccessStatusCode();
+        var responseBody = await response.Content.ReadAsStringAsync();
+        
+        var jsonResponse =
+            JsonSerializer.Deserialize(responseBody, CustomJsonSerializerContext.Default.ChatGptResponse);
+
+        Console.WriteLine(responseBody);
+        
+        return new VerifySentenceResponse {IsCorrect = false, Explanation = "Not implemented"};
+    }
+
     public async Task<string> GenerateSentenceAsync(string word, string language, string country)
     {
         var systemPrompt = LocalizedSystemPrompt(language, country);
@@ -92,7 +154,7 @@ public class TranslationService(TextTranslationClient textTranslationClient) : I
         Response<IReadOnlyList<TranslatedTextItem>> response = await textTranslationClient.TranslateAsync(options);
         IReadOnlyList<TranslatedTextItem?> translations = response.Value;
         var translation = translations.FirstOrDefault();
-        
+
         return translation;
     }
 }
