@@ -23,6 +23,7 @@ public class JsonSchema
     public string Name { get; set; } = "ChatGptResponse";
     public bool Strict { get; set; } = true;
     public required Schema Schema { get; set; }
+    public bool AdditionalProperties { get; set; }
 }
 
 public class Schema
