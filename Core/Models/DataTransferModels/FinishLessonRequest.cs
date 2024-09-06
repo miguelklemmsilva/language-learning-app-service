@@ -6,3 +6,11 @@ public class FinishLessonRequest
 {
     public required IEnumerable<Sentence> Sentences { get; set; }
 }
+
+public class FinishLessonSentence
+{
+    public required string Language { get; set; }
+    public int Mistakes { get; set; }
+    public required string Type { get; set; }
+    public required string Word { get; set; }
+}

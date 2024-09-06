@@ -251,7 +251,7 @@ public class Function(
             if (user.User.ActiveLanguage == null)
                 throw new Exception("Active language not set");
 
-            await vocabularyService.FinishLessonAsync(userId, finishRequest.Sentences, user.User.ActiveLanguage);
+            await vocabularyService.FinishLessonAsync(userId, finishRequest, user.User.ActiveLanguage);
 
             return ResponseHelper.CreateSuccessResponse(
                 new Dictionary<string, string> { { "message", "Lesson finished successfully" } },

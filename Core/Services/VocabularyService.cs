@@ -126,9 +126,9 @@ public class VocabularyService(
         return wordsToStudy;
     }
 
-    public async Task FinishLessonAsync(string userId, IEnumerable<Sentence> sentences, string language)
+    public async Task FinishLessonAsync(string userId, FinishLessonRequest finishLessonRequest, string language)
     {
-        var groupedSentences = sentences.GroupBy(s => s.Word);
+        var groupedSentences = finishLessonRequest.Sentences.GroupBy(s => s.Word);
 
         foreach (var group in groupedSentences)
         {

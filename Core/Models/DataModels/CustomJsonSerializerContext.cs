@@ -28,6 +28,7 @@ namespace Core.Models.DataModels;
 [JsonSerializable(typeof(SentencesResponse))]
 [JsonSerializable(typeof(VerifySentenceResponse))]
 [JsonSerializable(typeof(VerifySentenceRequest))]
+[JsonSerializable(typeof(FinishLessonRequest))]
 public partial class CustomJsonSerializerContext : JsonSerializerContext
 {
 }

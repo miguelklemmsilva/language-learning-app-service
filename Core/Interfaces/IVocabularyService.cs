@@ -10,5 +10,5 @@ public interface IVocabularyService
     Task RemoveVocabularyAsync(string userId, string language, string word);
     Task<Vocabulary> UpdateVocabularyAsync(Vocabulary vocabulary);
     Task<IEnumerable<Word>> GetWordsToStudyAsync(string userId, string language, int count);
-    Task FinishLessonAsync(string userId, IEnumerable<Sentence> sentences, string language);
+    Task FinishLessonAsync(string userId, FinishLessonRequest finishLessonRequest, string language);
 }

@@ -86,6 +86,14 @@ data "aws_iam_role" "verify_sentence_lambda_role" {
     name = "language-learning-app-VerifySentenceFunctionRole-holS3P2Shbds"
 }
 
+data "aws_lambda_function" "finish_lesson" {
+    function_name = "language-learning-app-FinishLessonFunction-UWsQVmEagD7i"
+}
+
+data "aws_iam_role" "finish_lesson_lambda_role" {
+    name = "language-learning-app-FinishLessonFunctionRole-h4fzo7UseQKi"
+}
+
 data "aws_secretsmanager_secret" "chat_gpt_key" {
   name = "ChatGptKey"
 }
@@ -182,6 +190,11 @@ resource "aws_iam_role_policy_attachment" "attach_generate_sentences_policy" {
 
 resource "aws_iam_role_policy_attachment" "attach_verify_sentence_policy" {
   role       = data.aws_iam_role.verify_sentence_lambda_role.name
+  policy_arn = aws_iam_policy.lambda_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach_finish_lesson_policy" {
+  role       = data.aws_iam_role.finish_lesson_lambda_role.name
   policy_arn = aws_iam_policy.lambda_policy.arn
 }
 

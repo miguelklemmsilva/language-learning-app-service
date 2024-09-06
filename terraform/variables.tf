@@ -55,6 +55,11 @@ variable "api_routes" {
       path            = "verifysentence"
       http_method     = "POST"
       lambda_function = "verify_sentence_function"
+    },
+    {
+      path            = "finishlesson"
+      http_method     = "POST"
+      lambda_function = "finish_lesson_function"
     }
   ]
 }
@@ -71,6 +76,7 @@ locals {
     "removevocabulary_function"   = data.aws_lambda_function.remove_vocabulary.invoke_arn
     "generate_sentences_function" = data.aws_lambda_function.generate_sentences.invoke_arn
     "verify_sentence_function"    = data.aws_lambda_function.verify_sentence.invoke_arn
+    "finish_lesson_function"      = data.aws_lambda_function.finish_lesson.invoke_arn
   }
 
   lambda_arn_map = {
@@ -84,5 +90,6 @@ locals {
     "removevocabulary_function"   = data.aws_lambda_function.remove_vocabulary.arn
     "generate_sentences_function" = data.aws_lambda_function.generate_sentences.arn
     "verify_sentence_function"    = data.aws_lambda_function.verify_sentence.arn
+    "finish_lesson_function"      = data.aws_lambda_function.finish_lesson.arn
   }
 }
