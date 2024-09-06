@@ -26,7 +26,7 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
                 {
                     Role = "system",
                     Content =
-                        "Evaluate whether a translation is correct or not. If not, explain why to the user. If it is correct return null."
+                        "Evaluate whether a translation is correct or not, don't be too harsh. If not, explain why to the user. If it is correct return null."
                 },
                 new ChatGptMessage
                 {
