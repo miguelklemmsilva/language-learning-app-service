@@ -57,28 +57,32 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
                 }
             }
         };
-        
+
         var requestJson = JsonSerializer.Serialize(requestBody, CustomJsonSerializerContext.Default.ChatGptRequest);
 
         Console.WriteLine(requestJson);
-        
+
         var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/v1/chat/completions")
         {
             Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
         };
-        
+
         var response = await httpClient.SendAsync(httpRequest);
         Console.WriteLine(await response.Content.ReadAsStringAsync());
-        
+
         response.EnsureSuccessStatusCode();
         var responseBody = await response.Content.ReadAsStringAsync();
-        
+
         var jsonResponse =
             JsonSerializer.Deserialize(responseBody, CustomJsonSerializerContext.Default.ChatGptResponse);
 
-        Console.WriteLine(responseBody);
+        if (jsonResponse == null)
+            return new VerifySentenceResponse { IsCorrect = false, Explanation = "No response from AI" };
+
+        var messageResponse = JsonSerializer.Deserialize(jsonResponse.Choices[0].Message.Content,
+            CustomJsonSerializerContext.Default.VerifySentenceResponse);
         
-        return new VerifySentenceResponse {IsCorrect = false, Explanation = "Not implemented"};
+        return messageResponse ?? new VerifySentenceResponse { IsCorrect = false, Explanation = "No response from AI" };
     }
 
     public async Task<string> GenerateSentenceAsync(string word, string language, string country)
