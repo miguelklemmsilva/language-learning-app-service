@@ -144,7 +144,7 @@ public class VocabularyService(
         }
     }
 
-    private int CalculateWordScore(IGrouping<string, Sentence> sentenceGroup)
+    private int CalculateWordScore(IGrouping<string, FinishLessonSentence> sentenceGroup)
     {
         var wordScore = 0;
 

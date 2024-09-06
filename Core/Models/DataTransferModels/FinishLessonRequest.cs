@@ -4,7 +4,7 @@ namespace Core.Models.DataTransferModels;
 
 public class FinishLessonRequest
 {
-    public required IEnumerable<Sentence> Sentences { get; set; }
+    public required IEnumerable<FinishLessonSentence> Sentences { get; set; }
 }
 
 public class FinishLessonSentence
