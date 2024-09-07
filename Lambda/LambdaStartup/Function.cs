@@ -18,7 +18,8 @@ public class Function(
     IUserService userService,
     IUserLanguageService userLanguageService,
     IVocabularyService vocabularyService,
-    IAiService aiService)
+    IAiService aiService,
+    ITokenService tokenService)
 {
     [LambdaFunction]
     public async Task<JsonObject> PreSignUpTrigger(JsonObject request)
@@ -245,7 +246,7 @@ public class Function(
         try
         {
             var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
-
+ 
             var user = await userService.GetUserAsync(userId);
             
             if (user.User.ActiveLanguage == null)
@@ -256,6 +257,22 @@ public class Function(
             return ResponseHelper.CreateSuccessResponse(
                 new Dictionary<string, string> { { "message", "Lesson finished successfully" } },
                 typeof(Dictionary<string, string>));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
+    }
+    
+    [LambdaFunction]
+    [HttpApi(LambdaHttpMethod.Post, "/issuetoken")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> IssueToken()
+    {
+        try
+        {
+            var token = await tokenService.GetIssueTokenAsync();
+            
+            return ResponseHelper.CreateSuccessResponse(token, typeof(string));
         }
         catch (Exception e)
         {
