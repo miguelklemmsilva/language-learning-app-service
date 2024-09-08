@@ -25,7 +25,7 @@ public class Function(
     public async Task<JsonObject> PreSignUpTrigger(JsonObject request)
     {
         var email = request["request"]!["userAttributes"]!["email"]!.ToString().ToLower();
-        var sub = request["userName"]!.ToString();
+        var sub = request["request"]!["userAttributes"]!["sub"]!.ToString();
 
         if (string.IsNullOrEmpty(email))
             throw new ArgumentException("Email not provided in the request.");

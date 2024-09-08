@@ -32,11 +32,12 @@ resource "aws_cognito_user_pool" "user_pool" {
 resource "aws_cognito_user_pool_client" "userpool_client" {
   name                                 = "client"
   user_pool_id                         = aws_cognito_user_pool.user_pool.id
-  callback_urls = ["https://miguelklemmsilva.com/"]
+  callback_urls = ["https://miguelklemmsilva.com/home", "http://localhost:3000/home"]
+  logout_urls = ["https://miguelklemmsilva.com", "http://localhost:3000"]
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows = ["code", "implicit"]
   allowed_oauth_scopes = ["email", "openid"]
-  supported_identity_providers = ["COGNITO"]
+  supported_identity_providers = ["COGNITO", "Google"]
 }
 
 resource "aws_cognito_user_pool_domain" "main" {
@@ -51,5 +52,36 @@ resource "aws_cognito_identity_pool" "identity_pool" {
     client_id               = aws_cognito_user_pool_client.userpool_client.id
     provider_name           = aws_cognito_user_pool.user_pool.endpoint
     server_side_token_check = false
+  }
+}
+
+data "aws_ssm_parameter" "google_client_id" {
+  name = "/myapp/google/client_id"
+}
+
+data "aws_ssm_parameter" "google_client_secret" {
+  name = "/myapp/google/client_secret"
+}
+
+resource "aws_cognito_identity_provider" "google" {
+  user_pool_id  = aws_cognito_user_pool.user_pool.id
+  provider_name = "Google"
+  provider_type = "Google"
+
+  provider_details = {
+    authorize_scopes              = "email openid"
+    client_id                     = data.aws_ssm_parameter.google_client_id.value
+    client_secret                 = data.aws_ssm_parameter.google_client_secret.value
+    token_url                     = "https://www.googleapis.com/oauth2/v4/token"
+    token_request_method          = "POST"
+    oidc_issuer                   = "https://accounts.google.com"
+    authorize_url                 = "https://accounts.google.com/o/oauth2/v2/auth"
+    attributes_url                = "https://people.googleapis.com/v1/people/me?personFields="
+    attributes_url_add_attributes = "true"
+  }
+
+  attribute_mapping = {
+    email    = "email"
+    username = "sub"
   }
 }
