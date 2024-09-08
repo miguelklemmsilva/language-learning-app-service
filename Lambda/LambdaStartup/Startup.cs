@@ -20,7 +20,7 @@ namespace Lambda.LambdaStartup;
 [LambdaStartup]
 public class Startup
 {
-    private const string SecretName = "AppSecrets";
+    private const string SecretName = "apiKeys";
 
     public void ConfigureServices(IServiceCollection services)
     {
