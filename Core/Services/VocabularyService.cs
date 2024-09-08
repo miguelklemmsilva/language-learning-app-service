@@ -39,7 +39,7 @@ public class VocabularyService(
                     UserId = userId,
                     Language = request.Language,
                     Word = word,
-                    LastPracticed = DateTimeOffset.UtcNow.ToUnixTimeSeconds()
+                    LastPracticed = DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
                 });
 
                 newWords.Add(word);
@@ -85,6 +85,7 @@ public class VocabularyService(
                 Word = v.Word,
                 LastPracticed = v.LastPracticed,
                 BoxNumber = v.BoxNumber,
+                Category = v.Category,
                 MinutesUntilDue = minutesUntilDue,
                 LastSeen = lastSeen
             };

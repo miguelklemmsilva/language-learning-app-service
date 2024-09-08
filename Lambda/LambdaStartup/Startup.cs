@@ -20,9 +20,14 @@ namespace Lambda.LambdaStartup;
 [LambdaStartup]
 public class Startup
 {
+    private const string SecretName = "AppSecrets";
+
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<IAmazonSecretsManager>(new AmazonSecretsManagerClient(RegionEndpoint.EUWest2));
+        var secretsManager = new AmazonSecretsManagerClient(RegionEndpoint.EUWest2);
+        var secrets = GetSecretsAsync(secretsManager).GetAwaiter().GetResult();
+
+        services.AddSingleton<IAmazonSecretsManager>(secretsManager);
         services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(RegionEndpoint.EUWest2));
         services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IUserService, UserService>();
@@ -36,57 +41,50 @@ public class Startup
         services.AddSingleton<ITranslationService, TranslationService>();
         services.AddSingleton<ITokenService, TokenService>();
 
-        services.AddHttpClient<IChatGptService, ChatGptService>((provider, client) =>
+        services.AddHttpClient<IChatGptService, ChatGptService>(client =>
         {
-            ConfigureChatGptHttpClientAsync(provider, client).GetAwaiter().GetResult();
+            ConfigureChatGptHttpClient(client, secrets);
         });
 
-        services.AddSingleton(provider =>
-        {
-            var secretsManager = provider.GetRequiredService<IAmazonSecretsManager>();
-            return CreateTextTranslationClientAsync(secretsManager).GetAwaiter().GetResult();
-        });
+        services.AddSingleton(provider => CreateTextTranslationClient(secrets));
 
-        services.AddHttpClient<ITokenService, TokenService>((provider, client) =>
+        services.AddHttpClient<ITokenService, TokenService>(client =>
         {
-            ConfigureSpeechServiceHttpClientAsync(provider, client).GetAwaiter().GetResult();
+            ConfigureSpeechServiceHttpClient(client, secrets);
         });
 
         services.AddSingleton<IAiService, AiService>();
     }
 
-    private static async Task ConfigureChatGptHttpClientAsync(IServiceProvider provider, HttpClient client)
+    private static void ConfigureChatGptHttpClient(HttpClient client, Dictionary<string, string> secrets)
     {
         client.BaseAddress = new Uri("https://api.openai.com");
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        var secretsManager = provider.GetRequiredService<IAmazonSecretsManager>();
-        var key = await GetSecretAsync(secretsManager, "ChatGptKey");
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {key}");
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {secrets["chatGptKey"]}");
     }
 
-    private static async Task ConfigureSpeechServiceHttpClientAsync(IServiceProvider provider, HttpClient client)
+    private static void ConfigureSpeechServiceHttpClient(HttpClient client, Dictionary<string, string> secrets)
     {
         client.BaseAddress = new Uri("https://uksouth.api.cognitive.microsoft.com");
         client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-        var secretsManager = provider.GetRequiredService<IAmazonSecretsManager>();
-        var key = await GetSecretAsync(secretsManager, "SpeechKey");
-        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", key);
+        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", secrets["speechKey"]);
     }
 
-    private static async Task<TextTranslationClient> CreateTextTranslationClientAsync(
-        IAmazonSecretsManager secretsManager)
+    private static TextTranslationClient CreateTextTranslationClient(Dictionary<string, string> secrets)
     {
-        var translatorKey = await GetSecretAsync(secretsManager, "TranslatorKey");
+        var translatorKey = secrets["translatorKey"];
         const string translatorRegion = "uksouth";
 
         var credential = new AzureKeyCredential(translatorKey);
         return new TextTranslationClient(credential, translatorRegion);
     }
 
-    private static async Task<string> GetSecretAsync(IAmazonSecretsManager secretsManager, string secretId)
+    private static async Task<Dictionary<string, string>> GetSecretsAsync(IAmazonSecretsManager secretsManager)
     {
-        var response = await secretsManager.GetSecretValueAsync(new GetSecretValueRequest { SecretId = secretId });
-        return response.SecretString;
+        var response = await secretsManager.GetSecretValueAsync(new GetSecretValueRequest { SecretId = SecretName });
+        return JsonSerializer.Deserialize(response.SecretString,
+                   CustomJsonSerializerContext.Default.DictionaryStringString) ??
+               throw new Exception("Failed to retrieve secrets");
     }
 }

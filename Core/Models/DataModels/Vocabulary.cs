@@ -7,4 +7,5 @@ public class Vocabulary
     public required string Word { get; set; }
     public long LastPracticed { get; set; }
     public int BoxNumber { get; set; }
+    public string? Category { get; set; }
 }
