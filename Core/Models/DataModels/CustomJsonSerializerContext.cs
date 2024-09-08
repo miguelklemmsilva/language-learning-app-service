@@ -1,3 +1,4 @@
+using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Amazon.Lambda.Annotations.APIGateway;
 using Amazon.Lambda.APIGatewayEvents;
@@ -29,6 +30,7 @@ namespace Core.Models.DataModels;
 [JsonSerializable(typeof(VerifySentenceResponse))]
 [JsonSerializable(typeof(VerifySentenceRequest))]
 [JsonSerializable(typeof(FinishLessonRequest))]
+[JsonSerializable(typeof(JsonObject))]
 public partial class CustomJsonSerializerContext : JsonSerializerContext
 {
 }

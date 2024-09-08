@@ -94,6 +94,14 @@ data "aws_iam_role" "finish_lesson_lambda_role" {
     name = "language-learning-app-FinishLessonFunctionRole-h4fzo7UseQKi"
 }
 
+data "aws_lambda_function" "issue_token" {
+  function_name = "language-learning-app-IssueTokenFunction-FubYr1cqTUZx"
+}
+
+data "aws_iam_role" "issue_token_lambda_role" {
+  name = "language-learning-app-IssueTokenFunctionRole-lPrVK5AGkLb4"
+}
+
 data "aws_secretsmanager_secret" "api_keys" {
   name = "apiKeys"
 }
@@ -186,6 +194,11 @@ resource "aws_iam_role_policy_attachment" "attach_verify_sentence_policy" {
 
 resource "aws_iam_role_policy_attachment" "attach_finish_lesson_policy" {
   role       = data.aws_iam_role.finish_lesson_lambda_role.name
+  policy_arn = aws_iam_policy.lambda_policy.arn
+}
+
+resource "aws_iam_role_policy_attachment" "attach_issue_token_policy" {
+  role       = data.aws_iam_role.issue_token_lambda_role.name
   policy_arn = aws_iam_policy.lambda_policy.arn
 }
 
