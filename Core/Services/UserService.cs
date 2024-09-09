@@ -34,7 +34,6 @@ public class UserService(
         return new UserResponse
         {
             User = user,
-            UserLanguages = await userLanguageService.GetUserLanguagesAsync(userId)
         };
     }
 
