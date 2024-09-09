@@ -31,7 +31,7 @@ namespace Core.Models.DataModels;
 [JsonSerializable(typeof(VerifySentenceRequest))]
 [JsonSerializable(typeof(FinishLessonRequest))]
 [JsonSerializable(typeof(JsonObject))]
-[JsonSerializable(typeof(IDictionary<string, IEnumerable<string>>))]
+[JsonSerializable(typeof(IEnumerable<Category>))]
 public partial class CustomJsonSerializerContext : JsonSerializerContext
 {
 }

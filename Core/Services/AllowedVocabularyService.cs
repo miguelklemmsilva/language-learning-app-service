@@ -14,15 +14,16 @@ public class AllowedVocabularyService(IAllowedVocabularyRepository allowedVocabu
         return allowedVocabularyRepository.IsVocabularyAllowedAsync(language, word);
     }
 
-    public async Task<IDictionary<string, IEnumerable<string>>> GetWordsByCategoryAsync(string language)
+    public async Task<IEnumerable<Category>> GetWordsByCategoryAsync(string language)
     {
         var allWords = await allowedVocabularyRepository.GetWordsByCategoryAsync(language);
-        
+
         return allWords
             .GroupBy(w => w.Category)
-            .ToDictionary(
-                g => g.Key,
-                g => g.Select(w => w.Word)
-            );
+            .Select(g => new Category
+            {
+                Name = g.Key,
+                Words = g.Select(w => new Word { Word = w.Word, Language = language }).ToList()
+            });
     }
 }
