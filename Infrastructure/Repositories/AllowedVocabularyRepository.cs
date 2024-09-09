@@ -25,8 +25,8 @@ public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocab
 
         return response.Item != null;
     }
-    
-    public async Task<List<AllowedVocabulary>> GetWordsByCategoryAsync(string language)
+
+    public async Task<IEnumerable<AllowedVocabulary>> GetWordsByCategoryAsync(string language)
     {
         var request = new QueryRequest
         {
@@ -45,17 +45,7 @@ public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocab
 
         var response = await client.QueryAsync(request);
 
-        var result = new List<AllowedVocabulary>();
-        foreach (var item in response.Items)
-        {
-            result.Add(new AllowedVocabulary
-            {
-                Language = item["Language"].S,
-                Word = item["Word"].S,
-                Category = item["Category"].S
-            });
-        }
-
-        return result;
+        return response.Items.Select(item => new AllowedVocabulary
+            { Language = item["Language"].S, Word = item["Word"].S, Category = item["Category"].S }).ToList();
     }
 }

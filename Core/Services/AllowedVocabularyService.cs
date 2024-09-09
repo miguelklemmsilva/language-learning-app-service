@@ -11,7 +11,7 @@ public class AllowedVocabularyService(IAllowedVocabularyRepository allowedVocabu
         return allowedVocabularyRepository.IsVocabularyAllowedAsync(language, word);
     }
 
-    public async Task<List<AllowedVocabulary>> GetWordsByCategoryAsync(string language)
+    public async Task<IEnumerable<AllowedVocabulary>> GetWordsByCategoryAsync(string language)
     {
         return await allowedVocabularyRepository.GetWordsByCategoryAsync(language);
     }

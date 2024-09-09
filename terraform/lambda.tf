@@ -130,12 +130,12 @@ data "aws_iam_policy_document" "lambda_policy" {
       "dynamodb:UpdateItem",
       "dynamodb:Query",
       "dynamodb:DeleteItem",
-      "secretsmanager:GetSecretValue"
+      "secretsmanager:GetSecretValue",
     ]
     effect = "Allow"
     resources = [
       aws_dynamodb_table.users.arn, aws_dynamodb_table.user_languages.arn, aws_dynamodb_table.vocabulary.arn,
-      aws_dynamodb_table.allowed_vocabulary.arn, data.aws_secretsmanager_secret.api_keys.arn
+      aws_dynamodb_table.allowed_vocabulary.arn, data.aws_secretsmanager_secret.api_keys.arn,  "${aws_dynamodb_table.allowed_vocabulary.arn}/index/*",
     ]
   }
 }
