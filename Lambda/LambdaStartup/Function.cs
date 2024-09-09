@@ -174,6 +174,11 @@ public class Function(
         {
             var userId = AuthHelper.ParseToken(authorization).Sub;
 
+            foreach (var word in addRequest.Vocabulary)
+            {
+                Console.WriteLine($"Adding word: {word}");
+            }
+
             var vocabularies = await vocabularyService.AddVocabularyAsync(userId, addRequest);
 
             return ResponseHelper.CreateSuccessResponse(vocabularies, typeof(IEnumerable<string>));
