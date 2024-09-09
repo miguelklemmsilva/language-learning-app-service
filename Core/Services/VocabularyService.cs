@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.DataModels;
@@ -5,7 +6,7 @@ using Core.Models.DataTransferModels;
 
 namespace Core.Services;
 
-public class VocabularyService(
+public partial class VocabularyService(
     IVocabularyRepository vocabularyRepository,
     IAllowedVocabularyService allowedVocabularyService) : IVocabularyService
 {
@@ -16,13 +17,20 @@ public class VocabularyService(
 
         return await allowedVocabularyService.IsVocabularyAllowedAsync(language, word);
     }
+    
+    private static string DecodeUnicodeEscapes(string input)
+    {
+        return MyRegex().Replace(input, match => ((char)Convert.ToInt32(match.Groups[1].Value, 16)).ToString());
+    }
 
     public async Task<IEnumerable<string>> AddVocabularyAsync(string userId, AddVocabularyRequest request)
     {
         var currentVocabulary = (await GetVocabularyAsync(userId, request.Language)).ToList();
         var newWords = new List<string>();
+        
+        var decodedVocabulary = request.Vocabulary.Select(DecodeUnicodeEscapes).ToList();
 
-        foreach (var word in request.Vocabulary)
+        foreach (var word in decodedVocabulary)
         {
             try
             {
@@ -175,4 +183,7 @@ public class VocabularyService(
 
         return wordScore;
     }
+
+    [GeneratedRegex(@"\\u([0-9A-Fa-f]{4})")]
+    private static partial Regex MyRegex();
 }
