@@ -3,7 +3,7 @@ using Core.Models.DataModels;
 
 namespace Infrastructure.Factories;
 
-public class UserFactory
+public static class UserFactory
 {
     public static User Build(Dictionary<string, AttributeValue> item)
     {

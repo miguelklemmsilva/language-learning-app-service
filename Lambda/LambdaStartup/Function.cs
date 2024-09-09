@@ -24,10 +24,6 @@ public class Function(
     [LambdaFunction]
     public async Task<JsonObject> PreSignUpTrigger(JsonObject request)
     {
-        // print all fields and fields inside of each in jsonobject
-        Console.WriteLine(request.ToString());
-        Console.WriteLine(request["request"]?.ToJsonString());
-
         var email = request["request"]!["userAttributes"]!["email"]!.ToString().ToLower();
         var sub = request["request"]!["userAttributes"]!["sub"]!.ToString();
         
@@ -51,8 +47,8 @@ public class Function(
     {
         try
         {
-            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
-
+            var userId = AuthHelper.ParseToken(authorization).Sub;
+            
             var user = await userService.GetUserAsync(userId);
 
             return ResponseHelper.CreateSuccessResponse(user, typeof(UserResponse));
@@ -70,7 +66,7 @@ public class Function(
     {
         try
         {
-            var username = AuthHelper.ParseToken(authorization).CognitoUsername;
+            var username = AuthHelper.ParseToken(authorization).Sub;
 
             var user = await userService.UpdateUserAsync(new User
                 { UserId = username, ActiveLanguage = updateRequest.ActiveLanguage });
@@ -90,7 +86,7 @@ public class Function(
     {
         try
         {
-            var username = AuthHelper.ParseToken(authorization).CognitoUsername;
+            var username = AuthHelper.ParseToken(authorization).Sub;
 
             var userLanguage = new UserLanguage
             {
@@ -117,7 +113,7 @@ public class Function(
     {
         try
         {
-            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+            var userId = AuthHelper.ParseToken(authorization).Sub;
 
             var languages = await userLanguageService.GetUserLanguagesAsync(userId);
 
@@ -136,7 +132,7 @@ public class Function(
     {
         try
         {
-            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+            var userId = AuthHelper.ParseToken(authorization).Sub;
 
             var newLanguage = await userLanguageService.RemoveUserLanguageAsync(userId, language);
             
@@ -156,7 +152,7 @@ public class Function(
     {
         try
         {
-            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+            var userId = AuthHelper.ParseToken(authorization).Sub;
 
             var vocabularies = await vocabularyService.GetVocabularyAsync(userId, language);
 
@@ -175,7 +171,7 @@ public class Function(
     {
         try
         {
-            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+            var userId = AuthHelper.ParseToken(authorization).Sub;
 
             var vocabularies = await vocabularyService.AddVocabularyAsync(userId, addRequest);
 
@@ -194,7 +190,7 @@ public class Function(
     {
         try
         {
-            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+            var userId = AuthHelper.ParseToken(authorization).Sub;
 
             await vocabularyService.RemoveVocabularyAsync(userId, language, word);
 
@@ -214,7 +210,7 @@ public class Function(
     {
         try
         {
-            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+            var userId = AuthHelper.ParseToken(authorization).Sub;
 
             var sentences = await aiService.GenerateSentencesAsync(userId);
 
@@ -249,7 +245,7 @@ public class Function(
     {
         try
         {
-            var userId = AuthHelper.ParseToken(authorization).CognitoUsername;
+            var userId = AuthHelper.ParseToken(authorization).Sub;
  
             var user = await userService.GetUserAsync(userId);
             
