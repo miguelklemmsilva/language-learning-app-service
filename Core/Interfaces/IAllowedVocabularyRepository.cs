@@ -5,5 +5,5 @@ namespace Core.Interfaces;
 public interface IAllowedVocabularyRepository
 {
     Task<bool> IsVocabularyAllowedAsync(string language, string word);
-    Task<IEnumerable<AllowedVocabulary>> GetAllowedVocabularyByLanguageAsync(string language);
+    Task<List<AllowedVocabulary>> GetWordsByCategoryAsync(string language);
 }

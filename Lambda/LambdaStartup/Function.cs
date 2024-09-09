@@ -287,7 +287,7 @@ public class Function(
     {
         try
         {
-            var categories = await allowedVocabularyService.GetAllowedVocabularyByLanguageAsync(language);
+            var categories = await allowedVocabularyService.GetWordsByCategoryAsync(language);
             
             return ResponseHelper.CreateSuccessResponse(categories, typeof(IEnumerable<string>));
         }

@@ -65,8 +65,9 @@ resource "aws_dynamodb_table" "allowed_vocabulary" {
   }
 
   global_secondary_index {
-    name               = "Language-index"
+    name               = "CategoryIndex"
     hash_key           = "Language"
+    range_key          = "Category"
     projection_type    = "ALL"
   }
 }

@@ -8,7 +8,6 @@ namespace Infrastructure.Repositories;
 public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocabularyRepository
 {
     private const string TableName = "allowed_vocabulary";
-    private const string LanguageIndexName = "Language-index";
 
     public async Task<bool> IsVocabularyAllowedAsync(string language, string word)
     {
@@ -26,13 +25,13 @@ public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocab
 
         return response.Item != null;
     }
-
-    public async Task<IEnumerable<AllowedVocabulary>> GetAllowedVocabularyByLanguageAsync(string language)
+    
+    public async Task<List<AllowedVocabulary>> GetWordsByCategoryAsync(string language)
     {
         var request = new QueryRequest
         {
             TableName = TableName,
-            IndexName = LanguageIndexName,
+            IndexName = "CategoryIndex",
             KeyConditionExpression = "Language = :language",
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
@@ -42,11 +41,17 @@ public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocab
 
         var response = await client.QueryAsync(request);
 
-        return response.Items.Select(item => new AllowedVocabulary
+        var result = new List<AllowedVocabulary>();
+        foreach (var item in response.Items)
         {
-            Word = item["Word"].S,
-            Language = item["Language"].S,
-            Category = item["Category"].S
-        });
+            result.Add(new AllowedVocabulary
+            {
+                Language = item["Language"].S,
+                Word = item["Word"].S,
+                Category = item["Category"].S
+            });
+        }
+
+        return result;
     }
 }
