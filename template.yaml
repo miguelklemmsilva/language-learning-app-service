@@ -191,6 +191,7 @@ Resources:
     Properties:
       CodeUri: ./Lambda/LambdaStartup/
       Handler: bootstrap
+      FunctionName: "GetCategories"
       Environment:
         Variables:
           ANNOTATIONS_HANDLER: "GetCategories"
