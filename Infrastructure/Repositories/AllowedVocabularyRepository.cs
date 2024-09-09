@@ -32,7 +32,11 @@ public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocab
         {
             TableName = TableName,
             IndexName = "CategoryIndex",
-            KeyConditionExpression = "Language = :language",
+            KeyConditionExpression = "#Language = :language",
+            ExpressionAttributeNames = new Dictionary<string, string>
+            {
+                { "#Language", "Language" }
+            },
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
                 { ":language", new AttributeValue { S = language } }

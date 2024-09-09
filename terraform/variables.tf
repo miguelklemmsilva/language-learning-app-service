@@ -62,9 +62,14 @@ variable "api_routes" {
       lambda_function = "finish_lesson_function"
     },
     {
-        path            = "issuetoken"
-        http_method     = "GET"
-        lambda_function = "issue_token_function"
+      path            = "issuetoken"
+      http_method     = "GET"
+      lambda_function = "issue_token_function"
+    },
+    {
+      path            = "categories"
+      http_method     = "GET"
+      lambda_function = "getcategories_function"
     }
   ]
 }
@@ -83,6 +88,7 @@ locals {
     "verify_sentence_function"    = data.aws_lambda_function.verify_sentence.invoke_arn
     "finish_lesson_function"      = data.aws_lambda_function.finish_lesson.invoke_arn
     "issue_token_function"        = data.aws_lambda_function.issue_token.invoke_arn
+    "getcategories_function"      = data.aws_lambda_function.get_categories.invoke_arn
   }
 
   lambda_arn_map = {
@@ -98,5 +104,6 @@ locals {
     "verify_sentence_function"    = data.aws_lambda_function.verify_sentence.arn
     "finish_lesson_function"      = data.aws_lambda_function.finish_lesson.arn
     "issue_token_function"        = data.aws_lambda_function.issue_token.arn
+    "getcategories_function"      = data.aws_lambda_function.get_categories.arn
   }
 }
