@@ -24,9 +24,13 @@ public class Function(
     [LambdaFunction]
     public async Task<JsonObject> PreSignUpTrigger(JsonObject request)
     {
+        // print all fields and fields inside of each in jsonobject
+        Console.WriteLine(request.ToString());
+        Console.WriteLine(request["request"]?.ToJsonString());
+
         var email = request["request"]!["userAttributes"]!["email"]!.ToString().ToLower();
         var sub = request["request"]!["userAttributes"]!["sub"]!.ToString();
-
+        
         if (string.IsNullOrEmpty(email))
             throw new ArgumentException("Email not provided in the request.");
         
