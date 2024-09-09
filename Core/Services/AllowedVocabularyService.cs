@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Core.Interfaces;
 using Core.Models.DataModels;
 
@@ -11,8 +14,15 @@ public class AllowedVocabularyService(IAllowedVocabularyRepository allowedVocabu
         return allowedVocabularyRepository.IsVocabularyAllowedAsync(language, word);
     }
 
-    public async Task<IEnumerable<AllowedVocabulary>> GetWordsByCategoryAsync(string language)
+    public async Task<IDictionary<string, IEnumerable<string>>> GetWordsByCategoryAsync(string language)
     {
-        return await allowedVocabularyRepository.GetWordsByCategoryAsync(language);
+        var allWords = await allowedVocabularyRepository.GetWordsByCategoryAsync(language);
+        
+        return allWords
+            .GroupBy(w => w.Category)
+            .ToDictionary(
+                g => g.Key,
+                g => g.Select(w => w.Word)
+            );
     }
-}   
+}

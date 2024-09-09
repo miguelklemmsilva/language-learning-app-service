@@ -4,6 +4,6 @@ namespace Core.Interfaces;
 
 public interface IAllowedVocabularyService
 {
-    public Task<bool> IsVocabularyAllowedAsync(string language, string word);
-    public Task<IEnumerable<AllowedVocabulary>> GetWordsByCategoryAsync(string language);
+    Task<bool> IsVocabularyAllowedAsync(string language, string word);
+    Task<IDictionary<string, IEnumerable<string>>> GetWordsByCategoryAsync(string language);
 }

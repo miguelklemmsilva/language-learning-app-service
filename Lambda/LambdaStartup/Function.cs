@@ -289,7 +289,7 @@ public class Function(
         {
             var categories = await allowedVocabularyService.GetWordsByCategoryAsync(language);
             
-            return ResponseHelper.CreateSuccessResponse(categories, typeof(IEnumerable<AllowedVocabulary>));
+            return ResponseHelper.CreateSuccessResponse(categories, typeof(IDictionary<string, IEnumerable<string>>));
         }
         catch (Exception e)
         {
