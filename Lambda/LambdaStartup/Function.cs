@@ -18,6 +18,7 @@ public class Function(
     IUserService userService,
     IUserLanguageService userLanguageService,
     IVocabularyService vocabularyService,
+    IAllowedVocabularyService allowedVocabularyService,
     IAiService aiService,
     ITokenService tokenService)
 {
@@ -55,7 +56,7 @@ public class Function(
         }
         catch (Exception e)
         {
-            return ResponseHelper.CreateErrorResponse(e.Message);
+            return ResponseHelper.CreateErrorResponse(e.Message) ;
         }
     }
 
@@ -273,6 +274,22 @@ public class Function(
             var token = await tokenService.GetIssueTokenAsync();
             
             return ResponseHelper.CreateSuccessResponse(token, typeof(string));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
+    }
+    
+    [LambdaFunction]
+    [HttpApi(LambdaHttpMethod.Get, "/categories")]
+    public async Task<APIGatewayHttpApiV2ProxyResponse> GetCategories([FromQuery] string language)
+    {
+        try
+        {
+            var categories = await allowedVocabularyService.GetAllowedVocabularyByLanguageAsync(language);
+            
+            return ResponseHelper.CreateSuccessResponse(categories, typeof(IEnumerable<string>));
         }
         catch (Exception e)
         {

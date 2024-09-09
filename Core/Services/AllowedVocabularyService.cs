@@ -1,4 +1,5 @@
 using Core.Interfaces;
+using Core.Models.DataModels;
 
 namespace Core.Services;
 
@@ -7,5 +8,10 @@ public class AllowedVocabularyService(IAllowedVocabularyRepository allowedVocabu
     public Task<bool> IsVocabularyAllowedAsync(string language, string word)
     {
         return allowedVocabularyRepository.IsVocabularyAllowedAsync(language, word);
+    }
+    
+    public Task<IEnumerable<AllowedVocabulary>> GetAllowedVocabularyByLanguageAsync(string language)
+    {
+        return allowedVocabularyRepository.GetAllowedVocabularyByLanguageAsync(language);
     }
 }
