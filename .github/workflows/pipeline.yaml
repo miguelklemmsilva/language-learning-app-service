@@ -33,12 +33,6 @@ jobs:
         with:
           use-installer: true
           
-      - name: List dotnet SDK versions
-        run: ls /usr/share/dotnet/sdk
-        
-      - name: Remove dotnet SDK versions
-        run: sudo rm -r /usr/share/dotnet/sdk/6.0.425 /usr/share/dotnet/sdk/7.0.410
-
       - name: Build lambdas
         run: sam build --template ${SAM_TEMPLATE} --parallel
           
