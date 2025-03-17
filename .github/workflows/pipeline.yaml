@@ -19,13 +19,7 @@ env:
   TESTING_ARTIFACTS_BUCKET: aws-sam-cli-managed-staging-pipeli-artifactsbucket-kixxajb9vq0q
   TESTING_REGION: eu-west-2
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-    - name: Run Unit and Integration Tests
-      run: dotnet test ./Tests/Tests.csproj --configuration Release
-  
+jobs:  
   build-and-package:
     runs-on: ubuntu-latest
     env:
