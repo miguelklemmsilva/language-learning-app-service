@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lambda.PreSignUp", "Lambda\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lambda.LambdaStartup", "Lambda\LambdaStartup\Lambda.LambdaStartup.csproj", "{C3FB60EC-B6F7-4198-8201-DF55089FDF1A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{4ACCFBBB-B3B5-454B-B1B7-6FFE480686CB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +40,10 @@ Global
 		{C3FB60EC-B6F7-4198-8201-DF55089FDF1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C3FB60EC-B6F7-4198-8201-DF55089FDF1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C3FB60EC-B6F7-4198-8201-DF55089FDF1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ACCFBBB-B3B5-454B-B1B7-6FFE480686CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ACCFBBB-B3B5-454B-B1B7-6FFE480686CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ACCFBBB-B3B5-454B-B1B7-6FFE480686CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ACCFBBB-B3B5-454B-B1B7-6FFE480686CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{56384230-FAA2-4443-B2BD-A0045E813112} = {15C3591B-31E6-4E3B-8AFF-13DAF3A98278}

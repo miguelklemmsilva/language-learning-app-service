@@ -20,6 +20,12 @@ env:
   TESTING_REGION: eu-west-2
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Run Unit and Integration Tests
+      run: dotnet test ./Tests/Tests.csproj --configuration Release
+  
   build-and-package:
     runs-on: ubuntu-latest
     env:
