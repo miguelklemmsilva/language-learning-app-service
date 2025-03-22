@@ -12,87 +12,50 @@ on:
 env:
   PIPELINE_USER_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  SAM_TEMPLATE: template.yaml
-  TESTING_STACK_NAME: language-learning-app
-  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::021891610553:role/aws-sam-cli-managed-sttg-pipe-PipelineExecutionRole-BtxVshGQRTdm
-  TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::021891610553:role/aws-sam-cli-managed-sttg--CloudFormationExecutionRo-CpMUVuR6YY5P
-  TESTING_ARTIFACTS_BUCKET: aws-sam-cli-managed-staging-pipeli-artifactsbucket-kixxajb9vq0q
-  TESTING_REGION: eu-west-2
+  PIPELINE_EXECUTION_ROLE: ${{ secrets.PIPELINE_EXECUTION_ROLE }}
 
 jobs:  
   build-and-package:
     runs-on: ubuntu-latest
-    env:
-      SAM_TEMPLATE: template.yaml
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - uses: aws-actions/setup-sam@v2
-        with:
-          use-installer: true
           
       - name: Build lambdas
-        run: sam build --template ${SAM_TEMPLATE} --parallel
-          
-      - name: Assume the testing pipeline user role
-        uses: aws-actions/configure-aws-credentials@v1-node16
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.TESTING_REGION }}
-          role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
-          role-session-name: feature-deployment
-          role-duration-seconds: 3600
-          role-skip-session-tagging: true
-
-      - name: Upload artifacts to testing artifact buckets
         run: |
-          sam package \
-            --s3-bucket ${TESTING_ARTIFACTS_BUCKET} \
-            --region ${TESTING_REGION} \
-            --output-template-file packaged-testing.yaml
-
+          dotnet tool install -g Amazon.Lambda.Tools
+          mkdir publish
+          cd Lambda/LambdaStartup
+          dotnet lambda package -farch x86_64 --output-package ../../publish/Lambdas.zip
+      
       - uses: actions/upload-artifact@v4
         with:
-          name: packaged-testing.yaml
-          path: packaged-testing.yaml
+          name: Package Lambdas
+          path: publish/Lambdas.zip
 
-  deploy-testing:
+  deploy:
     needs: [ build-and-package ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: aws-actions/setup-sam@v2
-        with:
-          use-installer: true
       - uses: actions/download-artifact@v4
         with:
-          name: packaged-testing.yaml
-
-      - name: Assume the testing pipeline user role
-        uses: aws-actions/configure-aws-credentials@v1-node16
+          name: Package Lambdas
+          
+      - name: Setup AWS CLI
+        uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.TESTING_REGION }}
-          role-to-assume: ${{ env.TESTING_PIPELINE_EXECUTION_ROLE }}
-          role-session-name: testing-deployment
-          role-duration-seconds: 3600
-          role-skip-session-tagging: true
-
-      - name: Deploy to testing account
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-2
+          
+      - name: Sync files to S3 bucket
         run: |
-          sam deploy --stack-name ${TESTING_STACK_NAME} \
-            --template packaged-testing.yaml \
-            --capabilities CAPABILITY_IAM \
-            --region ${TESTING_REGION} \
-            --no-fail-on-empty-changeset \
-            --role-arn ${TESTING_CLOUDFORMATION_EXECUTION_ROLE} \
-            --no-confirm-changeset
+          aws s3 cp Lambdas.zip s3://polybara-artifacts/Lambdas.zip 
   
   terraform:
+    needs: [ deploy ]
     runs-on: ubuntu-latest
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}

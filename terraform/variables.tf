@@ -73,37 +73,3 @@ variable "api_routes" {
     }
   ]
 }
-
-locals {
-  lambda_function_map = {
-    "updatelanguage_function"     = data.aws_lambda_function.update_language.invoke_arn
-    "getuser_function"            = data.aws_lambda_function.get_user.invoke_arn
-    "getuserlanguages_function"   = data.aws_lambda_function.get_user_languages.invoke_arn
-    "removeuserlanguage_function" = data.aws_lambda_function.remove_user_language.invoke_arn
-    "updateuser_function"         = data.aws_lambda_function.update_user.invoke_arn
-    "addvocabulary_function"      = data.aws_lambda_function.add_vocabulary.invoke_arn
-    "getvocabulary_function"      = data.aws_lambda_function.get_vocabulary.invoke_arn
-    "removevocabulary_function"   = data.aws_lambda_function.remove_vocabulary.invoke_arn
-    "generate_sentences_function" = data.aws_lambda_function.generate_sentences.invoke_arn
-    "verify_sentence_function"    = data.aws_lambda_function.verify_sentence.invoke_arn
-    "finish_lesson_function"      = data.aws_lambda_function.finish_lesson.invoke_arn
-    "issue_token_function"        = data.aws_lambda_function.issue_token.invoke_arn
-    "getcategories_function"      = data.aws_lambda_function.get_categories.invoke_arn
-  }
-
-  lambda_arn_map = {
-    "updatelanguage_function"     = data.aws_lambda_function.update_language.arn
-    "getuser_function"            = data.aws_lambda_function.get_user.arn
-    "getuserlanguages_function"   = data.aws_lambda_function.get_user_languages.arn
-    "removeuserlanguage_function" = data.aws_lambda_function.remove_user_language.arn
-    "updateuser_function"         = data.aws_lambda_function.update_user.arn
-    "addvocabulary_function"      = data.aws_lambda_function.add_vocabulary.arn
-    "getvocabulary_function"      = data.aws_lambda_function.get_vocabulary.arn
-    "removevocabulary_function"   = data.aws_lambda_function.remove_vocabulary.arn
-    "generate_sentences_function" = data.aws_lambda_function.generate_sentences.arn
-    "verify_sentence_function"    = data.aws_lambda_function.verify_sentence.arn
-    "finish_lesson_function"      = data.aws_lambda_function.finish_lesson.arn
-    "issue_token_function"        = data.aws_lambda_function.issue_token.arn
-    "getcategories_function"      = data.aws_lambda_function.get_categories.arn
-  }
-}

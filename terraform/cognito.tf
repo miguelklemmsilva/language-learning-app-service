@@ -25,7 +25,7 @@ resource "aws_cognito_user_pool" "user_pool" {
   }
 
   lambda_config {
-    post_confirmation = data.aws_lambda_function.pre_sign_up.arn
+    post_confirmation = aws_lambda_function.pre_sign_up.arn
   }
 }
 

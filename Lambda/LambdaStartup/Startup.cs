@@ -1,18 +1,12 @@
 using System.Net.Http.Headers;
-using System.Text.Json;
 using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.Lambda.Annotations;
-using Amazon.Runtime;
-using Amazon.SecretsManager;
-using Amazon.SecretsManager.Model;
 using Azure;
 using Azure.AI.Translation.Text;
 using Infrastructure.Repositories;
 using Core.Interfaces;
-using Core.Models.DataModels;
 using Core.Services;
-using Microsoft.CognitiveServices.Speech;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Lambda.LambdaStartup;
@@ -20,14 +14,8 @@ namespace Lambda.LambdaStartup;
 [LambdaStartup]
 public class Startup
 {
-    private const string SecretName = "apiKeys";
-
     public void ConfigureServices(IServiceCollection services)
     {
-        var secretsManager = new AmazonSecretsManagerClient(RegionEndpoint.EUWest2);
-        var secrets = GetSecretsAsync(secretsManager).GetAwaiter().GetResult();
-
-        services.AddSingleton<IAmazonSecretsManager>(secretsManager);
         services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(RegionEndpoint.EUWest2));
         services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IUserService, UserService>();
@@ -41,50 +29,47 @@ public class Startup
         services.AddSingleton<ITranslationService, TranslationService>();
         services.AddSingleton<ITokenService, TokenService>();
 
-        services.AddHttpClient<IChatGptService, ChatGptService>(client =>
-        {
-            ConfigureChatGptHttpClient(client, secrets);
-        });
+        services.AddHttpClient<IChatGptService, ChatGptService>(ConfigureChatGptHttpClient);
 
-        services.AddSingleton(provider => CreateTextTranslationClient(secrets));
+        services.AddSingleton(_ => CreateTextTranslationClient());
 
-        services.AddHttpClient<ITokenService, TokenService>(client =>
-        {
-            ConfigureSpeechServiceHttpClient(client, secrets);
-        });
+        services.AddHttpClient<ITokenService, TokenService>(ConfigureSpeechServiceHttpClient);
 
         services.AddSingleton<IAiService, AiService>();
     }
 
-    private static void ConfigureChatGptHttpClient(HttpClient client, Dictionary<string, string> secrets)
+    private static void ConfigureChatGptHttpClient(HttpClient client)
     {
+        var chatGptKey = Environment.GetEnvironmentVariable("CHAT_GPT_KEY");
+        if (!string.IsNullOrEmpty(chatGptKey))
+            throw new InvalidOperationException("Chat GPT key is missing");
+
         client.BaseAddress = new Uri("https://api.openai.com");
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {secrets["chatGptKey"]}");
+        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {chatGptKey}");
     }
 
-    private static void ConfigureSpeechServiceHttpClient(HttpClient client, Dictionary<string, string> secrets)
+    private static void ConfigureSpeechServiceHttpClient(HttpClient client)
     {
+        var speechKey = Environment.GetEnvironmentVariable("SPEECH_KEY");
+        if (string.IsNullOrEmpty(speechKey))
+            throw new InvalidOperationException("Speech key is missing");
+
         client.BaseAddress = new Uri("https://uksouth.api.cognitive.microsoft.com");
         client.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/x-www-form-urlencoded"));
-        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", secrets["speechKey"]);
+        client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", speechKey);
     }
 
-    private static TextTranslationClient CreateTextTranslationClient(Dictionary<string, string> secrets)
+    private static TextTranslationClient CreateTextTranslationClient()
     {
-        var translatorKey = secrets["translatorKey"];
+        var translatorKey = Environment.GetEnvironmentVariable("TRANSLATOR_KEY");
+        if (string.IsNullOrEmpty(translatorKey))
+            throw new InvalidOperationException("Translator key is missing");
+
         const string translatorRegion = "uksouth";
 
         var credential = new AzureKeyCredential(translatorKey);
         return new TextTranslationClient(credential, translatorRegion);
-    }
-
-    private static async Task<Dictionary<string, string>> GetSecretsAsync(IAmazonSecretsManager secretsManager)
-    {
-        var response = await secretsManager.GetSecretValueAsync(new GetSecretValueRequest { SecretId = SecretName });
-        return JsonSerializer.Deserialize(response.SecretString,
-                   CustomJsonSerializerContext.Default.DictionaryStringString) ??
-               throw new Exception("Failed to retrieve secrets");
     }
 }
