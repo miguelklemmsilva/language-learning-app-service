@@ -17,7 +17,7 @@ public partial class VocabularyService(
 
         return await allowedVocabularyService.IsVocabularyAllowedAsync(language, word);
     }
-    
+
     private static string DecodeUnicodeEscapes(string input)
     {
         return MyRegex().Replace(input, match => ((char)Convert.ToInt32(match.Groups[1].Value, 16)).ToString());
@@ -27,7 +27,7 @@ public partial class VocabularyService(
     {
         var currentVocabulary = (await GetVocabularyAsync(userId, request.Language)).ToList();
         var newWords = new List<string>();
-        
+
         var decodedVocabulary = request.Vocabulary.Select(DecodeUnicodeEscapes).ToList();
 
         foreach (var word in decodedVocabulary)
@@ -102,11 +102,12 @@ public partial class VocabularyService(
 
     public async Task<Vocabulary> UpdateVocabularyAsync(Vocabulary vocabulary)
     {
-        var existingVocabulary =
-            await vocabularyRepository.GetUserVocabularyAsync(vocabulary.UserId, vocabulary.Language);
+        ArgumentNullException.ThrowIfNull(vocabulary);
 
-        if (existingVocabulary == null)
-            throw new Exception("Vocabulary not found");
+        var existingVocabulary =
+            await vocabularyRepository.GetUserVocabularyAsync(vocabulary.UserId!, vocabulary.Language);
+
+        ArgumentNullException.ThrowIfNull(existingVocabulary);
 
         return await vocabularyRepository.UpdateVocabularyAsync(vocabulary);
     }
@@ -116,8 +117,7 @@ public partial class VocabularyService(
         var existingVocabulary =
             await vocabularyRepository.GetVocabularyAsync(userId, language, word);
 
-        if (existingVocabulary == null)
-            throw new Exception("Vocabulary not found");
+        ArgumentNullException.ThrowIfNull(existingVocabulary);
 
         await vocabularyRepository.RemoveVocabularyAsync(userId, language, word);
     }

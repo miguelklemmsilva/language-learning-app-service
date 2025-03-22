@@ -114,7 +114,6 @@ resource "aws_api_gateway_integration_response" "cors_integration_response" {
 
 resource "aws_api_gateway_deployment" "deployment" {
   rest_api_id = aws_api_gateway_rest_api.rest_api.id
-  stage_name  = "prod"
 
   triggers = {
     redeployment = sha1(jsonencode([

@@ -2,6 +2,7 @@
 # Created by https://www.gitignore.io/api/macos,linux,windows,sublimetext,dotsettings,visualstudio,visualstudiocode
 
 test-lambda.zip
+LanguageLearningAppService.Lambda/template.yaml
 
 ### DotSettings ###
 *.DotSettings
