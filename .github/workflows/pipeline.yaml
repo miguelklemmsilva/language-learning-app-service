@@ -52,7 +52,7 @@ jobs:
           
       - name: Sync files to S3 bucket
         run: |
-          aws s3 cp Lambdas.zip s3://polybara-artifacts/Lambdas.zip 
+          aws s3 sync Lambdas.zip s3://polybara-artifacts/Lambdas.zip 
   
   terraform:
     needs: [ deploy ]

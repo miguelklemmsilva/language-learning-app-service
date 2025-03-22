@@ -39,6 +39,8 @@ resource "aws_lambda_function" "api_route_functions" {
   s3_key      = "Lambdas.zip"
   function_name = each.key
   role          = aws_iam_role.lambda_role[each.key].arn
+  handler = "bootstrap"
+  runtime = "dotnet8"
 
   environment {
     variables = {
@@ -52,6 +54,8 @@ resource "aws_lambda_function" "pre_sign_up" {
   s3_key      = "Lambdas.zip"
   function_name = "PreSignUp"
   role          = aws_iam_role.pre_sign_up_role.arn
+  handler = "bootstrap"
+  runtime = "dotnet8"
 
   environment {
     variables = {
