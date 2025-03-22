@@ -56,6 +56,7 @@ resource "aws_lambda_function" "api_route_functions" {
 resource "aws_lambda_function" "pre_sign_up" {
   s3_bucket     = "polybara-artifacts"
   s3_key        = "Lambdas.zip"
+  s3_object_version = data.aws_s3_object.lambda_artifact_object.version_id
   function_name = "polybara-PreSignUp"
   role          = aws_iam_role.pre_sign_up_role.arn
   handler       = "bootstrap"
