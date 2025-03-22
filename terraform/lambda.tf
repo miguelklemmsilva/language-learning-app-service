@@ -36,6 +36,7 @@ resource "aws_lambda_function" "api_route_functions" {
   for_each = {for route in var.api_routes : route.lambda_function => route}
 
   s3_bucket     = "polybara-artifacts"
+  source_code_hash = data.aws_s3_object.lambda_artifact_object.checksum_sha256
   s3_key        = "Lambdas.zip"
   function_name = "polybara-${each.key}"
   role          = aws_iam_role.lambda_role[each.key].arn
@@ -59,6 +60,7 @@ resource "aws_lambda_function" "pre_sign_up" {
   role          = aws_iam_role.pre_sign_up_role.arn
   handler       = "bootstrap"
   runtime       = "dotnet8"
+  source_code_hash = data.aws_s3_object.lambda_artifact_object.checksum_sha256
 
   environment {
     variables = {
