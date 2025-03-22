@@ -37,6 +37,7 @@ resource "aws_lambda_function" "api_route_functions" {
 
   s3_bucket     = "polybara-artifacts"
   source_code_hash = data.aws_s3_object.lambda_artifact_object.checksum_sha256
+  s3_object_version = data.aws_s3_object.lambda_artifact_object.version_id
   s3_key        = "Lambdas.zip"
   function_name = "polybara-${each.key}"
   role          = aws_iam_role.lambda_role[each.key].arn
