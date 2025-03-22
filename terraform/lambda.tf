@@ -137,15 +137,3 @@ resource "aws_iam_role_policy" "pre_sign_up_policy" {
     ]
   })
 }
-
-resource "aws_cloudwatch_log_group" "api_route_log_groups" {
-  for_each = aws_lambda_function.api_route_functions
-
-  name              = "/aws/lambda/${each.value.function_name}"
-  retention_in_days = 1
-}
-
-resource "aws_cloudwatch_log_group" "pre_sign_up_log_group" {
-  name              = "/aws/lambda/${aws_lambda_function.pre_sign_up.function_name}"
-  retention_in_days = 1
-}
