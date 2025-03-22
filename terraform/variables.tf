@@ -73,3 +73,7 @@ variable "api_routes" {
     }
   ]
 }
+
+variable SPEECH_KEY {}
+variable "CHAT_GPT_KEY" {}
+variable "TRANSLATOR_KEY" {}

@@ -33,18 +33,21 @@ resource "aws_iam_role" "pre_sign_up_role" {
 }
 
 resource "aws_lambda_function" "api_route_functions" {
-  for_each      = { for route in var.api_routes : route.lambda_function => route }
+  for_each = {for route in var.api_routes : route.lambda_function => route}
 
-  s3_bucket      = "polybara-artifacts"
-  s3_key         = "Lambdas.zip"
-  function_name  = "polybara-${each.key}"
-  role           = aws_iam_role.lambda_role[each.key].arn
-  handler        = "bootstrap"
-  runtime        = "dotnet8"
+  s3_bucket     = "polybara-artifacts"
+  s3_key        = "Lambdas.zip"
+  function_name = "polybara-${each.key}"
+  role          = aws_iam_role.lambda_role[each.key].arn
+  handler       = "bootstrap"
+  runtime       = "dotnet8"
 
   environment {
     variables = {
       ANNOTATIONS_HANDLER = each.key
+      SPEECH_KEY          = var.SPEECH_KEY
+      TRANSLATOR_KEY      = var.TRANSLATOR_KEY
+      CHAT_GPT_KEY        = var.CHAT_GPT_KEY
     }
   }
 }
@@ -60,6 +63,9 @@ resource "aws_lambda_function" "pre_sign_up" {
   environment {
     variables = {
       ANNOTATIONS_HANDLER = "PreSignUp"
+      SPEECH_KEY          = var.SPEECH_KEY
+      TRANSLATOR_KEY      = var.TRANSLATOR_KEY
+      CHAT_GPT_KEY        = var.CHAT_GPT_KEY
     }
   }
 }
