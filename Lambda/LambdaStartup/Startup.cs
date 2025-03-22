@@ -40,7 +40,9 @@ public class Startup
 
     private static void ConfigureChatGptHttpClient(HttpClient client)
     {
-        var chatGptKey = Environment.GetEnvironmentVariable("CHAT_GPT_KEY")!;
+        var chatGptKey = Environment.GetEnvironmentVariable("CHAT_GPT_KEY");
+        if (string.IsNullOrEmpty(chatGptKey))
+            throw new InvalidOperationException("Chat GPT key is missing");
 
         client.BaseAddress = new Uri("https://api.openai.com");
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
