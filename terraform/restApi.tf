@@ -45,10 +45,11 @@ resource "aws_api_gateway_integration" "routes" {
 }
 
 resource "aws_lambda_permission" "api_gateway_invoke" {
-  for_each      = {for idx, route in var.api_routes : "${route.path}-${route.http_method}" => route}
+  for_each = { for idx, route in var.api_routes : "${route.path}-${route.http_method}" => route }
+
   statement_id  = "AllowAPIGatewayInvoke${replace(each.value.path, "/", "")}${each.value.http_method}"
   action        = "lambda:InvokeFunction"
-  function_name = each.value.lambda_function
+  function_name = aws_lambda_function.api_route_functions[each.value.lambda_function].function_name
   principal     = "apigateway.amazonaws.com"
   source_arn    = "${aws_api_gateway_rest_api.rest_api.execution_arn}/*/*"
 }
