@@ -9,67 +9,67 @@ variable "api_routes" {
     {
       path            = "language"
       http_method     = "PUT"
-      lambda_function = "updatelanguage_function"
+      lambda_function = "UpdateLanguage"
     },
     {
       path            = "user"
       http_method     = "GET"
-      lambda_function = "getuser_function"
+      lambda_function = "GetUser"
     },
     {
       path            = "languages"
       http_method     = "GET"
-      lambda_function = "getuserlanguages_function"
+      lambda_function = "GetUserLanguages"
     },
     {
       path            = "language"
       http_method     = "DELETE"
-      lambda_function = "removeuserlanguage_function"
+      lambda_function = "RemoveLanguage"
     },
     {
       path            = "user"
       http_method     = "PUT"
-      lambda_function = "updateuser_function"
+      lambda_function = "UpdateUser"
     },
     {
       path            = "vocabulary"
       http_method     = "PUT"
-      lambda_function = "addvocabulary_function"
+      lambda_function = "AddVocabulary"
     },
     {
       path            = "vocabulary"
       http_method     = "GET"
-      lambda_function = "getvocabulary_function"
+      lambda_function = "GetVocabulary"
     },
     {
       path            = "vocabulary"
       http_method     = "DELETE"
-      lambda_function = "removevocabulary_function"
+      lambda_function = "RemoveVocabulary"
     },
     {
       path            = "generatesentences"
       http_method     = "GET"
-      lambda_function = "generate_sentences_function"
+      lambda_function = "GenerateSentences"
     },
     {
       path            = "verifysentence"
       http_method     = "POST"
-      lambda_function = "verify_sentence_function"
+      lambda_function = "VerifySentence"
     },
     {
       path            = "finishlesson"
       http_method     = "POST"
-      lambda_function = "finish_lesson_function"
+      lambda_function = "FinishLesson"
     },
     {
       path            = "issuetoken"
       http_method     = "GET"
-      lambda_function = "issue_token_function"
+      lambda_function = "IssueToken"
     },
     {
       path            = "categories"
       http_method     = "GET"
-      lambda_function = "getcategories_function"
+      lambda_function = "GetCategories"
     }
   ]
 }

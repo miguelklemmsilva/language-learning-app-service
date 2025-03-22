@@ -27,21 +27,21 @@ public class Function(
     {
         var email = request["request"]!["userAttributes"]!["email"]!.ToString().ToLower();
         var sub = request["request"]!["userAttributes"]!["sub"]!.ToString();
-        
+
         if (string.IsNullOrEmpty(email))
             throw new ArgumentException("Email not provided in the request.");
-        
+
         var newUser = new User
         {
             UserId = sub,
             Email = email
         };
-        
+
         await userService.CreateUserAsync(newUser);
 
         return request;
     }
-    
+
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/user")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> GetUser([FromHeader] string authorization)
@@ -49,14 +49,14 @@ public class Function(
         try
         {
             var userId = AuthHelper.ParseToken(authorization).Sub;
-            
+
             var user = await userService.GetUserAsync(userId);
 
             return ResponseHelper.CreateSuccessResponse(user, typeof(UserResponse));
         }
         catch (Exception e)
         {
-            return ResponseHelper.CreateErrorResponse(e.Message) ;
+            return ResponseHelper.CreateErrorResponse(e.Message);
         }
     }
 
@@ -136,7 +136,7 @@ public class Function(
             var userId = AuthHelper.ParseToken(authorization).Sub;
 
             var newLanguage = await userLanguageService.RemoveUserLanguageAsync(userId, language);
-            
+
             return ResponseHelper.CreateSuccessResponse(new RemoveUserLanguageResponse { ActiveLanguage = newLanguage },
                 typeof(RemoveUserLanguageResponse));
         }
@@ -187,7 +187,7 @@ public class Function(
         {
             return ResponseHelper.CreateErrorResponse(e.Message);
         }
-    }   
+    }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Delete, "/vocabulary")]
@@ -209,7 +209,7 @@ public class Function(
             return ResponseHelper.CreateErrorResponse(e.Message);
         }
     }
-    
+
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/generatesentences")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> GenerateSentences([FromHeader] string authorization)
@@ -235,7 +235,7 @@ public class Function(
         try
         {
             var result = await aiService.VerifySentenceAsync(verifyRequest);
-            
+
             return ResponseHelper.CreateSuccessResponse(result, typeof(VerifySentenceResponse));
         }
         catch (Exception e)
@@ -243,7 +243,7 @@ public class Function(
             return ResponseHelper.CreateErrorResponse(e.Message);
         }
     }
-    
+
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Post, "/finishlesson")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> FinishLesson([FromHeader] string authorization,
@@ -252,9 +252,9 @@ public class Function(
         try
         {
             var userId = AuthHelper.ParseToken(authorization).Sub;
- 
+
             var user = await userService.GetUserAsync(userId);
-            
+
             if (user.User.ActiveLanguage == null)
                 throw new Exception("Active language not set");
 
@@ -269,7 +269,7 @@ public class Function(
             return ResponseHelper.CreateErrorResponse(e.Message);
         }
     }
-    
+
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Post, "/issuetoken")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> IssueToken()
@@ -277,7 +277,7 @@ public class Function(
         try
         {
             var token = await tokenService.GetIssueTokenAsync();
-            
+
             return ResponseHelper.CreateSuccessResponse(token, typeof(string));
         }
         catch (Exception e)
@@ -285,7 +285,7 @@ public class Function(
             return ResponseHelper.CreateErrorResponse(e.Message);
         }
     }
-    
+
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/categories")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> GetCategories([FromQuery] string language)
@@ -293,7 +293,7 @@ public class Function(
         try
         {
             var categories = await allowedVocabularyService.GetWordsByCategoryAsync(language);
-            
+
             return ResponseHelper.CreateSuccessResponse(categories, typeof(IEnumerable<Category>));
         }
         catch (Exception e)
