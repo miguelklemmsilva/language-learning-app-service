@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.Json;
-using System.Text.RegularExpressions;
 using Azure;
 using Azure.AI.Translation.Text;
 using Core.Interfaces;
@@ -10,7 +9,7 @@ using Core.Models.DataTransferModels;
 
 namespace Core.Services;
 
-public partial class ChatGptService(HttpClient httpClient) : IChatGptService
+public class ChatGptService(HttpClient httpClient) : IChatGptService
 {
     public async Task<VerifySentenceResponse> VerifySentenceAsync(VerifySentenceRequest request)
     {
@@ -136,9 +135,6 @@ public partial class ChatGptService(HttpClient httpClient) : IChatGptService
             _ => throw new ArgumentException($"Unsupported language: {language}")
         };
     }
-
-    [GeneratedRegex(@"[^\u0000-\u007F]")]
-    private static partial Regex MyRegex();
 }
 
 public class TranslationService(TextTranslationClient textTranslationClient) : ITranslationService

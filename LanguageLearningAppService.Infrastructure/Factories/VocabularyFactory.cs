@@ -1,7 +1,7 @@
 using Amazon.DynamoDBv2.Model;
 using Core.Models.DataModels;
 
-namespace Infrastructure.Factories;
+namespace LanguageLearningAppService.Infrastructure.Factories;
 
 public static class VocabularyFactory
 {

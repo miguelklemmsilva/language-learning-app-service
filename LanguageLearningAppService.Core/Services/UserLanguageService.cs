@@ -1,6 +1,5 @@
 using Core.Interfaces;
 using Core.Models.DataModels;
-using Core.Models.DataTransferModels;
 
 namespace Core.Services;
 

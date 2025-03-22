@@ -2,9 +2,9 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using Core.Interfaces;
 using Core.Models.DataModels;
-using Infrastructure.Factories;
+using LanguageLearningAppService.Infrastructure.Factories;
 
-namespace Infrastructure.Repositories;
+namespace LanguageLearningAppService.Infrastructure.Repositories;
 
 public class UserLanguageRepository(IAmazonDynamoDB client) : IUserLanguageRepository
 {

@@ -4,12 +4,12 @@ using Amazon.DynamoDBv2;
 using Amazon.Lambda.Annotations;
 using Azure;
 using Azure.AI.Translation.Text;
-using Infrastructure.Repositories;
 using Core.Interfaces;
 using Core.Services;
+using LanguageLearningAppService.Infrastructure.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Lambda.LambdaStartup;
+namespace LanguageLearningAppService.Lambda;
 
 [LambdaStartup]
 public class Startup

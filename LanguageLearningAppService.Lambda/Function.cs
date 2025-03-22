@@ -7,9 +7,8 @@ using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
-using Core.Services;
 
-namespace Lambda.LambdaStartup;
+namespace LanguageLearningAppService.Lambda;
 
 [method: DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(Function))]
 [method: DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(APIGatewayHttpApiV2ProxyRequest))]

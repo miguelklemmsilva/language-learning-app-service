@@ -13,7 +13,6 @@
         <!-- StripSymbols tells the compiler to strip debugging symbols from the final executable if we're on Linux and put them into their own file. 
         This will greatly reduce the final executable's size.-->
         <StripSymbols>true</StripSymbols>
-        <RootNamespace>Lambda.LambdaStartup</RootNamespace>
         <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>
     <ItemGroup>
@@ -29,6 +28,8 @@
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.2" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\Infrastructure\Infrastructure.csproj" />
+      <ProjectReference Include="..\..\LanguageLearningAppService.Infrastructure\LanguageLearningAppService.Infrastructure.csproj" />
+      <ProjectReference Include="..\LanguageLearningAppService.Core\LanguageLearningAppService.Core.csproj" />
+      <ProjectReference Include="..\LanguageLearningAppService.Infrastructure\LanguageLearningAppService.Infrastructure.csproj" />
     </ItemGroup>
 </Project>

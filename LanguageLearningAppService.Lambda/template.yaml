@@ -3,7 +3,29 @@
   "Transform": "AWS::Serverless-2016-10-31",
   "Description": "This template is partially managed by Amazon.Lambda.Annotations (v1.5.0.0).",
   "Resources": {
-    "LambdaLambdaStartupFunctionGetUserGenerated": {
+    "LanguageLearningAppServiceLambdaFunctionPreSignUpTriggerGenerated": {
+      "Type": "AWS::Serverless::Function",
+      "Metadata": {
+        "Tool": "Amazon.Lambda.Annotations"
+      },
+      "Properties": {
+        "Runtime": "dotnet8",
+        "CodeUri": ".",
+        "MemorySize": 512,
+        "Timeout": 30,
+        "Policies": [
+          "AWSLambdaBasicExecutionRole"
+        ],
+        "PackageType": "Zip",
+        "Handler": "bootstrap",
+        "Environment": {
+          "Variables": {
+            "ANNOTATIONS_HANDLER": "PreSignUpTrigger"
+          }
+        }
+      }
+    },
+    "LanguageLearningAppServiceLambdaFunctionGetUserGenerated": {
       "Type": "AWS::Serverless::Function",
       "Metadata": {
         "Tool": "Amazon.Lambda.Annotations",
@@ -43,7 +65,7 @@
         }
       }
     },
-    "LambdaLambdaStartupFunctionUpdateUserGenerated": {
+    "LanguageLearningAppServiceLambdaFunctionUpdateUserGenerated": {
       "Type": "AWS::Serverless::Function",
       "Metadata": {
         "Tool": "Amazon.Lambda.Annotations",
@@ -83,7 +105,7 @@
         }
       }
     },
-    "LambdaLambdaStartupFunctionUpdateLanguageGenerated": {
+    "LanguageLearningAppServiceLambdaFunctionUpdateLanguageGenerated": {
       "Type": "AWS::Serverless::Function",
       "Metadata": {
         "Tool": "Amazon.Lambda.Annotations",
@@ -123,7 +145,7 @@
         }
       }
     },
-    "LambdaLambdaStartupFunctionGetUserLanguagesGenerated": {
+    "LanguageLearningAppServiceLambdaFunctionGetUserLanguagesGenerated": {
       "Type": "AWS::Serverless::Function",
       "Metadata": {
         "Tool": "Amazon.Lambda.Annotations",
@@ -163,7 +185,7 @@
         }
       }
     },
-    "LambdaLambdaStartupFunctionRemoveLanguageGenerated": {
+    "LanguageLearningAppServiceLambdaFunctionRemoveLanguageGenerated": {
       "Type": "AWS::Serverless::Function",
       "Metadata": {
         "Tool": "Amazon.Lambda.Annotations",
@@ -203,87 +225,7 @@
         }
       }
     },
-    "LambdaLambdaStartupFunctionAddVocabularyGenerated": {
-      "Type": "AWS::Serverless::Function",
-      "Metadata": {
-        "Tool": "Amazon.Lambda.Annotations",
-        "SyncedEvents": [
-          "RootPut"
-        ],
-        "SyncedEventProperties": {
-          "RootPut": [
-            "Path",
-            "Method"
-          ]
-        }
-      },
-      "Properties": {
-        "Runtime": "dotnet8",
-        "CodeUri": ".",
-        "MemorySize": 512,
-        "Timeout": 30,
-        "Policies": [
-          "AWSLambdaBasicExecutionRole"
-        ],
-        "PackageType": "Zip",
-        "Handler": "bootstrap",
-        "Environment": {
-          "Variables": {
-            "ANNOTATIONS_HANDLER": "AddVocabulary"
-          }
-        },
-        "Events": {
-          "RootPut": {
-            "Type": "HttpApi",
-            "Properties": {
-              "Path": "/vocabulary",
-              "Method": "PUT"
-            }
-          }
-        }
-      }
-    },
-    "LambdaLambdaStartupFunctionRemoveVocabularyGenerated": {
-      "Type": "AWS::Serverless::Function",
-      "Metadata": {
-        "Tool": "Amazon.Lambda.Annotations",
-        "SyncedEvents": [
-          "RootDelete"
-        ],
-        "SyncedEventProperties": {
-          "RootDelete": [
-            "Path",
-            "Method"
-          ]
-        }
-      },
-      "Properties": {
-        "Runtime": "dotnet8",
-        "CodeUri": ".",
-        "MemorySize": 512,
-        "Timeout": 30,
-        "Policies": [
-          "AWSLambdaBasicExecutionRole"
-        ],
-        "PackageType": "Zip",
-        "Handler": "bootstrap",
-        "Environment": {
-          "Variables": {
-            "ANNOTATIONS_HANDLER": "RemoveVocabulary"
-          }
-        },
-        "Events": {
-          "RootDelete": {
-            "Type": "HttpApi",
-            "Properties": {
-              "Path": "/vocabulary",
-              "Method": "DELETE"
-            }
-          }
-        }
-      }
-    },
-    "LambdaLambdaStartupFunctionGetVocabularyGenerated": {
+    "LanguageLearningAppServiceLambdaFunctionGetVocabularyGenerated": {
       "Type": "AWS::Serverless::Function",
       "Metadata": {
         "Tool": "Amazon.Lambda.Annotations",
@@ -323,7 +265,87 @@
         }
       }
     },
-    "LambdaLambdaStartupFunctionGenerateSentencesGenerated": {
+    "LanguageLearningAppServiceLambdaFunctionAddVocabularyGenerated": {
+      "Type": "AWS::Serverless::Function",
+      "Metadata": {
+        "Tool": "Amazon.Lambda.Annotations",
+        "SyncedEvents": [
+          "RootPut"
+        ],
+        "SyncedEventProperties": {
+          "RootPut": [
+            "Path",
+            "Method"
+          ]
+        }
+      },
+      "Properties": {
+        "Runtime": "dotnet8",
+        "CodeUri": ".",
+        "MemorySize": 512,
+        "Timeout": 30,
+        "Policies": [
+          "AWSLambdaBasicExecutionRole"
+        ],
+        "PackageType": "Zip",
+        "Handler": "bootstrap",
+        "Environment": {
+          "Variables": {
+            "ANNOTATIONS_HANDLER": "AddVocabulary"
+          }
+        },
+        "Events": {
+          "RootPut": {
+            "Type": "HttpApi",
+            "Properties": {
+              "Path": "/vocabulary",
+              "Method": "PUT"
+            }
+          }
+        }
+      }
+    },
+    "LanguageLearningAppServiceLambdaFunctionRemoveVocabularyGenerated": {
+      "Type": "AWS::Serverless::Function",
+      "Metadata": {
+        "Tool": "Amazon.Lambda.Annotations",
+        "SyncedEvents": [
+          "RootDelete"
+        ],
+        "SyncedEventProperties": {
+          "RootDelete": [
+            "Path",
+            "Method"
+          ]
+        }
+      },
+      "Properties": {
+        "Runtime": "dotnet8",
+        "CodeUri": ".",
+        "MemorySize": 512,
+        "Timeout": 30,
+        "Policies": [
+          "AWSLambdaBasicExecutionRole"
+        ],
+        "PackageType": "Zip",
+        "Handler": "bootstrap",
+        "Environment": {
+          "Variables": {
+            "ANNOTATIONS_HANDLER": "RemoveVocabulary"
+          }
+        },
+        "Events": {
+          "RootDelete": {
+            "Type": "HttpApi",
+            "Properties": {
+              "Path": "/vocabulary",
+              "Method": "DELETE"
+            }
+          }
+        }
+      }
+    },
+    "LanguageLearningAppServiceLambdaFunctionGenerateSentencesGenerated": {
       "Type": "AWS::Serverless::Function",
       "Metadata": {
         "Tool": "Amazon.Lambda.Annotations",
@@ -363,29 +385,7 @@
         }
       }
     },
-    "LambdaLambdaStartupFunctionPreSignUpTriggerGenerated": {
-      "Type": "AWS::Serverless::Function",
-      "Metadata": {
-        "Tool": "Amazon.Lambda.Annotations"
-      },
-      "Properties": {
-        "Runtime": "dotnet8",
-        "CodeUri": ".",
-        "MemorySize": 512,
-        "Timeout": 30,
-        "Policies": [
-          "AWSLambdaBasicExecutionRole"
-        ],
-        "PackageType": "Zip",
-        "Handler": "bootstrap",
-        "Environment": {
-          "Variables": {
-            "ANNOTATIONS_HANDLER": "PreSignUpTrigger"
-          }
-        }
-      }
-    },
-    "LambdaLambdaStartupFunctionVerifySentenceGenerated": {
+    "LanguageLearningAppServiceLambdaFunctionVerifySentenceGenerated": {
       "Type": "AWS::Serverless::Function",
       "Metadata": {
         "Tool": "Amazon.Lambda.Annotations",
@@ -425,7 +425,7 @@
         }
       }
     },
-    "LambdaLambdaStartupFunctionFinishLessonGenerated": {
+    "LanguageLearningAppServiceLambdaFunctionFinishLessonGenerated": {
       "Type": "AWS::Serverless::Function",
       "Metadata": {
         "Tool": "Amazon.Lambda.Annotations",
@@ -465,7 +465,7 @@
         }
       }
     },
-    "LambdaLambdaStartupFunctionIssueTokenGenerated": {
+    "LanguageLearningAppServiceLambdaFunctionIssueTokenGenerated": {
       "Type": "AWS::Serverless::Function",
       "Metadata": {
         "Tool": "Amazon.Lambda.Annotations",
@@ -505,7 +505,7 @@
         }
       }
     },
-    "LambdaLambdaStartupFunctionGetCategoriesGenerated": {
+    "LanguageLearningAppServiceLambdaFunctionGetCategoriesGenerated": {
       "Type": "AWS::Serverless::Function",
       "Metadata": {
         "Tool": "Amazon.Lambda.Annotations",

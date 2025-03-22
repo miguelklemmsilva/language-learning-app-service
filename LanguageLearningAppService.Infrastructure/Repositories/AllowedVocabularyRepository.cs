@@ -3,7 +3,7 @@ using Amazon.DynamoDBv2.Model;
 using Core.Interfaces;
 using Core.Models.DataModels;
 
-namespace Infrastructure.Repositories;
+namespace LanguageLearningAppService.Infrastructure.Repositories;
 
 public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocabularyRepository
 {

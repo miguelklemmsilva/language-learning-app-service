@@ -12,7 +12,7 @@
         <PackageReference Include="coverlet.collector" Version="3.1.2"/>
     </ItemGroup>
     <ItemGroup>
-        <ProjectReference Include="..\Core\Core.csproj"/>
-        <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
+        <ProjectReference Include="..\LanguageLearningAppService.Core\LanguageLearningAppService.Core.csproj" />
+        <ProjectReference Include="..\LanguageLearningAppService.Infrastructure\LanguageLearningAppService.Infrastructure.csproj" />
     </ItemGroup>
 </Project>
