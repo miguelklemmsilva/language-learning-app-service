@@ -64,7 +64,7 @@ resource "aws_lambda_function" "pre_sign_up" {
 
   environment {
     variables = {
-      ANNOTATIONS_HANDLER = "PreSignUp"
+      ANNOTATIONS_HANDLER = "PreSignUpTrigger"
       SPEECH_KEY          = var.SPEECH_KEY
       TRANSLATOR_KEY      = var.TRANSLATOR_KEY
       CHAT_GPT_KEY        = var.CHAT_GPT_KEY
