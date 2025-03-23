@@ -35,13 +35,14 @@ resource "aws_iam_role" "pre_sign_up_role" {
 resource "aws_lambda_function" "api_route_functions" {
   for_each = {for route in var.api_routes : route.lambda_function => route}
 
-  s3_bucket     = "polybara-artifacts"
+  s3_bucket         = "polybara-artifacts"
+  s3_key            = "Lambdas.zip"
   s3_object_version = data.aws_s3_object.lambda_artifact_object.version_id
-  s3_key        = "Lambdas.zip"
-  function_name = "polybara-${each.key}"
-  role          = aws_iam_role.lambda_role[each.key].arn
-  handler       = "bootstrap"
-  runtime       = "dotnet8"
+  function_name     = "polybara-${each.key}"
+  role              = aws_iam_role.lambda_role[each.key].arn
+  handler           = "bootstrap"
+  runtime           = "dotnet8"
+  architectures = ["x86_64"]
 
   environment {
     variables = {
@@ -54,13 +55,14 @@ resource "aws_lambda_function" "api_route_functions" {
 }
 
 resource "aws_lambda_function" "pre_sign_up" {
-  s3_bucket     = "polybara-artifacts"
-  s3_key        = "Lambdas.zip"
+  s3_bucket         = "polybara-artifacts"
+  s3_key            = "Lambdas.zip"
   s3_object_version = data.aws_s3_object.lambda_artifact_object.version_id
-  function_name = "polybara-PreSignUp"
-  role          = aws_iam_role.pre_sign_up_role.arn
-  handler       = "bootstrap"
-  runtime       = "dotnet8"
+  function_name     = "polybara-PreSignUp"
+  role              = aws_iam_role.pre_sign_up_role.arn
+  handler           = "bootstrap"
+  runtime           = "dotnet8"
+  architectures = ["x86_64"]
 
   environment {
     variables = {
@@ -103,7 +105,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
           aws_dynamodb_table.user_languages.arn,
           aws_dynamodb_table.vocabulary.arn,
           aws_dynamodb_table.allowed_vocabulary.arn,
-          "${aws_dynamodb_table.allowed_vocabulary.arn}/index/*"
+          aws_dynamodb_table.allowed_vocabulary.arn
         ]
       }
     ]
@@ -131,7 +133,7 @@ resource "aws_iam_role_policy" "pre_sign_up_policy" {
           aws_dynamodb_table.user_languages.arn,
           aws_dynamodb_table.vocabulary.arn,
           aws_dynamodb_table.allowed_vocabulary.arn,
-          "${aws_dynamodb_table.allowed_vocabulary.arn}/index/*"
+          aws_dynamodb_table.allowed_vocabulary.arn
         ]
       }
     ]

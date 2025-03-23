@@ -282,15 +282,8 @@ public class Function(
     [HttpApi(LambdaHttpMethod.Get, "/categories")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> GetCategories([FromQuery] string language)
     {
-        try
-        {
-            var categories = await allowedVocabularyService.GetWordsByCategoryAsync(language);
+        var categories = await allowedVocabularyService.GetWordsByCategoryAsync(language);
 
-            return ResponseHelper.CreateSuccessResponse(categories, typeof(IEnumerable<Category>));
-        }
-        catch (Exception e)
-        {
-            return ResponseHelper.CreateErrorResponse(e.Message);
-        }
+        return ResponseHelper.CreateSuccessResponse(categories, typeof(IEnumerable<Category>));
     }
 }

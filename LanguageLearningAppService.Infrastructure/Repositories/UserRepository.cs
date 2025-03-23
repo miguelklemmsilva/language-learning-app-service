@@ -14,7 +14,7 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
 
     public async Task<User> CreateUserAsync(User user)
     {
-        var item = new Dictionary<string, AttributeValue>()
+        var item = new Dictionary<string, AttributeValue>
         {
             {
                 "UserId",
@@ -25,7 +25,7 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
                 new AttributeValue { S = user.Email }
             }
         };
-
+        
         var request = new PutItemRequest
         {
             TableName = TableName,
