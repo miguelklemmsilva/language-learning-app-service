@@ -13,6 +13,8 @@ public class AllowedVocabularyService(IAllowedVocabularyRepository allowedVocabu
 
     public async Task<IEnumerable<Category>> GetWordsByCategoryAsync(string language)
     {
+        if (string.IsNullOrEmpty(language)) throw new ArgumentNullException(nameof(language));
+        
         var allWords = await allowedVocabularyRepository.GetWordsByCategoryAsync(language);
 
         return allWords

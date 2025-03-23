@@ -45,11 +45,18 @@ public class Function(
     [HttpApi(LambdaHttpMethod.Get, "/user")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> GetUser([FromHeader] string authorization)
     {
-        var userId = AuthHelper.ParseToken(authorization).Sub;
+        try
+        {
+            var userId = AuthHelper.ParseToken(authorization).Sub;
 
-        var user = await userService.GetUserAsync(userId);
+            var user = await userService.GetUserAsync(userId);
 
-        return ResponseHelper.CreateSuccessResponse(user, typeof(UserResponse));
+            return ResponseHelper.CreateSuccessResponse(user, typeof(UserResponse));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
     }
 
     [LambdaFunction]
@@ -282,8 +289,15 @@ public class Function(
     [HttpApi(LambdaHttpMethod.Get, "/categories")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> GetCategories([FromQuery] string language)
     {
-        var categories = await allowedVocabularyService.GetWordsByCategoryAsync(language);
+        try
+        {
+            var categories = await allowedVocabularyService.GetWordsByCategoryAsync(language);
 
-        return ResponseHelper.CreateSuccessResponse(categories, typeof(IEnumerable<Category>));
+            return ResponseHelper.CreateSuccessResponse(categories, typeof(IEnumerable<Category>));
+        }
+        catch (Exception e)
+        {
+            return ResponseHelper.CreateErrorResponse(e.Message);
+        }
     }
 }

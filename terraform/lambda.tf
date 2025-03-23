@@ -105,7 +105,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
           aws_dynamodb_table.user_languages.arn,
           aws_dynamodb_table.vocabulary.arn,
           aws_dynamodb_table.allowed_vocabulary.arn,
-          aws_dynamodb_table.allowed_vocabulary.arn
+          "${aws_dynamodb_table.allowed_vocabulary.arn}/index/*"
         ]
       }
     ]
@@ -130,10 +130,6 @@ resource "aws_iam_role_policy" "pre_sign_up_policy" {
         ],
         Resource = [
           aws_dynamodb_table.users.arn,
-          aws_dynamodb_table.user_languages.arn,
-          aws_dynamodb_table.vocabulary.arn,
-          aws_dynamodb_table.allowed_vocabulary.arn,
-          aws_dynamodb_table.allowed_vocabulary.arn
         ]
       }
     ]
