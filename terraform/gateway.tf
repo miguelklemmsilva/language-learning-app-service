@@ -126,13 +126,10 @@ resource "aws_api_gateway_deployment" "deployment" {
   lifecycle {
     create_before_destroy = true
   }
+}
 
-  depends_on = [
-    aws_api_gateway_integration.cors_integration,
-    aws_api_gateway_integration_response.cors_integration_response,
-    aws_api_gateway_method_response.cors_method_response,
-    aws_api_gateway_method.cors_options,
-    aws_api_gateway_integration.routes,
-    aws_api_gateway_method.routes,
-  ]
+resource "aws_api_gateway_stage" "stage" {
+  rest_api_id = aws_api_gateway_rest_api.rest_api.id
+  stage_name = "prod"
+  deployment_id = aws_api_gateway_deployment.deployment.id
 }

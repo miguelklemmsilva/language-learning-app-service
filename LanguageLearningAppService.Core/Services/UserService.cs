@@ -18,10 +18,7 @@ public class UserService(
     {
         var user = await userRepository.GetUserAsync(userId);
 
-        if (user == null)
-        {
-            throw new Exception("User not found");
-        }
+        ArgumentNullException.ThrowIfNull(user);
 
         if (user.ActiveLanguage != null)
             return new UserResponse
@@ -33,7 +30,7 @@ public class UserService(
         
         return new UserResponse
         {
-            User = user,
+            User = user
         };
     }
 
