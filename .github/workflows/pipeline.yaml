@@ -9,6 +9,11 @@ on:
     branches:
       - 'feature**'
 
+env:
+  AWS_REGION: eu-west-2
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -18,53 +23,53 @@ jobs:
         image: amazon/dynamodb-local
         ports:
           - 8000:8000
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: '8.0.x'
-      - name: Restore dependencies
-        run: dotnet restore
-      - name: Build solution
-        run: dotnet build --no-restore
-      - name: Run tests
-        run: dotnet test --no-build --verbosity normal
-        
+      steps:
+        - uses: actions/checkout@v2
+        - name: Setup .NET
+          uses: actions/setup-dotnet@v3
+          with:
+            dotnet-version: '8.0.x'
+        - name: Restore dependencies
+          run: dotnet restore
+        - name: Build solution
+          run: dotnet build --no-restore
+        - name: Run tests
+          run: dotnet test --no-build --logger "console;verbosity=detailed"
+  
   build-and-package:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-          
+
       - name: Build lambdas
         run: |
           dotnet tool install -g Amazon.Lambda.Tools
           cd LanguageLearningAppService.Lambda
           dotnet lambda package -farch x86_64 --output-package ../Lambdas.zip
-      
+
       - uses: actions/upload-artifact@v4
         with:
           name: Package Lambdas
           path: Lambdas.zip
 
   deploy:
-    needs: [ build-and-package ]
+    needs: [ build-and-package, test ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: Package Lambdas
-          
+
       - name: Setup AWS CLI
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-2
-          
+
       - name: Sync files to S3 bucket
         run: |
           aws s3 cp Lambdas.zip s3://polybara-artifacts/Lambdas.zip 
@@ -73,9 +78,6 @@ jobs:
     needs: [ deploy ]
     runs-on: ubuntu-latest
     env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_DEFAULT_REGION: eu-west-2
       TF_VAR_SPEECH_KEY: ${{ secrets.SPEECH_KEY }}
       TF_VAR_CHAT_GPT_KEY: ${{ secrets.CHAT_GPT_KEY }}
       TF_VAR_TRANSLATOR_KEY: ${{ secrets.TRANSLATOR_KEY }}
