@@ -20,7 +20,7 @@ public class AllowedVocabularyService(IAllowedVocabularyRepository allowedVocabu
             .Select(g => new Category
             {
                 Name = g.Key,
-                Words = g.Select(w => new Word { Word = w.Word, Language = language }).ToList()
+                Words = g.ToList()
             });
     }
 }

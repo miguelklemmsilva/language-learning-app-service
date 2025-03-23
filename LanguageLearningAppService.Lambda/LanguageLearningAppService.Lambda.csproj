@@ -28,7 +28,6 @@
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.2" />
     </ItemGroup>
     <ItemGroup>
-      <ProjectReference Include="..\..\LanguageLearningAppService.Infrastructure\LanguageLearningAppService.Infrastructure.csproj" />
       <ProjectReference Include="..\LanguageLearningAppService.Core\LanguageLearningAppService.Core.csproj" />
       <ProjectReference Include="..\LanguageLearningAppService.Infrastructure\LanguageLearningAppService.Infrastructure.csproj" />
     </ItemGroup>

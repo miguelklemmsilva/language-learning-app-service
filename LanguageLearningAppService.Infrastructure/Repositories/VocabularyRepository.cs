@@ -1,5 +1,7 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Core;
+using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.DataModels;
 using LanguageLearningAppService.Infrastructure.Factories;
@@ -8,7 +10,7 @@ namespace LanguageLearningAppService.Infrastructure.Repositories;
 
 public class VocabularyRepository(IAmazonDynamoDB client) : IVocabularyRepository
 {
-    private const string TableName = "vocabulary";
+    private static readonly string TableName = Table.Vocabulary.GetTableName();
 
     public async Task<Vocabulary> UpdateVocabularyAsync(Vocabulary vocabulary)
     {

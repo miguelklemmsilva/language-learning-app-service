@@ -1,5 +1,7 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Core;
+using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.DataModels;
 
@@ -7,7 +9,7 @@ namespace LanguageLearningAppService.Infrastructure.Repositories;
 
 public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocabularyRepository
 {
-    private const string TableName = "allowed_vocabulary";
+    private static readonly string TableName = Table.AllowedVocabulary.GetTableName();
 
     public async Task<bool> IsVocabularyAllowedAsync(string language, string word)
     {

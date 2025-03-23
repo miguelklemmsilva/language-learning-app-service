@@ -7,9 +7,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageLearningAppService.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageLearningAppService.Core", "LanguageLearningAppService.Core\LanguageLearningAppService.Core.csproj", "{74B682B4-47F2-4D69-B301-5E9DDEB51217}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{4ACCFBBB-B3B5-454B-B1B7-6FFE480686CB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageLearningAppService.Lambda", "LanguageLearningAppService.Lambda\LanguageLearningAppService.Lambda.csproj", "{71812E3F-68BD-49B9-9B59-AC0ECB538894}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageLearningAppService.Tests", "LanguageLearningAppService.Tests\LanguageLearningAppService.Tests.csproj", "{49C3A1FC-77A0-413D-9191-3D3B805C1D7B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -28,14 +28,14 @@ Global
 		{74B682B4-47F2-4D69-B301-5E9DDEB51217}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74B682B4-47F2-4D69-B301-5E9DDEB51217}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74B682B4-47F2-4D69-B301-5E9DDEB51217}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4ACCFBBB-B3B5-454B-B1B7-6FFE480686CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4ACCFBBB-B3B5-454B-B1B7-6FFE480686CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4ACCFBBB-B3B5-454B-B1B7-6FFE480686CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4ACCFBBB-B3B5-454B-B1B7-6FFE480686CB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{71812E3F-68BD-49B9-9B59-AC0ECB538894}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{71812E3F-68BD-49B9-9B59-AC0ECB538894}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71812E3F-68BD-49B9-9B59-AC0ECB538894}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71812E3F-68BD-49B9-9B59-AC0ECB538894}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49C3A1FC-77A0-413D-9191-3D3B805C1D7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49C3A1FC-77A0-413D-9191-3D3B805C1D7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49C3A1FC-77A0-413D-9191-3D3B805C1D7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49C3A1FC-77A0-413D-9191-3D3B805C1D7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

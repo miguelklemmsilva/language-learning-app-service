@@ -1,5 +1,7 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using Core;
+using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.DataModels;
 using LanguageLearningAppService.Infrastructure.Factories;
@@ -8,7 +10,7 @@ namespace LanguageLearningAppService.Infrastructure.Repositories;
 
 public class UserRepository(IAmazonDynamoDB client) : IUserRepository
 {
-    private const string TableName = "users";
+    private static readonly string TableName = Table.Users.GetTableName();
 
     public async Task<User> CreateUserAsync(User user)
     {
