@@ -20,7 +20,9 @@ public class DynamoDbFixture : IDisposable
         {
             var config = new AmazonDynamoDBConfig
             {
-                ServiceURL = "http://localhost:8000"
+                ServiceURL = "http://localhost:8000",
+                UseHttp = true
+                
             };
             var client = new AmazonDynamoDBClient(config);
             new TableCreator(client).CreateTablesAsync().GetAwaiter().GetResult();

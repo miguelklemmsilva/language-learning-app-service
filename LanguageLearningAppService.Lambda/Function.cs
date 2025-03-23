@@ -45,18 +45,11 @@ public class Function(
     [HttpApi(LambdaHttpMethod.Get, "/user")]
     public async Task<APIGatewayHttpApiV2ProxyResponse> GetUser([FromHeader] string authorization)
     {
-        try
-        {
-            var userId = AuthHelper.ParseToken(authorization).Sub;
+        var userId = AuthHelper.ParseToken(authorization).Sub;
 
-            var user = await userService.GetUserAsync(userId);
+        var user = await userService.GetUserAsync(userId);
 
-            return ResponseHelper.CreateSuccessResponse(user, typeof(UserResponse));
-        }
-        catch (Exception e)
-        {
-            return ResponseHelper.CreateErrorResponse(e.Message);
-        }
+        return ResponseHelper.CreateSuccessResponse(user, typeof(UserResponse));
     }
 
     [LambdaFunction]
