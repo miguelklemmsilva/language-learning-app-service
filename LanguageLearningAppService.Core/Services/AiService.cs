@@ -14,30 +14,24 @@ public enum StudyType
 public class AiService(
     IChatGptService chatGptService,
     ITranslationService translationService,
-    ITokenService tokenService,
+    ITokenRepository tokenRepository,
     IUserService userService,
     IUserLanguageService userLanguageService,
     IVocabularyService vocabularyService)
     : IAiService
 {
-    public async Task<VerifySentenceResponse> VerifySentenceAsync(VerifySentenceRequest request)
-    {
-        return await chatGptService.VerifySentenceAsync(request);
-    }
-
     public async Task<SentencesResponse> GenerateSentencesAsync(string userId)
     {
         var userTask = userService.GetUserAsync(userId);
-        var issueTokenTask = tokenService.GetIssueTokenAsync();
+        var issueTokenTask = tokenRepository.GetIssueTokenAsync();
 
         await Task.WhenAll(userTask, issueTokenTask);
 
         var user = await userTask;
         var issueToken = await issueTokenTask;
 
-        if (user.User.ActiveLanguage == null)
-            throw new Exception("User has no active language");
-        
+        ArgumentNullException.ThrowIfNull(user.User.ActiveLanguage);
+
         var activeLanguage = await userLanguageService.GetUserLanguageAsync(userId, user.User.ActiveLanguage);
 
         var activeStudyTypes = GetActiveStudyTypes(activeLanguage);
@@ -59,7 +53,7 @@ public class AiService(
         };
     }
 
-    private List<StudyType> GetActiveStudyTypes(UserLanguage activeLanguage)
+    private static List<StudyType> GetActiveStudyTypes(UserLanguage activeLanguage)
     {
         var activeTypes = new List<StudyType>();
         if (activeLanguage.Translation) activeTypes.Add(StudyType.Translation);
@@ -70,7 +64,8 @@ public class AiService(
 
     private async Task<Sentence> GenerateSentenceAsync(Word word, UserLanguage activeLanguage)
     {
-        var sentenceTask = chatGptService.GenerateSentenceAsync(word.Word, activeLanguage.Language, activeLanguage.Country);
+        var sentenceTask =
+            chatGptService.GenerateSentenceAsync(word.Word, activeLanguage.Language, activeLanguage.Country);
         var translationTask = translationService.TranslateSentenceAsync(await sentenceTask, activeLanguage.Language);
 
         var translatedText = await translationTask;

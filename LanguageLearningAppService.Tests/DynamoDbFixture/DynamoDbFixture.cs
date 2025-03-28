@@ -3,6 +3,7 @@ using Amazon.DynamoDBv2;
 using Core.Interfaces;
 using Core.Services;
 using LanguageLearningAppService.Infrastructure.Repositories;
+using LanguageLearningAppService.Tests.TestRepositories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LanguageLearningAppService.Tests.DynamoDbFixture;
@@ -34,11 +35,17 @@ public class DynamoDbFixture : IDisposable
         services.AddSingleton<IUserLanguageRepository, UserLanguageRepository>();
         services.AddSingleton<IVocabularyRepository, VocabularyRepository>();
         services.AddSingleton<IAllowedVocabularyRepository, AllowedVocabularyRepository>();
+        services.AddSingleton<ITokenRepository, TestTokenRepository>();
+        services.AddSingleton<IChatGptRepository, TestChatGptRepository>();
+        services.AddSingleton<ITranslationRepository, TestTranslationRepository>();
 
         services.AddSingleton<IUserService, UserService>();
         services.AddSingleton<IUserLanguageService, UserLanguageService>();
         services.AddSingleton<IVocabularyService, VocabularyService>();
         services.AddSingleton<IAllowedVocabularyService, AllowedVocabularyService>();
+        services.AddSingleton<IChatGptService, ChatGptService>();
+        services.AddSingleton<ITranslationService, TranslationService>();
+        services.AddSingleton<IAiService, AiService>();
 
 
         // Build the provider.

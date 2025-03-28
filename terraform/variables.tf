@@ -77,3 +77,7 @@ variable "api_routes" {
 variable SPEECH_KEY {}
 variable "CHAT_GPT_KEY" {}
 variable "TRANSLATOR_KEY" {}
+variable "AWS_REGION" {
+  type = string
+  default = "eu-west-2"
+}

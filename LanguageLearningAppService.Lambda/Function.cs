@@ -19,7 +19,8 @@ public class Function(
     IVocabularyService vocabularyService,
     IAllowedVocabularyService allowedVocabularyService,
     IAiService aiService,
-    ITokenService tokenService)
+    ITokenRepository tokenRepository,
+    IChatGptService chatGptService)
 {
     [LambdaFunction]
     public async Task<JsonObject> PreSignUpTrigger(JsonObject request)
@@ -233,7 +234,7 @@ public class Function(
     {
         try
         {
-            var result = await aiService.VerifySentenceAsync(verifyRequest);
+            var result = await chatGptService.VerifySentenceAsync(verifyRequest);
 
             return ResponseHelper.CreateSuccessResponse(result, typeof(VerifySentenceResponse));
         }
@@ -275,7 +276,7 @@ public class Function(
     {
         try
         {
-            var token = await tokenService.GetIssueTokenAsync();
+            var token = await tokenRepository.GetIssueTokenAsync();
 
             return ResponseHelper.CreateSuccessResponse(token, typeof(string));
         }

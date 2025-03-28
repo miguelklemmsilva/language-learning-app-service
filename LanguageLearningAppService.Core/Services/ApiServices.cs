@@ -9,11 +9,11 @@ using Core.Models.DataTransferModels;
 
 namespace Core.Services;
 
-public class ChatGptService(HttpClient httpClient) : IChatGptService
+public class ChatGptService(IChatGptRepository chatGptRepository) : IChatGptService
 {
     public async Task<VerifySentenceResponse> VerifySentenceAsync(VerifySentenceRequest request)
     {
-        var requestBody = new ChatGptRequest
+        var chatGptRequest = new ChatGptRequest
         {
             Model = "gpt-4o-mini",
             Messages =
@@ -26,7 +26,7 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
                 },
                 new ChatGptMessage
                 {
-                    Role  = "user",
+                    Role = "user",
                     Content = $"English to {request.Language}"
                 },
                 new ChatGptMessage
@@ -60,35 +60,19 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
             }
         };
 
-        var requestJson = JsonSerializer.Serialize(requestBody, CustomJsonSerializerContext.Default.ChatGptRequest);
+        var chatGptResponse = await chatGptRepository.SendChatGptRequestAsync(chatGptRequest);
 
-        Console.WriteLine(requestJson);
-
-        var httpRequest = new HttpRequestMessage(HttpMethod.Post, "/v1/chat/completions")
-        {
-            Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
-        };
-
-        var response = await httpClient.SendAsync(httpRequest);
-        Console.WriteLine(await response.Content.ReadAsStringAsync());
-
-        response.EnsureSuccessStatusCode();
-        var responseBody = await response.Content.ReadAsStringAsync();
-
-        var jsonResponse =
-            JsonSerializer.Deserialize(responseBody, CustomJsonSerializerContext.Default.ChatGptResponse);
-        
-        var messageResponse = JsonSerializer.Deserialize(jsonResponse!.Choices.First().Message.Content,
+        var messageResponse = JsonSerializer.Deserialize(chatGptResponse.Choices.First().Message.Content,
             CustomJsonSerializerContext.Default.VerifySentenceResponse);
-        
+
         return messageResponse ?? new VerifySentenceResponse { IsCorrect = false, Explanation = "No response from AI" };
     }
-    
+
     public async Task<string> GenerateSentenceAsync(string word, string language, string country)
     {
-        var systemPrompt = LocalizedSystemPrompt(language, country);
+        string systemPrompt = LocalizedSystemPrompt(language, country);
 
-        var requestBody = new ChatGptRequest
+        var chatGptRequest = new ChatGptRequest
         {
             Model = "gpt-4o-mini",
             Messages =
@@ -99,25 +83,11 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
             Temperature = 0.8
         };
 
-        var requestJson = JsonSerializer.Serialize(requestBody, CustomJsonSerializerContext.Default.ChatGptRequest);
-
-        var request = new HttpRequestMessage(HttpMethod.Post, "/v1/chat/completions")
-        {
-            Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
-        };
-
-        var response = await httpClient.SendAsync(request);
-
-        response.EnsureSuccessStatusCode();
-        var responseBody = await response.Content.ReadAsStringAsync();
-
-        var jsonResponse =
-            JsonSerializer.Deserialize(responseBody, CustomJsonSerializerContext.Default.ChatGptResponse);
-
-        return jsonResponse!.Choices.First().Message.Content;
+        var chatGptResponse = await chatGptRepository.SendChatGptRequestAsync(chatGptRequest);
+        return chatGptResponse.Choices.First().Message.Content;
     }
 
-    private string LocalizedSystemPrompt(string language, string region)
+    private static string LocalizedSystemPrompt(string language, string region)
     {
         return language switch
         {
@@ -137,7 +107,7 @@ public class ChatGptService(HttpClient httpClient) : IChatGptService
     }
 }
 
-public class TranslationService(TextTranslationClient textTranslationClient) : ITranslationService
+public class TranslationService(ITranslationRepository translationRepository) : ITranslationService
 {
     public async Task<TranslatedTextItem?> TranslateSentenceAsync(string sentence, string sourceLanguage)
     {
@@ -151,28 +121,7 @@ public class TranslationService(TextTranslationClient textTranslationClient) : I
             "French" => "fr",
             _ => throw new ArgumentException($"Unsupported language: {sourceLanguage}")
         };
-
-        var options = new TextTranslationTranslateOptions(targetLanguages: ["en"], content: [sentence])
-        {
-            SourceLanguage = sourceLanguageCode,
-            ProfanityAction = ProfanityAction.NoAction,
-            IncludeAlignment = true
-        };
-
-        Response<IReadOnlyList<TranslatedTextItem>> response = await textTranslationClient.TranslateAsync(options);
-        IReadOnlyList<TranslatedTextItem?> translations = response.Value;
-        var translation = translations.FirstOrDefault();
-
-        return translation;
-    }
-}
-
-public class TokenService(HttpClient httpClient) : ITokenService
-{
-    public async Task<string> GetIssueTokenAsync()
-    {
-        var request = new HttpRequestMessage(HttpMethod.Post, "/sts/v1.0/issueToken");
-        var response = await httpClient.SendAsync(request);
-        return await response.Content.ReadAsStringAsync();
+        
+        return await translationRepository.TranslateSentenceAsync(sentence, sourceLanguageCode);
     }
 }

@@ -9,7 +9,7 @@ public class UserServiceTests(DynamoDbFixture.DynamoDbFixture fixture)
 {
     private readonly IUserService _userService = fixture.ServiceProvider.GetRequiredService<IUserService>();
 
-    private User CreateTestUser() => new()
+    public static User CreateTestUser() => new()
     { 
         UserId = Guid.NewGuid().ToString(), 
         Email = "test@example.com" 

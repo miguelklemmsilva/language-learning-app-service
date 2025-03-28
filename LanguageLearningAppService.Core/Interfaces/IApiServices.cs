@@ -4,7 +4,7 @@ using Microsoft.CognitiveServices.Speech;
 
 namespace Core.Interfaces;
 
-public interface ITokenService
+public interface ITokenRepository
 {
     Task<string> GetIssueTokenAsync();
 }

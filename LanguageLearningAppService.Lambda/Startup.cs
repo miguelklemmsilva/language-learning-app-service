@@ -27,13 +27,15 @@ public class Startup
         services.AddSingleton<IAllowedVocabularyService, AllowedVocabularyService>();
         services.AddSingleton<IChatGptService, ChatGptService>();
         services.AddSingleton<ITranslationService, TranslationService>();
-        services.AddSingleton<ITokenService, TokenService>();
-
-        services.AddHttpClient<IChatGptService, ChatGptService>(ConfigureChatGptHttpClient);
-
+        services.AddSingleton<ITokenRepository, TokenRepository>();
+        services.AddSingleton<IChatGptService, ChatGptService>();
+        services.AddSingleton<ITranslationRepository, TranslationRepository>();
+        
+        services.AddHttpClient<IChatGptRepository, ChatGptRepository>(ConfigureChatGptHttpClient);
+        
         services.AddSingleton(_ => CreateTextTranslationClient());
 
-        services.AddHttpClient<ITokenService, TokenService>(ConfigureSpeechServiceHttpClient);
+        services.AddHttpClient<ITokenRepository, TokenRepository>(ConfigureSpeechServiceHttpClient);
 
         services.AddSingleton<IAiService, AiService>();
     }
