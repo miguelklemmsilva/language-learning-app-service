@@ -11,7 +11,7 @@ public static class ResponseHelper
 {
     private static readonly Dictionary<string, string> CorsHeaders = new()
     {
-        { "Access-Control-Allow-Origin", "http://localhost:300,https://www.miguelklemmsilva.com" },
+        { "Access-Control-Allow-Origin", "*" },
         { "Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,PATCH" },
         { "Access-Control-Allow-Headers", "Content-Type,Authorization,X-Amz-Date,X-Api-Key,X-Amz-Security-Token" }
     };
