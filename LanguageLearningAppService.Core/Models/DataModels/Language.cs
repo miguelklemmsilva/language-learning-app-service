@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Core.Models.DataModels;
 
+[JsonConverter(typeof(JsonStringEnumConverter<Language>))]
 public enum Language
 {
     [LanguageCode("es")] Spanish,
@@ -13,7 +14,6 @@ public enum Language
     [LanguageCode("jp")] Japanese
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter<Language>))]
 [AttributeUsage(AttributeTargets.Field)]
 public sealed class LanguageCode(string? code) : Attribute
 {
