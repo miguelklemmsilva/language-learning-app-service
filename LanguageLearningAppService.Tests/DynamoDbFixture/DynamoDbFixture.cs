@@ -62,8 +62,7 @@ public class DynamoDbFixture : IDisposable
 
     public async void Dispose()
     {
-        await TableManager.DeleteTables();
-        
+        TableManager.DeleteTables().Wait();
         await ServiceProvider.DisposeAsync();
     }
 }
