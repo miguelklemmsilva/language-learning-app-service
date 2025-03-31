@@ -11,7 +11,7 @@ public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocab
 {
     private static readonly string TableName = Table.AllowedVocabulary.GetTableName();
 
-    public async Task<bool> IsVocabularyAllowedAsync(string language, string word)
+    public async Task<bool> IsVocabularyAllowedAsync(Language language, string word)
     {
         var request = new GetItemRequest
         {
@@ -19,7 +19,7 @@ public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocab
             Key = new Dictionary<string, AttributeValue>
             {
                 { "Word", new AttributeValue { S = word } },
-                { "Language", new AttributeValue { S = language } }
+                { "Language", new AttributeValue { S = language.ToString() } }
             }
         };
 
@@ -28,7 +28,7 @@ public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocab
         return response.Item != null;
     }
 
-    public async Task<IEnumerable<AllowedVocabulary>> GetWordsByCategoryAsync(string language)
+    public async Task<IEnumerable<AllowedVocabulary>> GetWordsByCategoryAsync(Language language)
     {
         var request = new QueryRequest
         {
@@ -41,7 +41,7 @@ public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocab
             },
             ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
-                { ":language", new AttributeValue { S = language } }
+                { ":language", new AttributeValue { S = language.ToString() } }
             }
         };
 

@@ -7,6 +7,7 @@ using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
+using static System.Enum;
 
 namespace LanguageLearningAppService.Lambda;
 
@@ -135,7 +136,11 @@ public class Function(
         {
             var userId = AuthHelper.ParseToken(authorization).Sub;
 
-            var newLanguage = await userLanguageService.RemoveUserLanguageAsync(userId, language);
+            var tryParse = TryParse<Language>(language, out var enumLanguage);
+            
+            if (!tryParse) throw new Exception($"{language} is not a valid language!");
+
+            var newLanguage = await userLanguageService.RemoveUserLanguageAsync(userId, enumLanguage);
 
             return ResponseHelper.CreateSuccessResponse(new RemoveUserLanguageResponse { ActiveLanguage = newLanguage },
                 typeof(RemoveUserLanguageResponse));
@@ -154,8 +159,12 @@ public class Function(
         try
         {
             var userId = AuthHelper.ParseToken(authorization).Sub;
+            
+            var tryParse = TryParse<Language>(language, out var enumLanguage);
+            
+            if (!tryParse) throw new Exception($"{language} is not a valid language!");
 
-            var vocabularies = await vocabularyService.GetVocabularyAsync(userId, language);
+            var vocabularies = await vocabularyService.GetVocabularyAsync(userId, enumLanguage);
 
             return ResponseHelper.CreateSuccessResponse(vocabularies, typeof(IEnumerable<Word>));
         }
@@ -197,8 +206,12 @@ public class Function(
         try
         {
             var userId = AuthHelper.ParseToken(authorization).Sub;
+            
+            var tryParse = TryParse<Language>(language, out var enumLanguage);
+            
+            if (!tryParse) throw new Exception($"{language} is not a valid language!");
 
-            await vocabularyService.RemoveVocabularyAsync(userId, language, word);
+            await vocabularyService.RemoveVocabularyAsync(userId, enumLanguage, word);
 
             return ResponseHelper.CreateSuccessResponse(
                 new Dictionary<string, string> { { "message", "Vocabulary removed successfully" } },
@@ -255,10 +268,10 @@ public class Function(
 
             var user = await userService.GetUserAsync(userId);
 
-            if (user.User.ActiveLanguage == null)
-                throw new Exception("Active language not set");
-
-            await vocabularyService.FinishLessonAsync(userId, finishRequest, user.User.ActiveLanguage);
+            var activeLanguage = user.User.ActiveLanguage ??
+                               throw new ArgumentNullException(nameof(user.User.ActiveLanguage));
+            
+            await vocabularyService.FinishLessonAsync(userId, finishRequest, activeLanguage);
 
             return ResponseHelper.CreateSuccessResponse(
                 new Dictionary<string, string> { { "message", "Lesson finished successfully" } },
@@ -292,7 +305,11 @@ public class Function(
     {
         try
         {
-            var categories = await allowedVocabularyService.GetWordsByCategoryAsync(language);
+            var tryParse = TryParse<Language>(language, out var enumLanguage);
+            
+            if (!tryParse) throw new Exception($"{language} is not a valid language!");
+
+            var categories = await allowedVocabularyService.GetWordsByCategoryAsync(enumLanguage);
 
             return ResponseHelper.CreateSuccessResponse(categories, typeof(IEnumerable<Category>));
         }

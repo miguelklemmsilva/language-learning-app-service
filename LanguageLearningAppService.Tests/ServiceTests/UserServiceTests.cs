@@ -1,5 +1,6 @@
 using Core.Interfaces;
 using Core.Models.DataModels;
+using LanguageLearningAppService.Tests.TestBuilders;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LanguageLearningAppService.Tests.ServiceTests;
@@ -8,17 +9,11 @@ namespace LanguageLearningAppService.Tests.ServiceTests;
 public class UserServiceTests(DynamoDbFixture.DynamoDbFixture fixture)
 {
     private readonly IUserService _userService = fixture.ServiceProvider.GetRequiredService<IUserService>();
-
-    public static User CreateTestUser() => new()
-    { 
-        UserId = Guid.NewGuid().ToString(), 
-        Email = "test@example.com" 
-    };
     
     [Fact]
     public async Task Can_Create_And_Retrieve_User()
     {
-        var user = CreateTestUser();
+        var user = new UserBuilder().Build();
         
         // Act
         await _userService.CreateUserAsync(user);
@@ -33,10 +28,10 @@ public class UserServiceTests(DynamoDbFixture.DynamoDbFixture fixture)
     public async Task Can_Update_User()
     {
         // Arrange
-        var user = CreateTestUser();
+        var user = new UserBuilder().Build();
 
         await _userService.CreateUserAsync(user);
-        user.ActiveLanguage = "Spanish";
+        user.ActiveLanguage = Language.Spanish;
         
         // Act
         var updatedUser = await _userService.UpdateUserAsync(user);
@@ -51,10 +46,10 @@ public class UserServiceTests(DynamoDbFixture.DynamoDbFixture fixture)
     public async Task Can_Remove_Active_Language()
     {
         // Arrange
-        var user = CreateTestUser();
+        var user = new UserBuilder().Build();
 
         await _userService.CreateUserAsync(user);
-        user.ActiveLanguage = "Spanish";
+        user.ActiveLanguage = Language.Spanish;
         var updatedUser = await _userService.UpdateUserAsync(user);
 
         updatedUser.User.ActiveLanguage = null;

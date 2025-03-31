@@ -20,14 +20,14 @@ public class UserService(
 
         ArgumentNullException.ThrowIfNull(user);
 
-        if (user.ActiveLanguage != null)
+        if (user.ActiveLanguage is { } activeLanguage)
             return new UserResponse
             {
                 User = user,
                 UserLanguages = await userLanguageService.GetUserLanguagesAsync(userId),
-                Vocabulary = await vocabularyService.GetVocabularyAsync(userId, user.ActiveLanguage)
+                Vocabulary = await vocabularyService.GetVocabularyAsync(userId, activeLanguage)
             };
-        
+
         return new UserResponse
         {
             User = user

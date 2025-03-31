@@ -11,8 +11,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AWSSDK.DynamoDBv2" Version="4.0.0-preview" />
-      <PackageReference Include="AWSSDK.SecretsManager" Version="4.0.0-preview" />
+      <PackageReference Include="AWSSDK.DynamoDBv2" Version="4.0.0.0-preview.11" />
       <PackageReference Include="Azure.AI.Translation.Text" Version="1.0.0" />
     </ItemGroup>
 

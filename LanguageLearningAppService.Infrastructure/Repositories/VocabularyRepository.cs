@@ -1,87 +1,46 @@
-using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.Model;
-using Core;
+using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.DataModels;
-using LanguageLearningAppService.Infrastructure.Factories;
+using Table = Core.Helpers.Table;
 
 namespace LanguageLearningAppService.Infrastructure.Repositories;
 
-public class VocabularyRepository(IAmazonDynamoDB client) : IVocabularyRepository
+public class VocabularyRepository(IDynamoDBContext context) : IVocabularyRepository
 {
-    private static readonly string TableName = Table.Vocabulary.GetTableName();
-
     public async Task<Vocabulary> UpdateVocabularyAsync(Vocabulary vocabulary)
     {
-        var item = new Dictionary<string, AttributeValue>
-        {
-            { "UserId", new AttributeValue { S = vocabulary.UserId } },
-            { "sk", new AttributeValue { S = $"{vocabulary.Language}#{vocabulary.Word}" } },
-            { "LastSeen", new AttributeValue { N = vocabulary.LastPracticed.ToString() } },
-            { "BoxNumber", new AttributeValue { N = vocabulary.BoxNumber.ToString() } }
-        };
-
-        var request = new PutItemRequest
-        {
-            TableName = TableName,
-            Item = item
-        };
-
-        await client.PutItemAsync(request);
+        await context.SaveAsync(vocabulary);
 
         return await GetVocabularyAsync(vocabulary.UserId, vocabulary.Language, vocabulary.Word);
     }
 
-    public async Task<Vocabulary> GetVocabularyAsync(string userId, string language, string word)
+    public async Task<Vocabulary> GetVocabularyAsync(string userId, Language language, string word)
     {
-        var key = new Dictionary<string, AttributeValue>
-        {
-            { "UserId", new AttributeValue { S = userId } },
-            { "sk", new AttributeValue { S = $"{language}#{word}" } }
-        };
-
-        var request = new GetItemRequest
-        {
-            TableName = TableName,
-            Key = key
-        };
-
-        var response = await client.GetItemAsync(request);
-
-        return VocabularyFactory.Build(response.Item);
+        // DynamoDBContext will automatically use the composite key.
+        return await context.LoadAsync<Vocabulary>(userId, $"{language}#{word}");
     }
 
-    public async Task<IEnumerable<Vocabulary>> GetUserVocabularyAsync(string userId, string language)
+    public async Task<IEnumerable<Vocabulary>> GetUserVocabularyAsync(string userId, Language language)
     {
-        var request = new QueryRequest
-        {
-            TableName = TableName,
-            KeyConditionExpression = "UserId = :userId AND begins_with(sk, :language)",
-            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-            {
-                { ":userId", new AttributeValue { S = userId } },
-                { ":language", new AttributeValue { S = language } }
-            }
-        };
-
-        var response = await client.QueryAsync(request);
-
-        return response.Items.Select(VocabularyFactory.Build).ToList();
-    }
-
-    public async Task RemoveVocabularyAsync(string userId, string language, string word)
-    {
-        var request = new DeleteItemRequest
-        {
-            TableName = TableName,
-            Key = new Dictionary<string, AttributeValue>
-            {
-                { "UserId", new AttributeValue { S = userId } },
-                { "sk", new AttributeValue { S = $"{language}#{word}" } }
-            }
-        };
+        // Our composite key is "Language#Word", so to retrieve all items for a language,
+        // we need to filter where the range key begins with "Language#".
+        var prefix = $"{language}#";
         
-        await client.DeleteItemAsync(request);
+        // QueryAsync<T> has an overload that accepts a QueryOperator.
+        // Here, we use QueryOperator.BeginsWith to restrict the range key.
+        var query = context.QueryAsync<Vocabulary>(
+            hashKeyValue: userId,
+            op: QueryOperator.BeginsWith,
+            values: [prefix]
+        );
+
+        return await query.GetRemainingAsync();
+    }
+
+    public async Task RemoveVocabularyAsync(string userId, Language language, string word)
+    {
+        await context.DeleteAsync<Vocabulary>(userId, $"{language}#{word}");
     }
 }

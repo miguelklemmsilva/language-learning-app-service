@@ -30,9 +30,9 @@ public class AiService(
         var user = await userTask;
         var issueToken = await issueTokenTask;
 
-        ArgumentNullException.ThrowIfNull(user.User.ActiveLanguage);
-
-        var activeLanguage = await userLanguageService.GetUserLanguageAsync(userId, user.User.ActiveLanguage);
+        Language userLanguage = user.User.ActiveLanguage ?? throw new ArgumentNullException(nameof(user.User.ActiveLanguage));
+        
+        var activeLanguage = await userLanguageService.GetUserLanguageAsync(userId, userLanguage);
 
         var activeStudyTypes = GetActiveStudyTypes(activeLanguage);
 
@@ -40,7 +40,7 @@ public class AiService(
             throw new Exception("User has no active exercises");
 
         var wordsToFetch = (int)Math.Ceiling(3f / activeStudyTypes.Count);
-        var wordsToStudy = await vocabularyService.GetWordsToStudyAsync(userId, user.User.ActiveLanguage, wordsToFetch);
+        var wordsToStudy = await vocabularyService.GetWordsToStudyAsync(userId, userLanguage, wordsToFetch);
 
         var sentenceTasks = wordsToStudy.Select(word => GenerateSentenceAsync(word, activeLanguage)).ToList();
 

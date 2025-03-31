@@ -6,14 +6,14 @@ namespace Core.Services;
 public class AllowedVocabularyService(IAllowedVocabularyRepository allowedVocabularyRepository)
     : IAllowedVocabularyService
 {
-    public Task<bool> IsVocabularyAllowedAsync(string language, string word)
+    public Task<bool> IsVocabularyAllowedAsync(Language language, string word)
     {
         return allowedVocabularyRepository.IsVocabularyAllowedAsync(language, word);
     }
 
-    public async Task<IEnumerable<Category>> GetWordsByCategoryAsync(string language)
+    public async Task<IEnumerable<Category>> GetWordsByCategoryAsync(Language language)
     {
-        if (string.IsNullOrEmpty(language)) throw new ArgumentNullException(nameof(language));
+        ArgumentNullException.ThrowIfNull(language);
         
         var allWords = await allowedVocabularyRepository.GetWordsByCategoryAsync(language);
 

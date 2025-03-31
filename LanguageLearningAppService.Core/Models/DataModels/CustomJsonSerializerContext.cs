@@ -32,6 +32,4 @@ namespace Core.Models.DataModels;
 [JsonSerializable(typeof(FinishLessonRequest))]
 [JsonSerializable(typeof(JsonObject))]
 [JsonSerializable(typeof(IEnumerable<Category>))]
-public partial class CustomJsonSerializerContext : JsonSerializerContext
-{
-}
+public partial class CustomJsonSerializerContext : JsonSerializerContext;

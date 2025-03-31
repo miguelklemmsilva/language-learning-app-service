@@ -10,9 +10,9 @@ public partial class VocabularyService(
     IVocabularyRepository vocabularyRepository,
     IAllowedVocabularyService allowedVocabularyService) : IVocabularyService
 {
-    private async Task<bool> IsVocabularyAllowedAsync(string language, string word)
+    private async Task<bool> IsVocabularyAllowedAsync(Language language, string word)
     {
-        if (language.Equals("Japanese"))
+        if (language == Language.Japanese)
             return true;
 
         return await allowedVocabularyService.IsVocabularyAllowedAsync(language, word);
@@ -38,7 +38,7 @@ public partial class VocabularyService(
                     continue;
 
                 if (currentVocabulary.Any(v =>
-                        v.Language.Equals(request.Language, StringComparison.OrdinalIgnoreCase) &&
+                        v.Language == request.Language &&
                         v.Word.Equals(word, StringComparison.OrdinalIgnoreCase)))
                     continue;
 
@@ -61,7 +61,7 @@ public partial class VocabularyService(
         return newWords;
     }
 
-    public async Task<IEnumerable<Word>> GetVocabularyAsync(string userId, string language)
+    public async Task<IEnumerable<Word>> GetVocabularyAsync(string userId, Language language)
     {
         var vocabularies = await vocabularyRepository.GetUserVocabularyAsync(userId, language);
 
@@ -112,7 +112,7 @@ public partial class VocabularyService(
         return await vocabularyRepository.UpdateVocabularyAsync(vocabulary);
     }
 
-    public async Task RemoveVocabularyAsync(string userId, string language, string word)
+    public async Task RemoveVocabularyAsync(string userId, Language language, string word)
     {
         var existingVocabulary =
             await vocabularyRepository.GetVocabularyAsync(userId, language, word);
@@ -122,7 +122,7 @@ public partial class VocabularyService(
         await vocabularyRepository.RemoveVocabularyAsync(userId, language, word);
     }
 
-    public async Task<IEnumerable<Word>> GetWordsToStudyAsync(string userId, string language, int count)
+    public async Task<IEnumerable<Word>> GetWordsToStudyAsync(string userId, Language language, int count)
     {
         var allVocabulary = await GetVocabularyAsync(userId, language);
         var now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
@@ -135,7 +135,7 @@ public partial class VocabularyService(
         return wordsToStudy;
     }
 
-    public async Task FinishLessonAsync(string userId, FinishLessonRequest finishLessonRequest, string language)
+    public async Task FinishLessonAsync(string userId, FinishLessonRequest finishLessonRequest, Language language)
     {
         var groupedSentences = finishLessonRequest.Sentences.GroupBy(s => s.Word);
 

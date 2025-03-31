@@ -1,6 +1,8 @@
+using Core.Models.DataModels;
+
 namespace Core.Models.DataTransferModels;
 
 public class UpdateUserRequest
 {
-    public required string ActiveLanguage { get; set; }
+    public required Language ActiveLanguage { get; set; }
 }

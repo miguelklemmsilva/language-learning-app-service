@@ -69,7 +69,7 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
             ReturnValues = ReturnValue.ALL_NEW
         };
 
-        if (string.IsNullOrEmpty(user.ActiveLanguage))
+        if (user.ActiveLanguage is null)
         {
             request.UpdateExpression = "REMOVE ActiveLanguage";
         }
@@ -78,7 +78,7 @@ public class UserRepository(IAmazonDynamoDB client) : IUserRepository
             request.UpdateExpression = "SET ActiveLanguage = :activeLanguage";
             request.ExpressionAttributeValues = new Dictionary<string, AttributeValue>
             {
-                { ":activeLanguage", new AttributeValue { S = user.ActiveLanguage } }
+                { ":activeLanguage", new AttributeValue { S = user.ActiveLanguage.ToString() } }
             };
         }
 

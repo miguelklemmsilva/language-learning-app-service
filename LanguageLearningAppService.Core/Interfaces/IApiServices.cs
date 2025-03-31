@@ -1,6 +1,6 @@
 using Azure.AI.Translation.Text;
+using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
-using Microsoft.CognitiveServices.Speech;
 
 namespace Core.Interfaces;
 
@@ -11,11 +11,11 @@ public interface ITokenRepository
 
 public interface ITranslationService
 {
-    Task<TranslatedTextItem?> TranslateSentenceAsync(string sentence, string sourceLanguage);
+    Task<TranslatedTextItem?> TranslateSentenceAsync(string sentence, Language sourceLanguage);
 }
 
 public interface IChatGptService
 {
-    Task<string> GenerateSentenceAsync(string word, string language, string country);
+    Task<string> GenerateSentenceAsync(string word, Language language, string country);
     Task<VerifySentenceResponse> VerifySentenceAsync(VerifySentenceRequest request);
 }

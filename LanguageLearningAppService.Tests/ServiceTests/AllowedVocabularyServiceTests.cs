@@ -1,4 +1,5 @@
 using Core.Interfaces;
+using Core.Models.DataModels;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LanguageLearningAppService.Tests.ServiceTests;
@@ -12,7 +13,7 @@ public class AllowedVocabularyServiceTests(DynamoDbFixture.DynamoDbFixture fixtu
     public async Task Can_Check_If_Word_Is_Allowed()
     {
         // Arrange
-        var language = "Spanish";
+        var language = Language.Spanish;
         var word = "hola";
 
         // Act
@@ -26,7 +27,7 @@ public class AllowedVocabularyServiceTests(DynamoDbFixture.DynamoDbFixture fixtu
     public async Task Can_Check_If_Word_Is_Not_Allowed()
     {
         // Arrange
-        var language = "Spanish";
+        var language = Language.Spanish;
         var word = "hello";
 
         // Act
@@ -40,7 +41,7 @@ public class AllowedVocabularyServiceTests(DynamoDbFixture.DynamoDbFixture fixtu
     public async Task Can_Get_Categories()
     {
         // Arrange
-        var language = "Spanish";
+        var language = Language.Spanish;
 
         // Act
         var categories = await _allowedVocabularyService.GetWordsByCategoryAsync(language);

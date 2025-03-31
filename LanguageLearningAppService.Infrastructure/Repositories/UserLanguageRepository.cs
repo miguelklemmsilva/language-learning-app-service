@@ -1,6 +1,5 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using Core;
 using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.DataModels;
@@ -12,12 +11,12 @@ public class UserLanguageRepository(IAmazonDynamoDB client) : IUserLanguageRepos
 {
     private static readonly string TableName = Table.UserLanguages.GetTableName();
     
-    public async Task<UserLanguage> GetUserLanguageAsync(string userId, string language)
+    public async Task<UserLanguage> GetUserLanguageAsync(string userId, Language? language)
     {
         var key = new Dictionary<string, AttributeValue>
         {
             { "UserId", new AttributeValue { S = userId } },
-            { "Language", new AttributeValue { S = language } }
+            { "Language", new AttributeValue { S = language.ToString() } }
         };
 
         var request = new GetItemRequest
@@ -58,7 +57,7 @@ public class UserLanguageRepository(IAmazonDynamoDB client) : IUserLanguageRepos
             },
             {
                 "Language",
-                new AttributeValue { S = userLanguage.Language }
+                new AttributeValue { S = userLanguage.Language.ToString() }
             },
             {
                 "Country",
@@ -89,12 +88,12 @@ public class UserLanguageRepository(IAmazonDynamoDB client) : IUserLanguageRepos
         return userLanguage;
     }
     
-    public async Task RemoveUserLanguageAsync(string userId, string? language)
+    public async Task RemoveUserLanguageAsync(string userId, Language? language)
     {
         var key = new Dictionary<string, AttributeValue>
         {
             { "UserId", new AttributeValue { S = userId } },
-            { "Language", new AttributeValue { S = language } }
+            { "Language", new AttributeValue { S = language.ToString() } }
         };
 
         var request = new DeleteItemRequest

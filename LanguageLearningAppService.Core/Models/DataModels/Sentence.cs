@@ -10,7 +10,7 @@ public class Sentence
     public int Mistakes { get; set; }
     public string? Translation { get; set; }
     public byte[]? Voice { get; set; }
-    public required string Language { get; set; }
+    public required Language Language { get; set; }
     public string? Alignment { get; set; }
     public string? Country { get; set; }
     public string? Type { get; set; }

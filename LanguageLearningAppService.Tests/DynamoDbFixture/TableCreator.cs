@@ -1,4 +1,5 @@
 using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.Model;
 using Core;
 using Core.Helpers;
@@ -13,7 +14,7 @@ public class TableCreator(IAmazonDynamoDB client)
         // list tables
         var response = await client.ListTablesAsync();
         var tables = response.TableNames;
-
+        
         if (!tables.Contains(Table.Users.GetTableName()))
             await CreateUsersTableAsync();
 
@@ -36,7 +37,7 @@ public class TableCreator(IAmazonDynamoDB client)
             KeySchema = [new KeySchemaElement("UserId", KeyType.HASH)],
             BillingMode = BillingMode.PAY_PER_REQUEST
         };
-
+        
         await client.CreateTableAsync(request);
         Console.WriteLine("Created table 'users'");
     }

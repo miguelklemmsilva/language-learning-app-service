@@ -1,6 +1,8 @@
+using Core.Models.DataModels;
+
 namespace Core.Models.DataTransferModels;
 
 public class RemoveUserLanguageResponse
 {
-    public string? ActiveLanguage { get; set; }
+    public Language? ActiveLanguage { get; set; }
 }

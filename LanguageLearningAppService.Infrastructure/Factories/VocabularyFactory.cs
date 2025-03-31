@@ -13,11 +13,16 @@ public static class VocabularyFactory
         var language = languageWord.Split("#")[0];
         var word = languageWord.Split("#")[1];
         
+        var tryParse = Enum.TryParse<Language>(language, out var languageEnum);
+
+        if (!tryParse)
+            throw new Exception($"Invalid language value ${language} for User ${item["UserId"].S}.");
+        
         
         return new Vocabulary
         {
             UserId = item["UserId"].S,
-            Language = language,
+            Language = languageEnum,
             Word = word,
             LastPracticed = long.Parse(item["LastSeen"].N),
             BoxNumber = int.Parse(item["BoxNumber"].N)

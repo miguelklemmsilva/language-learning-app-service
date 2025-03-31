@@ -9,7 +9,7 @@ public class FinishLessonRequest
 
 public class FinishLessonSentence
 {
-    public required string Language { get; set; }
+    public required Language Language { get; set; }
     public int Mistakes { get; set; }
     public required string Type { get; set; }
     public required string Word { get; set; }

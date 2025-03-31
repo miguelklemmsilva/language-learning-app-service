@@ -1,5 +1,6 @@
 using Amazon;
 using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Core.Interfaces;
 using Core.Services;
 using LanguageLearningAppService.Infrastructure.Repositories;
@@ -15,20 +16,24 @@ public class DynamoDbFixture : IDisposable
     public DynamoDbFixture()
     {
         var services = new ServiceCollection();
+        
+        var config = new AmazonDynamoDBConfig
+        {
+            ServiceURL = "http://localhost:8000",
+            UseHttp = true
+                
+        };
+        var client = new AmazonDynamoDBClient(config);
+        services.AddSingleton<IAmazonDynamoDB>(client);
 
         // Configure the DynamoDB client for local testing.
-        services.AddSingleton<IAmazonDynamoDB>(_ =>
+        services.AddSingleton<IDynamoDBContext>(_ =>
         {
-            var config = new AmazonDynamoDBConfig
-            {
-                ServiceURL = "http://localhost:8000",
-                UseHttp = true
-                
-            };
-            var client = new AmazonDynamoDBClient(config);
+            var context = new DynamoDBContextBuilder().WithDynamoDBClient(() => client).Build();
+            
             new TableCreator(client).CreateTablesAsync().GetAwaiter().GetResult();
 
-            return client;
+            return context;
         });
 
         services.AddSingleton<IUserRepository, UserRepository>();

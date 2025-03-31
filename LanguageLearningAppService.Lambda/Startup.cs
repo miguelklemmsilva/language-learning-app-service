@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using Amazon;
 using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.Lambda.Annotations;
 using Azure;
 using Azure.AI.Translation.Text;
@@ -16,7 +17,9 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(RegionEndpoint.EUWest2));
+        services.AddSingleton<IDynamoDBContext>(new DynamoDBContextBuilder()
+            .WithDynamoDBClient(() => new AmazonDynamoDBClient(RegionEndpoint.EUWest2)).Build());
+
         services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IUserService, UserService>();
         services.AddSingleton<IUserLanguageRepository, UserLanguageRepository>();
@@ -30,9 +33,9 @@ public class Startup
         services.AddSingleton<ITokenRepository, TokenRepository>();
         services.AddSingleton<IChatGptService, ChatGptService>();
         services.AddSingleton<ITranslationRepository, TranslationRepository>();
-        
+
         services.AddHttpClient<IChatGptRepository, ChatGptRepository>(ConfigureChatGptHttpClient);
-        
+
         services.AddSingleton(_ => CreateTextTranslationClient());
 
         services.AddHttpClient<ITokenRepository, TokenRepository>(ConfigureSpeechServiceHttpClient);
