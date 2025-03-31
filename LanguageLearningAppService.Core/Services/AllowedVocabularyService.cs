@@ -6,9 +6,11 @@ namespace Core.Services;
 public class AllowedVocabularyService(IAllowedVocabularyRepository allowedVocabularyRepository)
     : IAllowedVocabularyService
 {
-    public Task<bool> IsVocabularyAllowedAsync(Language language, string word)
+    public async Task<bool> IsVocabularyAllowedAsync(Language language, string word)
     {
-        return allowedVocabularyRepository.IsVocabularyAllowedAsync(language, word);
+        if (string.IsNullOrEmpty(word)) return false;
+        
+        return await allowedVocabularyRepository.IsVocabularyAllowedAsync(language, word.ToLower());
     }
 
     public async Task<IEnumerable<Category>> GetWordsByCategoryAsync(Language language)
