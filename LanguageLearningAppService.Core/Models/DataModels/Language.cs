@@ -13,7 +13,7 @@ public enum Language
     [LanguageCode("jp")] Japanese
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumConverter<Language>))]
 [AttributeUsage(AttributeTargets.Field)]
 public sealed class LanguageCode(string? code) : Attribute
 {
