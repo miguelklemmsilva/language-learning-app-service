@@ -17,8 +17,11 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
+        var client = new AmazonDynamoDBClient(RegionEndpoint.EUWest2);
+        services.AddSingleton<IAmazonDynamoDB>(client);
+
         services.AddSingleton<IDynamoDBContext>(new DynamoDBContextBuilder()
-            .WithDynamoDBClient(() => new AmazonDynamoDBClient(RegionEndpoint.EUWest2)).Build());
+            .WithDynamoDBClient(() => client).Build());
 
         services.AddSingleton<IUserRepository, UserRepository>();
         services.AddSingleton<IUserService, UserService>();
