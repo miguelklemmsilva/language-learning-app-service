@@ -1,4 +1,5 @@
 using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.Model;
 using Core;
 using Core.Helpers;
@@ -7,47 +8,24 @@ using Core.Models.DataModels;
 
 namespace LanguageLearningAppService.Infrastructure.Repositories;
 
-public class AllowedVocabularyRepository(IAmazonDynamoDB client) : IAllowedVocabularyRepository
+public class AllowedVocabularyRepository(IDynamoDBContext context) : IAllowedVocabularyRepository
 {
-    private static readonly string TableName = Table.AllowedVocabulary.GetTableName();
-
     public async Task<bool> IsVocabularyAllowedAsync(Language language, string word)
     {
-        var request = new GetItemRequest
-        {
-            TableName = TableName,
-            Key = new Dictionary<string, AttributeValue>
-            {
-                { "Word", new AttributeValue { S = word } },
-                { "Language", new AttributeValue { S = language.ToString() } }
-            }
-        };
-
-        var response = await client.GetItemAsync(request);
-
-        return response.Item != null;
+        var allowedVocabulary = await context.LoadAsync<AllowedVocabulary>(word, language.ToString());
+        return allowedVocabulary != null;
     }
 
     public async Task<IEnumerable<AllowedVocabulary>> GetWordsByCategoryAsync(Language language)
     {
-        var request = new QueryRequest
+        // Set up the DynamoDBOperationConfig to use the secondary index.
+        var config = new QueryConfig
         {
-            TableName = TableName,
-            IndexName = "CategoryIndex",
-            KeyConditionExpression = "#Language = :language",
-            ExpressionAttributeNames = new Dictionary<string, string>
-            {
-                { "#Language", "Language" }
-            },
-            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-            {
-                { ":language", new AttributeValue { S = language.ToString() } }
-            }
+            IndexName = "CategoryIndex"
         };
 
-        var response = await client.QueryAsync(request);
-
-        return response.Items.Select(item => new AllowedVocabulary
-            { Language = item["Language"].S, Word = item["Word"].S, Category = item["Category"].S }).ToList();
+        // Query the GSI where the partition key is "Language". 
+        var query = context.QueryAsync<AllowedVocabulary>(language.ToString(), config);
+        return await query.GetRemainingAsync();
     }
 }

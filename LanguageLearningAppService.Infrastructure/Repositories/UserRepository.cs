@@ -1,89 +1,25 @@
-using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.Model;
-using Core;
-using Core.Helpers;
+using Amazon.DynamoDBv2.DataModel;
 using Core.Interfaces;
 using Core.Models.DataModels;
-using LanguageLearningAppService.Infrastructure.Factories;
 
 namespace LanguageLearningAppService.Infrastructure.Repositories;
 
-public class UserRepository(IAmazonDynamoDB client) : IUserRepository
+public class UserRepository(IDynamoDBContext context) : IUserRepository
 {
-    private static readonly string TableName = Table.Users.GetTableName();
-
     public async Task<User> CreateUserAsync(User user)
     {
-        var item = new Dictionary<string, AttributeValue>
-        {
-            {
-                "UserId",
-                new AttributeValue { S = user.UserId }
-            },
-            {
-                "Email",
-                new AttributeValue { S = user.Email }
-            }
-        };
-        
-        var request = new PutItemRequest
-        {
-            TableName = TableName,
-            Item = item
-        };
-
-        await client.PutItemAsync(request);
-
+        await context.SaveAsync(user);
         return user;
     }
 
     public async Task<User> GetUserAsync(string userId)
     {
-        var key = new Dictionary<string, AttributeValue>
-        {
-            { "UserId", new AttributeValue { S = userId } }
-        };
-
-        var request = new GetItemRequest
-        {
-            TableName = TableName,
-            Key = key
-        };
-
-        var response = await client.GetItemAsync(request);
-
-        return UserFactory.Build(response.Item);
+        return await context.LoadAsync<User>(userId);
     }
 
     public async Task<User> UpdateUserAsync(User user)
     {
-        var key = new Dictionary<string, AttributeValue>
-        {
-            { "UserId", new AttributeValue { S = user.UserId } }
-        };
-
-        var request = new UpdateItemRequest
-        {
-            TableName = TableName,
-            Key = key,
-            ReturnValues = ReturnValue.ALL_NEW
-        };
-
-        if (user.ActiveLanguage is null)
-        {
-            request.UpdateExpression = "REMOVE ActiveLanguage";
-        }
-        else
-        {
-            request.UpdateExpression = "SET ActiveLanguage = :activeLanguage";
-            request.ExpressionAttributeValues = new Dictionary<string, AttributeValue>
-            {
-                { ":activeLanguage", new AttributeValue { S = user.ActiveLanguage.ToString() } }
-            };
-        }
-
-        var response = await client.UpdateItemAsync(request);
-
-        return UserFactory.Build(response.Attributes);
+        await context.SaveAsync(user);
+        return user;
     }
 }

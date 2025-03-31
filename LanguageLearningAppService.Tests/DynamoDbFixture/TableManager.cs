@@ -1,31 +1,22 @@
 using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.Model;
-using Core;
 using Core.Helpers;
-using LanguageLearningAppService.Infrastructure;
 
 namespace LanguageLearningAppService.Tests.DynamoDbFixture;
 
-public class TableCreator(IAmazonDynamoDB client)
+public class TableManager(IAmazonDynamoDB client)
 {
     public async Task CreateTablesAsync()
     {
-        // list tables
-        var response = await client.ListTablesAsync();
-        var tables = response.TableNames;
-        
-        if (!tables.Contains(Table.Users.GetTableName()))
-            await CreateUsersTableAsync();
+        var createTableTasks = new List<Task>
+        {
+            CreateUsersTableAsync(),
+            CreateUserLanguagesTableAsync(),
+            CreateVocabularyTableAsync(),
+            CreateAllowedVocabularyTableAsync()
+        };
 
-        if (!tables.Contains(Table.UserLanguages.GetTableName()))
-            await CreateUserLanguagesTableAsync();
-
-        if (!tables.Contains(Table.Vocabulary.GetTableName()))
-            await CreateVocabularyTableAsync();
-
-        if (!tables.Contains(Table.AllowedVocabulary.GetTableName()))
-            await CreateAllowedVocabularyTableAsync();
+        await Task.WhenAll(createTableTasks);
     }
 
     private async Task CreateUsersTableAsync()
@@ -37,7 +28,7 @@ public class TableCreator(IAmazonDynamoDB client)
             KeySchema = [new KeySchemaElement("UserId", KeyType.HASH)],
             BillingMode = BillingMode.PAY_PER_REQUEST
         };
-        
+
         await client.CreateTableAsync(request);
         Console.WriteLine("Created table 'users'");
     }
@@ -119,7 +110,7 @@ public class TableCreator(IAmazonDynamoDB client)
         };
 
         await client.CreateTableAsync(request);
-        
+
         // Populate with test data
         var putRequest = new PutItemRequest
         {
@@ -131,9 +122,22 @@ public class TableCreator(IAmazonDynamoDB client)
                 { "Category", new AttributeValue { S = "Greetings" } }
             }
         };
-        
+
         await client.PutItemAsync(putRequest);
-        
+
         Console.WriteLine("Created table 'allowed_vocabulary'");
+    }
+
+    public async Task DeleteTables()
+    {
+        var deleteTablesTask = new List<Task>
+        {
+            client.DeleteTableAsync(Table.Users.GetTableName()),
+            client.DeleteTableAsync(Table.Vocabulary.GetTableName()),
+            client.DeleteTableAsync(Table.UserLanguages.GetTableName()),
+            client.DeleteTableAsync(Table.AllowedVocabulary.GetTableName())
+        };
+
+        await Task.WhenAll(deleteTablesTask);
     }
 }

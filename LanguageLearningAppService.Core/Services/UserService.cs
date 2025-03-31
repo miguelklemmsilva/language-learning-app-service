@@ -36,8 +36,6 @@ public class UserService(
 
     public async Task<UserResponse> UpdateUserAsync(User user)
     {
-        await GetUserAsync(user.UserId);
-
         await userRepository.UpdateUserAsync(user);
 
         return await GetUserAsync(user.UserId);

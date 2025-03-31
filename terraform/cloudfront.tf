@@ -1,3 +1,16 @@
+provider "aws" {
+  alias  = "us_east_1"
+  region = "us-east-1"
+}
+
+# must be imported from us-east-1 for cloudfront
+data "aws_acm_certificate" "domain_certificate" {
+  domain = "api.miguelklemmsilva.com"
+  statuses = ["ISSUED"]
+  provider    = aws.us_east_1
+  most_recent = true
+}
+
 resource "aws_cloudfront_response_headers_policy" "cors_policy" {
   name = "CORSResponseHeadersPolicy"
 
@@ -17,6 +30,7 @@ resource "aws_cloudfront_response_headers_policy" "cors_policy" {
 }
 
 resource "aws_cloudfront_distribution" "api_distribution" {
+  aliases = ["api.miguelklemmsilva.com"]
   origin {
     domain_name = "${aws_api_gateway_deployment.deployment.rest_api_id}.execute-api.${var.AWS_REGION}"
     origin_id   = "api-gateway-origin"
@@ -35,8 +49,6 @@ resource "aws_cloudfront_distribution" "api_distribution" {
     cached_methods = ["HEAD", "GET", "OPTIONS"]
     viewer_protocol_policy = "redirect-to-https"
 
-    response_headers_policy_id = aws_cloudfront_response_headers_policy.cors_policy.id
-
     forwarded_values {
       query_string = true
       headers = ["Authorization"]
@@ -50,7 +62,7 @@ resource "aws_cloudfront_distribution" "api_distribution" {
   is_ipv6_enabled = true
   comment         = "Distribution in front of API Gateway for CORS handling"
   price_class     = "PriceClass_All"
-  
+
   logging_config {
     bucket = aws_s3_bucket.logging_bucket.bucket_domain_name
   }
@@ -62,6 +74,7 @@ resource "aws_cloudfront_distribution" "api_distribution" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn = data.aws_acm_certificate.domain_certificate.arn
+    ssl_support_method  = "sni-only"
   }
 }

@@ -12,6 +12,7 @@ namespace LanguageLearningAppService.Tests.DynamoDbFixture;
 public class DynamoDbFixture : IDisposable
 {
     public ServiceProvider ServiceProvider { get; }
+    private TableManager TableManager { get; }
 
     public DynamoDbFixture()
     {
@@ -24,6 +25,8 @@ public class DynamoDbFixture : IDisposable
                 
         };
         var client = new AmazonDynamoDBClient(config);
+        TableManager = new TableManager(client);
+        
         services.AddSingleton<IAmazonDynamoDB>(client);
 
         // Configure the DynamoDB client for local testing.
@@ -31,7 +34,7 @@ public class DynamoDbFixture : IDisposable
         {
             var context = new DynamoDBContextBuilder().WithDynamoDBClient(() => client).Build();
             
-            new TableCreator(client).CreateTablesAsync().GetAwaiter().GetResult();
+            TableManager.CreateTablesAsync().GetAwaiter().GetResult();
 
             return context;
         });
@@ -57,9 +60,11 @@ public class DynamoDbFixture : IDisposable
         ServiceProvider = services.BuildServiceProvider();
     }
 
-    public void Dispose()
+    public async void Dispose()
     {
-        ServiceProvider.Dispose();
+        await TableManager.DeleteTables();
+        
+        await ServiceProvider.DisposeAsync();
     }
 }
 
