@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 
 namespace Core.Models.DataModels;
 
@@ -12,6 +13,7 @@ public enum Language
     [LanguageCode("jp")] Japanese
 }
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 [AttributeUsage(AttributeTargets.Field)]
 public sealed class LanguageCode(string? code) : Attribute
 {
