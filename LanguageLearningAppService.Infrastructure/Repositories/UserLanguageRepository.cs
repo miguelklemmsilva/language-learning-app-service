@@ -1,10 +1,6 @@
-using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
-using Amazon.DynamoDBv2.Model;
-using Core.Helpers;
 using Core.Interfaces;
 using Core.Models.DataModels;
-using LanguageLearningAppService.Infrastructure.Factories;
 
 namespace LanguageLearningAppService.Infrastructure.Repositories;
 

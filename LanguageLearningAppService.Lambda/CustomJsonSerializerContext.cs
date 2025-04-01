@@ -3,9 +3,10 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Amazon.Lambda.APIGatewayEvents;
 using Core.Models.ApiModels;
+using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
 
-namespace Core.Models.DataModels;
+namespace LanguageLearningAppService.Lambda;
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]

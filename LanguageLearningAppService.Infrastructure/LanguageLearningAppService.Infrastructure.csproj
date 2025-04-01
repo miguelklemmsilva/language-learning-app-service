@@ -15,4 +15,7 @@
       <PackageReference Include="Azure.AI.Translation.Text" Version="1.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+    </ItemGroup>
+
 </Project>

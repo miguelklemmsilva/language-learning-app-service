@@ -6,7 +6,6 @@ namespace Core.Models.DataModels;
 [DynamoDBTable("allowed_vocabulary")]
 public class AllowedVocabulary
 {
-    // We assume that "Word" is the hash key.
     [DynamoDBHashKey]
     public required string Word { get; set; }
     
