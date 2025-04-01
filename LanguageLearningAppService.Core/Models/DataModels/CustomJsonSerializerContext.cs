@@ -1,14 +1,15 @@
+using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
-using Amazon.Lambda.Annotations.APIGateway;
+using Amazon.Lambda.APIGatewayEvents;
 using Core.Models.ApiModels;
 using Core.Models.DataTransferModels;
 
 namespace Core.Models.DataModels;
 
-[JsonSourceGenerationOptions(
-    PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase
-)]
+[JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
+[JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
+[JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
 [JsonSerializable(typeof(UpdateUserRequest))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
 [JsonSerializable(typeof(UserResponse))]
@@ -17,8 +18,6 @@ namespace Core.Models.DataModels;
 [JsonSerializable(typeof(IEnumerable<UserLanguage>))]
 [JsonSerializable(typeof(IEnumerable<string>))]
 [JsonSerializable(typeof(IEnumerable<Word>))]
-[JsonSerializable(typeof(IHttpResult))]
-[JsonSerializable(typeof(HttpResults))]
 [JsonSerializable(typeof(UserLanguageRequest))]
 [JsonSerializable(typeof(AddVocabularyRequest))]
 [JsonSerializable(typeof(ChatGptRequest))]
