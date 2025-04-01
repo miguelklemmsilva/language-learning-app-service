@@ -45,16 +45,18 @@ public class Function(
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/user")]
-    public async Task<UserResponse> GetUser([FromHeader] string authorization)
+    public async Task<APIGatewayHttpApiV2ProxyResponse> GetUser([FromHeader] string authorization)
     {
         var userId = AuthHelper.ParseToken(authorization).Sub;
 
-        return await userService.GetUserAsync(userId);
+        var user = await userService.GetUserAsync(userId);
+
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(user);
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Put, "/user")]
-    public async Task<UserResponse> UpdateUser([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> UpdateUser([FromHeader] string authorization,
         [FromBody] UpdateUserRequest updateRequest)
     {
         var username = AuthHelper.ParseToken(authorization).Sub;
@@ -62,12 +64,12 @@ public class Function(
         var user = await userService.UpdateUserAsync(new User
             { UserId = username, ActiveLanguage = updateRequest.ActiveLanguage });
 
-        return user;
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(user);
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Put, "/language")]
-    public async Task<UserLanguage> UpdateLanguage([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> UpdateLanguage([FromHeader] string authorization,
         [FromBody] UserLanguageRequest updateRequest)
     {
         var username = AuthHelper.ParseToken(authorization).Sub;
@@ -82,23 +84,25 @@ public class Function(
             Speaking = updateRequest.Speaking
         };
 
-        return await userLanguageService.UpdateUserLanguageAsync(userLanguage);
+        var userLanguageResponse = await userLanguageService.UpdateUserLanguageAsync(userLanguage);
+        
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(userLanguageResponse);
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/languages")]
-    public async Task<IEnumerable<UserLanguage>> GetUserLanguages([FromHeader] string authorization)
+    public async Task<APIGatewayHttpApiV2ProxyResponse> GetUserLanguages([FromHeader] string authorization)
     {
         var userId = AuthHelper.ParseToken(authorization).Sub;
 
         var languages = await userLanguageService.GetUserLanguagesAsync(userId);
 
-        return languages;
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(languages);
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Delete, "/language")]
-    public async Task<RemoveUserLanguageResponse> RemoveLanguage([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveLanguage([FromHeader] string authorization,
         [FromQuery] string language)
     {
         var userId = AuthHelper.ParseToken(authorization).Sub;
@@ -109,12 +113,14 @@ public class Function(
 
         var newLanguage = await userLanguageService.RemoveUserLanguageAsync(userId, enumLanguage);
 
-        return new RemoveUserLanguageResponse { ActiveLanguage = newLanguage };
+        var removeUserLanguageResponse = new RemoveUserLanguageResponse { ActiveLanguage = newLanguage };
+        
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(removeUserLanguageResponse);
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/vocabulary")]
-    public async Task<IEnumerable<Word>> GetVocabulary([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> GetVocabulary([FromHeader] string authorization,
         [FromQuery] string language)
     {
         var userId = AuthHelper.ParseToken(authorization).Sub;
@@ -123,22 +129,26 @@ public class Function(
 
         if (!tryParse) throw new Exception($"{language} is not a valid language!");
 
-        return await vocabularyService.GetVocabularyAsync(userId, enumLanguage);
+        var vocabulary = await vocabularyService.GetVocabularyAsync(userId, enumLanguage);
+        
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(vocabulary);
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Put, "/vocabulary")]
-    public async Task<IEnumerable<string>> AddVocabulary([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> AddVocabulary([FromHeader] string authorization,
         [FromBody] AddVocabularyRequest addRequest)
     {
         var userId = AuthHelper.ParseToken(authorization).Sub;
 
-        return await vocabularyService.AddVocabularyAsync(userId, addRequest);
+        var vocabulary = await vocabularyService.AddVocabularyAsync(userId, addRequest);
+        
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(vocabulary);
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Delete, "/vocabulary")]
-    public async Task<Dictionary<string, string>> RemoveVocabulary([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> RemoveVocabulary([FromHeader] string authorization,
         [FromQuery] string language, [FromQuery] string word)
     {
         var userId = AuthHelper.ParseToken(authorization).Sub;
@@ -149,28 +159,34 @@ public class Function(
 
         await vocabularyService.RemoveVocabularyAsync(userId, enumLanguage, word);
 
-        return new Dictionary<string, string> { { "message", "Vocabulary removed successfully" } };
+        var vocabularyRemovalResponse = new Dictionary<string, string> { { "message", "Vocabulary removed successfully" } };
+        
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(vocabularyRemovalResponse);
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/generatesentences")]
-    public async Task<SentencesResponse> GenerateSentences([FromHeader] string authorization)
+    public async Task<APIGatewayHttpApiV2ProxyResponse> GenerateSentences([FromHeader] string authorization)
     {
         var userId = AuthHelper.ParseToken(authorization).Sub;
 
-        return await aiService.GenerateSentencesAsync(userId);
+        var sentences = await aiService.GenerateSentencesAsync(userId);
+        
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(sentences);
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Post, "/verifysentence")]
-    public async Task<VerifySentenceResponse> VerifySentence([FromBody] VerifySentenceRequest verifyRequest)
+    public async Task<APIGatewayHttpApiV2ProxyResponse> VerifySentence([FromBody] VerifySentenceRequest verifyRequest)
     {
-        return await chatGptService.VerifySentenceAsync(verifyRequest);
+        var verifySentenceResponse = await chatGptService.VerifySentenceAsync(verifyRequest);
+        
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(verifySentenceResponse);
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Post, "/finishlesson")]
-    public async Task<Dictionary<string, string>> FinishLesson([FromHeader] string authorization,
+    public async Task<APIGatewayHttpApiV2ProxyResponse> FinishLesson([FromHeader] string authorization,
         [FromBody] FinishLessonRequest finishRequest)
     {
         var userId = AuthHelper.ParseToken(authorization).Sub;
@@ -182,21 +198,23 @@ public class Function(
 
         await vocabularyService.FinishLessonAsync(userId, finishRequest, activeLanguage);
 
-        return new Dictionary<string, string> { { "message", "Lesson finished successfully" } };
+        var successMessage = new Dictionary<string, string> { { "message", "Lesson finished successfully" } };
+        
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(successMessage);
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Post, "/issuetoken")]
-    public async Task<string> IssueToken()
+    public async Task<APIGatewayHttpApiV2ProxyResponse> IssueToken()
     {
         var token = await tokenRepository.GetIssueTokenAsync();
 
-        return token;
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(token);
     }
 
     [LambdaFunction]
     [HttpApi(LambdaHttpMethod.Get, "/categories")]
-    public async Task<IEnumerable<Category>> GetCategories([FromQuery] string language)
+    public async Task<APIGatewayHttpApiV2ProxyResponse> GetCategories([FromQuery] string language)
     {
         var tryParse = TryParse<Language>(language, out var enumLanguage);
 
@@ -204,6 +222,6 @@ public class Function(
 
         var categories = await allowedVocabularyService.GetWordsByCategoryAsync(enumLanguage);
 
-        return categories;
+        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(categories);
     }
 }
