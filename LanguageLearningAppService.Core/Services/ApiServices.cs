@@ -61,7 +61,7 @@ public class ChatGptService(IChatGptRepository chatGptRepository) : IChatGptServ
         var chatGptResponse = await chatGptRepository.SendChatGptRequestAsync(chatGptRequest);
 
         var messageResponse = JsonSerializer.Deserialize(chatGptResponse.Choices.First().Message.Content,
-            CustomJsonSerializerContext.Default.VerifySentenceResponse);
+            ApiJsonSerializerContext.Default.VerifySentenceResponse);
 
         return messageResponse ?? new VerifySentenceResponse { IsCorrect = false, Explanation = "No response from AI" };
     }
