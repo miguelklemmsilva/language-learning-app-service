@@ -27,6 +27,7 @@ resource "aws_cloudfront_distribution" "api_distribution" {
   aliases = ["api.miguelklemmsilva.com"]
   origin {
     domain_name = "${aws_api_gateway_deployment.deployment.rest_api_id}.execute-api.${var.AWS_REGION}.amazonaws.com"
+    origin_path = "/prod"
     origin_id   = "api-gateway-origin"
 
     custom_origin_config {
