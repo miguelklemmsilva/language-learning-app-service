@@ -1,7 +1,6 @@
 using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using Amazon.Lambda.Annotations.APIGateway;
-using Amazon.Lambda.APIGatewayEvents;
 using Core.Models.ApiModels;
 using Core.Models.DataTransferModels;
 
@@ -10,8 +9,6 @@ namespace Core.Models.DataModels;
 [JsonSourceGenerationOptions(
     PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase
 )]
-[JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
-[JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
 [JsonSerializable(typeof(UpdateUserRequest))]
 [JsonSerializable(typeof(Dictionary<string, string>))]
 [JsonSerializable(typeof(UserResponse))]
