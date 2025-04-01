@@ -9,6 +9,7 @@ public class APIGatewayResponseManager
     {
         return new APIGatewayHttpApiV2ProxyResponse
         {
+            StatusCode = 200,
             Body = JsonSerializer.Serialize(response, typeof(T), CustomJsonSerializerContext.Default)
         };
     }
