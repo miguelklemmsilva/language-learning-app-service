@@ -63,6 +63,7 @@ resource "aws_lambda_function" "pre_sign_up" {
   handler           = "bootstrap"
   runtime           = "dotnet8"
   architectures = ["x86_64"]
+  timeout = 10
 
   environment {
     variables = {
