@@ -43,6 +43,7 @@ resource "aws_lambda_function" "api_route_functions" {
   handler           = "bootstrap"
   runtime           = "dotnet8"
   architectures = ["x86_64"]
+  timeout = 15
 
   environment {
     variables = {
