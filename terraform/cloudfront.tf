@@ -5,34 +5,28 @@ provider "aws" {
 
 # must be imported from us-east-1 for cloudfront
 data "aws_acm_certificate" "domain_certificate" {
-  domain = "api.miguelklemmsilva.com"
+  domain      = "api.miguelklemmsilva.com"
   statuses = ["ISSUED"]
   provider    = aws.us_east_1
   most_recent = true
 }
 
-resource "aws_cloudfront_response_headers_policy" "cors_policy" {
-  name = "CORSResponseHeadersPolicy"
+data "aws_cloudfront_cache_policy" "cache_policy" {
+  name = "Managed-CachingDisabled"
+}
 
-  cors_config {
-    access_control_allow_credentials = false
-    access_control_allow_headers {
-      items = ["Content-Type", "Authorization", "X-Amz-Date", "X-Api-Key", "X-Amz-Security-Token"]
-    }
-    access_control_allow_methods {
-      items = ["HEAD", "DELETE", "GET", "POST", "PUT", "OPTIONS", "PATCH"]
-    }
-    access_control_allow_origins {
-      items = ["*"]
-    }
-    origin_override = true
-  }
+data "aws_cloudfront_origin_request_policy" "origin_request_policy" {
+  name = "Managed-AllViewerExceptHostHeader"
+}
+
+data "aws_cloudfront_response_headers_policy" "response_headers_policy" {
+  name = "Managed-CORS-With-Preflight"
 }
 
 resource "aws_cloudfront_distribution" "api_distribution" {
   aliases = ["api.miguelklemmsilva.com"]
   origin {
-    domain_name = "${aws_api_gateway_deployment.deployment.rest_api_id}.execute-api.${var.AWS_REGION}"
+    domain_name = "${aws_api_gateway_deployment.deployment.rest_api_id}.execute-api.${var.AWS_REGION}.amazonaws.com"
     origin_id   = "api-gateway-origin"
 
     custom_origin_config {
@@ -44,18 +38,14 @@ resource "aws_cloudfront_distribution" "api_distribution" {
   }
 
   default_cache_behavior {
-    target_origin_id       = "api-gateway-origin"
+    target_origin_id         = "api-gateway-origin"
+    viewer_protocol_policy   = "redirect-to-https"
+    cache_policy_id          = data.aws_cloudfront_cache_policy.cache_policy.id
+    origin_request_policy_id = data.aws_cloudfront_origin_request_policy.origin_request_policy.id
     allowed_methods = ["HEAD", "GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"]
     cached_methods = ["HEAD", "GET", "OPTIONS"]
-    viewer_protocol_policy = "redirect-to-https"
 
-    forwarded_values {
-      query_string = true
-      headers = ["Authorization"]
-      cookies {
-        forward = "none"
-      }
-    }
+    response_headers_policy_id = data.aws_cloudfront_response_headers_policy.response_headers_policy.id
   }
 
   enabled         = true
