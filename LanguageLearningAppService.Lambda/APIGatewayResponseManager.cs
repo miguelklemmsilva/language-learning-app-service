@@ -3,9 +3,9 @@ using Amazon.Lambda.APIGatewayEvents;
 
 namespace LanguageLearningAppService.Lambda;
 
-public class APIGatewayResponseManager
+public static class ApiGatewayResponseManager
 {
-    public static APIGatewayHttpApiV2ProxyResponse ToAPIGatewaySuccessResponse<T>(T response)
+    public static APIGatewayHttpApiV2ProxyResponse ToApiGatewaySuccessResponse<T>(T response)
     {
         return new APIGatewayHttpApiV2ProxyResponse
         {

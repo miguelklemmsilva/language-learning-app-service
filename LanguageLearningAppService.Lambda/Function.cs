@@ -51,7 +51,7 @@ public class Function(
 
         var user = await userService.GetUserAsync(userId);
 
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(user);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(user);
     }
 
     [LambdaFunction]
@@ -64,7 +64,7 @@ public class Function(
         var user = await userService.UpdateUserAsync(new User
             { UserId = username, ActiveLanguage = updateRequest.ActiveLanguage });
 
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(user);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(user);
     }
 
     [LambdaFunction]
@@ -86,7 +86,7 @@ public class Function(
 
         var userLanguageResponse = await userLanguageService.UpdateUserLanguageAsync(userLanguage);
         
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(userLanguageResponse);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(userLanguageResponse);
     }
 
     [LambdaFunction]
@@ -97,7 +97,7 @@ public class Function(
 
         var languages = await userLanguageService.GetUserLanguagesAsync(userId);
 
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(languages);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(languages);
     }
 
     [LambdaFunction]
@@ -115,7 +115,7 @@ public class Function(
 
         var removeUserLanguageResponse = new RemoveUserLanguageResponse { ActiveLanguage = newLanguage };
         
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(removeUserLanguageResponse);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(removeUserLanguageResponse);
     }
 
     [LambdaFunction]
@@ -131,7 +131,7 @@ public class Function(
 
         var vocabulary = await vocabularyService.GetVocabularyAsync(userId, enumLanguage);
         
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(vocabulary);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(vocabulary);
     }
 
     [LambdaFunction]
@@ -143,7 +143,7 @@ public class Function(
 
         var vocabulary = await vocabularyService.AddVocabularyAsync(userId, addRequest);
         
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(vocabulary);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(vocabulary);
     }
 
     [LambdaFunction]
@@ -161,7 +161,7 @@ public class Function(
 
         var vocabularyRemovalResponse = new Dictionary<string, string> { { "message", "Vocabulary removed successfully" } };
         
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(vocabularyRemovalResponse);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(vocabularyRemovalResponse);
     }
 
     [LambdaFunction]
@@ -172,7 +172,7 @@ public class Function(
 
         var sentences = await aiService.GenerateSentencesAsync(userId);
         
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(sentences);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(sentences);
     }
 
     [LambdaFunction]
@@ -181,7 +181,7 @@ public class Function(
     {
         var verifySentenceResponse = await chatGptService.VerifySentenceAsync(verifyRequest);
         
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(verifySentenceResponse);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(verifySentenceResponse);
     }
 
     [LambdaFunction]
@@ -200,7 +200,7 @@ public class Function(
 
         var successMessage = new Dictionary<string, string> { { "message", "Lesson finished successfully" } };
         
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(successMessage);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(successMessage);
     }
 
     [LambdaFunction]
@@ -209,7 +209,7 @@ public class Function(
     {
         var token = await tokenRepository.GetIssueTokenAsync();
 
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(token);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(token);
     }
 
     [LambdaFunction]
@@ -222,6 +222,6 @@ public class Function(
 
         var categories = await allowedVocabularyService.GetWordsByCategoryAsync(enumLanguage);
 
-        return APIGatewayResponseManager.ToAPIGatewaySuccessResponse(categories);
+        return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(categories);
     }
 }
