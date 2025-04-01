@@ -9,6 +9,7 @@ using Core.Models.DataTransferModels;
 namespace LanguageLearningAppService.Lambda;
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
+[JsonConverter(typeof(JsonStringEnumConverter<Language>))]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyRequest))]
 [JsonSerializable(typeof(APIGatewayHttpApiV2ProxyResponse))]
 [JsonSerializable(typeof(UpdateUserRequest))]
