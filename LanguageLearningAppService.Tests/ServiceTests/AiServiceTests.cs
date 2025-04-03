@@ -1,6 +1,7 @@
 using Core.Interfaces;
 using Core.Models.DataModels;
 using Core.Models.DataTransferModels;
+using LanguageLearningAppService.Tests.TestBuilders;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LanguageLearningAppService.Tests.ServiceTests
@@ -19,9 +20,8 @@ namespace LanguageLearningAppService.Tests.ServiceTests
         public async Task GenerateSentencesAsync_Should_Return_Correct_SentencesResponse()
         {
             // Arrange
-            var userId = "ai-user1";
-            // Create a user with no active language.
-            var user = new User { UserId = userId, Email = "ai-user1@example.com", ActiveLanguage = null };
+            var user = new UserBuilder().Build();
+            var userId = user.UserId;
             await _userService.CreateUserAsync(user);
 
             // Set active language via user language service with at least one active study type (Translation = true).

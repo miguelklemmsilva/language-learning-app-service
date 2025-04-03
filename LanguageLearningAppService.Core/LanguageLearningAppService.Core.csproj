@@ -13,5 +13,6 @@
       <PackageReference Include="AWSSDK.DynamoDBv2" Version="4.0.0-preview.11" />
       <PackageReference Include="Azure.AI.Translation.Text" Version="1.0.0" />
       <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.0.2" />
+      <PackageReference Include="xunit.extensibility.core" Version="2.9.2" />
     </ItemGroup>
 </Project>

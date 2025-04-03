@@ -23,10 +23,3 @@ resource "aws_s3_bucket_ownership_controls" "logging_ownership_controls" {
     object_ownership = "BucketOwnerPreferred"
   }
 }
-
-# resource "aws_s3_bucket_acl" "logging_acl" {
-#   depends_on = [aws_s3_bucket.logging_bucket]
-#   
-#   bucket = aws_s3_bucket.logging_bucket.id
-#   acl    = "private"
-# }

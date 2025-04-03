@@ -111,21 +111,45 @@ public class TableManager(IAmazonDynamoDB client)
 
         await client.CreateTableAsync(request);
 
-        // Populate with test data
-        var putRequest = new PutItemRequest
+        await PopulateAllowedVocabularyTestDataAsync();
+
+        Console.WriteLine("Created table 'allowed_vocabulary'");
+    }
+
+    private async Task PopulateAllowedVocabularyTestDataAsync()
+    {
+        var testData = new List<Dictionary<string, AttributeValue>>
         {
-            TableName = Table.AllowedVocabulary.GetTableName(),
-            Item = new Dictionary<string, AttributeValue>
+            new()
             {
                 { "Word", new AttributeValue { S = "hola" } },
                 { "Language", new AttributeValue { S = "Spanish" } },
                 { "Category", new AttributeValue { S = "Greetings" } }
+            },
+            new()
+            {
+                { "Word", new AttributeValue { S = "soy" } },
+                { "Language", new AttributeValue { S = "Spanish" } },
+                { "Category", new AttributeValue { S = "Verbs" } }
+            },
+            new()
+            {
+                { "Word", new AttributeValue { S = "eres" } },
+                { "Language", new AttributeValue { S = "Spanish" } },
+                { "Category", new AttributeValue { S = "Verbs" } }
             }
         };
 
-        await client.PutItemAsync(putRequest);
+        foreach (var item in testData)
+        {
+            var putRequest = new PutItemRequest
+            {
+                TableName = Table.AllowedVocabulary.GetTableName(),
+                Item = item
+            };
 
-        Console.WriteLine("Created table 'allowed_vocabulary'");
+            await client.PutItemAsync(putRequest);
+        }
     }
 
     public async Task DeleteTables()
