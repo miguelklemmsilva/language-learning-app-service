@@ -1,11 +1,13 @@
-using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Core.Interfaces;
 using Core.Services;
+using LanguageLearningAppService.Extensions;
 using LanguageLearningAppService.Infrastructure.Repositories;
 using LanguageLearningAppService.Tests.TestRepositories;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace LanguageLearningAppService.Tests.DynamoDbFixture;
 
@@ -17,47 +19,35 @@ public class DynamoDbFixture : IDisposable
     public DynamoDbFixture()
     {
         var services = new ServiceCollection();
+        // Build a configuration with the local DynamoDB endpoint
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                { "DynamoDb:ServiceUrl", "http://localhost:8001" }
+            }!)
+            .Build();
+
+        services.AddCommonServices(configuration);
         
-        var config = new AmazonDynamoDBConfig
-        {
-            ServiceURL = "http://localhost:8000",
-            UseHttp = true
-                
-        };
-        var client = new AmazonDynamoDBClient(config);
-        TableManager = new TableManager(client);
-        
-        services.AddSingleton<IAmazonDynamoDB>(client);
-
-        // Configure the DynamoDB client for local testing.
-        services.AddSingleton<IDynamoDBContext>(_ =>
-        {
-            var context = new DynamoDBContextBuilder().WithDynamoDBClient(() => client).Build();
-            
-            TableManager.CreateTablesAsync().GetAwaiter().GetResult();
-
-            return context;
-        });
-
-        services.AddSingleton<IUserRepository, UserRepository>();
-        services.AddSingleton<IUserLanguageRepository, UserLanguageRepository>();
-        services.AddSingleton<IVocabularyRepository, VocabularyRepository>();
-        services.AddSingleton<IAllowedVocabularyRepository, AllowedVocabularyRepository>();
-        services.AddSingleton<ITokenRepository, TestTokenRepository>();
+        // Remove the production HTTP client-based repository and add the test version
+        services.RemoveAll<IChatGptRepository>();
         services.AddSingleton<IChatGptRepository, TestChatGptRepository>();
+
+        // Remove the production token repository and add the test version
+        services.RemoveAll<ITokenRepository>();
+        services.AddSingleton<ITokenRepository, TestTokenRepository>();
+
+        // Remove the production translation repository and add the test version
+        services.RemoveAll<ITranslationRepository>();
         services.AddSingleton<ITranslationRepository, TestTranslationRepository>();
 
-        services.AddSingleton<IUserService, UserService>();
-        services.AddSingleton<IUserLanguageService, UserLanguageService>();
-        services.AddSingleton<IVocabularyService, VocabularyService>();
-        services.AddSingleton<IAllowedVocabularyService, AllowedVocabularyService>();
-        services.AddSingleton<IChatGptService, ChatGptService>();
-        services.AddSingleton<ITranslationService, TranslationService>();
-        services.AddSingleton<IAiService, AiService>();
-
-
-        // Build the provider.
         ServiceProvider = services.BuildServiceProvider();
+
+
+        var client = ServiceProvider.GetRequiredService<IAmazonDynamoDB>();
+        TableManager = new TableManager(client);
+
+        TableManager.CreateTablesAsync().Wait();
     }
 
     public async void Dispose()

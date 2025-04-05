@@ -19,8 +19,27 @@ public class TableManager(IAmazonDynamoDB client)
         await Task.WhenAll(createTableTasks);
     }
 
+    private async Task<bool> TableExistsAsync(string tableName)
+    {
+        try
+        {
+            var response = await client.DescribeTableAsync(tableName);
+            return response.Table.TableStatus == TableStatus.ACTIVE;
+        }
+        catch (ResourceNotFoundException)
+        {
+            return false;
+        }
+    }
+
     private async Task CreateUsersTableAsync()
     {
+        if (await TableExistsAsync(Table.Users.GetTableName()))
+        {
+            Console.WriteLine("Table 'users' already exists. Skipping creation.");
+            return;
+        }
+
         var request = new CreateTableRequest
         {
             TableName = Table.Users.GetTableName(),
@@ -35,6 +54,12 @@ public class TableManager(IAmazonDynamoDB client)
 
     private async Task CreateUserLanguagesTableAsync()
     {
+        if (await TableExistsAsync(Table.UserLanguages.GetTableName()))
+        {
+            Console.WriteLine("Table 'user_languages' already exists. Skipping creation.");
+            return;
+        }
+
         var request = new CreateTableRequest
         {
             TableName = Table.UserLanguages.GetTableName(),
@@ -57,6 +82,12 @@ public class TableManager(IAmazonDynamoDB client)
 
     private async Task CreateVocabularyTableAsync()
     {
+        if (await TableExistsAsync(Table.Vocabulary.GetTableName()))
+        {
+            Console.WriteLine("Table 'vocabulary' already exists. Skipping creation.");
+            return;
+        }
+
         var request = new CreateTableRequest
         {
             TableName = Table.Vocabulary.GetTableName(),
@@ -79,6 +110,12 @@ public class TableManager(IAmazonDynamoDB client)
 
     private async Task CreateAllowedVocabularyTableAsync()
     {
+        if (await TableExistsAsync(Table.AllowedVocabulary.GetTableName()))
+        {
+            Console.WriteLine("Table 'allowed_vocabulary' already exists. Skipping creation.");
+            return;
+        }
+
         var request = new CreateTableRequest
         {
             TableName = Table.AllowedVocabulary.GetTableName(),
@@ -110,10 +147,9 @@ public class TableManager(IAmazonDynamoDB client)
         };
 
         await client.CreateTableAsync(request);
+        Console.WriteLine("Created table 'allowed_vocabulary'");
 
         await PopulateAllowedVocabularyTestDataAsync();
-
-        Console.WriteLine("Created table 'allowed_vocabulary'");
     }
 
     private async Task PopulateAllowedVocabularyTestDataAsync()

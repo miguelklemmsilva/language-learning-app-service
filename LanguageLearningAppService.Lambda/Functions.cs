@@ -11,10 +11,10 @@ using static System.Enum;
 
 namespace LanguageLearningAppService.Lambda;
 
-[method: DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(Function))]
+[method: DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(Functions))]
 [method: DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(APIGatewayHttpApiV2ProxyRequest))]
 [method: DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(APIGatewayHttpApiV2ProxyResponse))]
-public class Function(
+public class Functions(
     IUserService userService,
     IUserLanguageService userLanguageService,
     IVocabularyService vocabularyService,

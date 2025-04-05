@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <UserSecretsId>c3dd0227-2fce-4eff-905e-1ab385a1b6e4</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.14"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\LanguageLearningAppService.Extensions\LanguageLearningAppService.Extensions.csproj" />
+      <ProjectReference Include="..\LanguageLearningAppService.Lambda\LanguageLearningAppService.Lambda.csproj" />
+      <ProjectReference Include="..\LanguageLearningAppService.Tests\LanguageLearningAppService.Tests.csproj" />
+    </ItemGroup>
+
+</Project>

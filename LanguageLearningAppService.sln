@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageLearningAppService.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageLearningAppService.Tests", "LanguageLearningAppService.Tests\LanguageLearningAppService.Tests.csproj", "{49C3A1FC-77A0-413D-9191-3D3B805C1D7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageLearningAppService.Extensions", "LanguageLearningAppService.Extensions\LanguageLearningAppService.Extensions.csproj", "{AE76B263-A26F-4EAE-84E6-925EAF71F635}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LanguageLearningAppService.Local", "LanguageLearningAppService.Local\LanguageLearningAppService.Local.csproj", "{DBB39021-2433-42EB-8695-0A0738205D8A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +40,14 @@ Global
 		{49C3A1FC-77A0-413D-9191-3D3B805C1D7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{49C3A1FC-77A0-413D-9191-3D3B805C1D7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{49C3A1FC-77A0-413D-9191-3D3B805C1D7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE76B263-A26F-4EAE-84E6-925EAF71F635}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE76B263-A26F-4EAE-84E6-925EAF71F635}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE76B263-A26F-4EAE-84E6-925EAF71F635}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE76B263-A26F-4EAE-84E6-925EAF71F635}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBB39021-2433-42EB-8695-0A0738205D8A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBB39021-2433-42EB-8695-0A0738205D8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBB39021-2433-42EB-8695-0A0738205D8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBB39021-2433-42EB-8695-0A0738205D8A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 	EndGlobalSection

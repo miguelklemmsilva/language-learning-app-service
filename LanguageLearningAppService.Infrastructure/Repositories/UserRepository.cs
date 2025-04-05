@@ -12,9 +12,9 @@ public class UserRepository(IDynamoDBContext context) : IUserRepository
         return user;
     }
 
-    public async Task<User> GetUserAsync(string userId)
+    public async Task<User?> GetUserAsync(string userId)
     {
-        return await context.LoadAsync<User>(userId);
+        return await context.LoadAsync<User?>(userId);
     }
 
     public async Task<User> UpdateUserAsync(User user)

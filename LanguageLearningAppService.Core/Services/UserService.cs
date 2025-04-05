@@ -18,7 +18,15 @@ public class UserService(
     {
         var user = await userRepository.GetUserAsync(userId);
 
-        ArgumentNullException.ThrowIfNull(user);
+        if (user is null)
+        {
+            user = await CreateUserAsync(new User
+            {
+                UserId = userId,
+                Email = "test@test.com",
+                ActiveLanguage = null
+            });
+        }
 
         if (user.ActiveLanguage is { } activeLanguage)
             return new UserResponse

@@ -21,7 +21,7 @@ jobs:
       dynamodb:
         image: amazon/dynamodb-local
         ports:
-          - 8000:8000
+          - 8001:8001
     steps:
       - uses: actions/checkout@v2
       - name: Setup .NET
