@@ -20,8 +20,7 @@ jobs:
     services:
       dynamodb:
         image: amazon/dynamodb-local
-        options: --entrypoint java
-        command: -jar DynamoDBLocal.jar -port 8001
+        options: '--entrypoint java -- -jar DynamoDBLocal.jar -port 8001'
         ports:
           - 8001:8001
     steps:
