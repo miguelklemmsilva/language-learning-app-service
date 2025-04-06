@@ -26,9 +26,23 @@ foreach (var kvp in builder.Configuration.AsEnumerable())
 builder.Services.AddCommonServices(builder.Configuration);
 builder.Services.AddSingleton(typeof(Functions));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "cors_policy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173", "https://localhost:5173")
+            .AllowAnyMethod()
+            .AllowAnyHeader()  // Allows all headers, including Authorization
+            .AllowCredentials();  // Allows cookies and authorization headers
+    });
+});
+
 // 3. Build the app
 var app = builder.Build();
 var client = app.Services.GetRequiredService<IAmazonDynamoDB>();
+
+app.UseCors("cors_policy");
 
 var tableManager = new TableManager(client);
 await tableManager.CreateTablesAsync();

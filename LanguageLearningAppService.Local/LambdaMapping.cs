@@ -63,7 +63,7 @@ public static class LambdaMapping
         }
     }
 
-    private static async Task<object?> InvokeLambdaMethodAsync(MethodInfo method,
+    private static async Task<APIGatewayHttpApiV2ProxyResponse?> InvokeLambdaMethodAsync(MethodInfo method,
         Functions instance, HttpContext context)
     {
         // 1. Build up the parameter list based on method signature 
@@ -129,16 +129,16 @@ public static class LambdaMapping
             // Check if it's a generic Task<T>
             if (taskResult.GetType().IsGenericType)
             {
-                return taskResult.GetType().GetProperty("Result")!.GetValue(taskResult)!;
+                return (APIGatewayHttpApiV2ProxyResponse?)taskResult.GetType().GetProperty("Result")!.GetValue(taskResult);
             }
 
             return null;
         }
 
-        return result;
+        return (APIGatewayHttpApiV2ProxyResponse?)result;
     }
 
-    private static async Task WriteResultAsync(HttpContext context, object? result)
+    private static async Task WriteResultAsync(HttpContext context, APIGatewayHttpApiV2ProxyResponse? result)
     {
         // If your AWS Lambda method uses `APIGatewayHttpApiV2ProxyResponse` or returns something else,
         // you can adapt accordingly. Here’s a simple approach:
@@ -150,7 +150,6 @@ public static class LambdaMapping
         }
 
         context.Response.ContentType = "application/json";
-        var json = System.Text.Json.JsonSerializer.Serialize(result);
-        await context.Response.WriteAsync(json);
+        await context.Response.WriteAsync(result.Body);
     }
 }
