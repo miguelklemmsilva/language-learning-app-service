@@ -23,7 +23,7 @@ public class DynamoDbFixture : IDisposable
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string>
             {
-                { "DynamoDb:ServiceUrl", "http://localhost:8001" }
+                { "DynamoDb:ServiceUrl", "http://localhost:8000" }
             }!)
             .Build();
 
