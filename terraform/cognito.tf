@@ -38,6 +38,7 @@ resource "aws_cognito_user_pool_client" "userpool_client" {
   allowed_oauth_flows = ["code", "implicit"]
   allowed_oauth_scopes = ["email", "openid"]
   supported_identity_providers = ["COGNITO", "Google"]
+  explicit_auth_flows = [ "ALLOW_USER_PASSWORD_AUTH" ]
 }
 
 resource "aws_cognito_user_pool_domain" "main" {
