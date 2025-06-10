@@ -32,13 +32,33 @@ resource "aws_cognito_user_pool" "user_pool" {
 resource "aws_cognito_user_pool_client" "userpool_client" {
   name                                 = "client"
   user_pool_id                         = aws_cognito_user_pool.user_pool.id
-  callback_urls = ["https://miguelklemmsilva.com/dashboard", "http://localhost:5173/dashboard", "https://miguelklemmsilva.com/home", "polybara://home"]
-  logout_urls = ["https://miguelklemmsilva.com", "http://localhost:5173", "polybara://"]
+  
+  # OAuth Configuration
+  callback_urls                        = ["https://miguelklemmsilva.com/dashboard", "http://localhost:5173/dashboard", "https://miguelklemmsilva.com/home", "polybara://home"]
+  logout_urls                          = ["https://miguelklemmsilva.com", "http://localhost:5173", "polybara://"]
   allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_flows = ["code", "implicit"]
-  allowed_oauth_scopes = ["email", "openid"]
-  supported_identity_providers = ["COGNITO", "Google"]
-  explicit_auth_flows = [ "ALLOW_USER_PASSWORD_AUTH" ]
+  allowed_oauth_flows                  = ["code"] # Remove "implicit" as it's less secure
+  allowed_oauth_scopes                 = ["email", "openid", "profile"]
+  supported_identity_providers         = ["COGNITO", "Google"]
+  
+  id_token_validity                   = 60       # 1 hour (in minutes)
+  access_token_validity               = 60       # 1 hour (in minutes)
+  refresh_token_validity              = 43200    # 30 days (in minutes)
+  token_validity_units {
+    id_token      = "minutes"
+    access_token  = "minutes"
+    refresh_token = "minutes"
+  }
+
+  # Authentication Flows
+  explicit_auth_flows = [
+    "ALLOW_USER_PASSWORD_AUTH",
+    "ALLOW_REFRESH_TOKEN_AUTH"
+  ]
+
+  # Prevent common errors
+  prevent_user_existence_errors = "ENABLED"
+  enable_token_revocation      = true
 }
 
 resource "aws_cognito_user_pool_domain" "main" {
