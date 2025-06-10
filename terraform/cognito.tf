@@ -32,8 +32,8 @@ resource "aws_cognito_user_pool" "user_pool" {
 resource "aws_cognito_user_pool_client" "userpool_client" {
   name                                 = "client"
   user_pool_id                         = aws_cognito_user_pool.user_pool.id
-  callback_urls = ["https://miguelklemmsilva.com/dashboard", "http://localhost:5173/dashboard", "https://miguelklemmsilva.com/home"]
-  logout_urls = ["https://miguelklemmsilva.com", "http://localhost:5173"]
+  callback_urls = ["https://miguelklemmsilva.com/dashboard", "http://localhost:5173/dashboard", "https://miguelklemmsilva.com/home", "polybara://home"]
+  logout_urls = ["https://miguelklemmsilva.com", "http://localhost:5173", "polybara://"]
   allowed_oauth_flows_user_pool_client = true
   allowed_oauth_flows = ["code", "implicit"]
   allowed_oauth_scopes = ["email", "openid"]
