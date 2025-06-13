@@ -59,10 +59,12 @@ public class Functions(
     public async Task<APIGatewayHttpApiV2ProxyResponse> UpdateUser([FromHeader] string authorization,
         [FromBody] UpdateUserRequest updateRequest)
     {
-        var username = AuthHelper.ParseToken(authorization).Sub;
+        var parsedToken = AuthHelper.ParseToken(authorization);
+        var userId = parsedToken.Sub;
+        var email = parsedToken.Email;
 
         var user = await userService.UpdateUserAsync(new User
-            { UserId = username, ActiveLanguage = updateRequest.ActiveLanguage });
+            { UserId = userId, ActiveLanguage = updateRequest.ActiveLanguage, Email = email });
 
         return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(user);
     }
@@ -86,7 +88,7 @@ public class Functions(
         };
 
         var userLanguageResponse = await userLanguageService.UpdateUserLanguageAsync(userLanguage);
-        
+
         return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(userLanguageResponse);
     }
 
@@ -115,7 +117,7 @@ public class Functions(
         var newLanguage = await userLanguageService.RemoveUserLanguageAsync(userId, enumLanguage);
 
         var removeUserLanguageResponse = new RemoveUserLanguageResponse { ActiveLanguage = newLanguage };
-        
+
         return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(removeUserLanguageResponse);
     }
 
@@ -131,7 +133,7 @@ public class Functions(
         if (!tryParse) throw new Exception($"{language} is not a valid language!");
 
         var vocabulary = await vocabularyService.GetVocabularyAsync(userId, enumLanguage);
-        
+
         return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(vocabulary);
     }
 
@@ -143,7 +145,7 @@ public class Functions(
         var userId = AuthHelper.ParseToken(authorization).Sub;
 
         var vocabulary = await vocabularyService.AddVocabularyAsync(userId, addRequest);
-        
+
         return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(vocabulary);
     }
 
@@ -160,8 +162,9 @@ public class Functions(
 
         await vocabularyService.RemoveVocabularyAsync(userId, enumLanguage, word);
 
-        var vocabularyRemovalResponse = new Dictionary<string, string> { { "message", "Vocabulary removed successfully" } };
-        
+        var vocabularyRemovalResponse = new Dictionary<string, string>
+            { { "message", "Vocabulary removed successfully" } };
+
         return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(vocabularyRemovalResponse);
     }
 
@@ -172,7 +175,7 @@ public class Functions(
         var userId = AuthHelper.ParseToken(authorization).Sub;
 
         var sentences = await aiService.GenerateSentencesAsync(userId);
-        
+
         return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(sentences);
     }
 
@@ -181,7 +184,7 @@ public class Functions(
     public async Task<APIGatewayHttpApiV2ProxyResponse> VerifySentence([FromBody] VerifySentenceRequest verifyRequest)
     {
         var verifySentenceResponse = await chatGptService.VerifySentenceAsync(verifyRequest);
-        
+
         return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(verifySentenceResponse);
     }
 
@@ -200,7 +203,7 @@ public class Functions(
         await vocabularyService.FinishLessonAsync(userId, finishRequest, activeLanguage);
 
         var successMessage = new Dictionary<string, string> { { "message", "Lesson finished successfully" } };
-        
+
         return ApiGatewayResponseManager.ToApiGatewaySuccessResponse(successMessage);
     }
 

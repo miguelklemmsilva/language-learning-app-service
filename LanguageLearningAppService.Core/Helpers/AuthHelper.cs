@@ -18,6 +18,7 @@ public static class AuthHelper
         var tokenData = new Token
         {
             Sub = token.Claims.First(c => c.Type == "sub").Value,
+            Email = token.Claims.First(c => c.Type == "sub").Value
         };
 
         return tokenData;
