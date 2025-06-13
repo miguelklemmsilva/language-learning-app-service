@@ -87,11 +87,6 @@ resource "aws_dynamodb_table" "sentences" {
   }
 
   attribute {
-    name = "tgtLang"
-    type = "S"
-  }
-
-  attribute {
     name = "tokenCount"
     type = "N"
   }
