@@ -43,32 +43,36 @@ resource "aws_dynamodb_table" "vocabulary" {
   }
 }
 
-resource "aws_dynamodb_table" "allowed_vocabulary" {
-  name         = "allowed_vocabulary"
+resource "aws_dynamodb_table" "sentences" {
+  name         = "sentences"
   billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "Word"
-  range_key    = "Language"
+  hash_key     = "id"
 
   attribute {
-    name = "Word"
+    name = "id"
     type = "S"
   }
 
   attribute {
-    name = "Language"
+    name = "srcLang"
     type = "S"
   }
 
   attribute {
-    name = "Category"
+    name = "tgtLang"
     type = "S"
+  }
+
+  attribute {
+    name = "tokenCount"
+    type = "N"
   }
 
   global_secondary_index {
-    name               = "CategoryIndex"
-    hash_key           = "Language"
-    range_key          = "Category"
-    projection_type    = "ALL"
+    name            = "LangTokenIndex"
+    hash_key        = "srcLang"
+    range_key       = "tokenCount"
+    projection_type = "ALL"
   }
 }
 
