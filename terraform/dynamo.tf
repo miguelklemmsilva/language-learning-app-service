@@ -43,6 +43,34 @@ resource "aws_dynamodb_table" "vocabulary" {
   }
 }
 
+resource "aws_dynamodb_table" "allowed_vocabulary" {
+  name         = "allowed_vocabulary"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "Word"
+  range_key    = "Language"
+
+  attribute {
+    name = "Word"
+    type = "S"
+  }
+
+  attribute {
+    name = "Language"
+    type = "S"
+  }
+
+  attribute {
+    name = "Category"
+    type = "S"
+  }
+
+  global_secondary_index {
+    name               = "CategoryIndex"
+    hash_key           = "Language"
+    range_key          = "Category"
+    projection_type    = "ALL"
+  }
+}
 resource "aws_dynamodb_table" "sentences" {
   name         = "sentences"
   billing_mode = "PAY_PER_REQUEST"
