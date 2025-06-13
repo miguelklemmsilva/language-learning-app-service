@@ -29,5 +29,4 @@ namespace LanguageLearningAppService.Lambda;
 [JsonSerializable(typeof(FinishLessonRequest))]
 [JsonSerializable(typeof(JsonObject))]
 [JsonSerializable(typeof(IEnumerable<Category>))]
-[JsonSerializable(typeof(Proficiency))]
 public partial class CustomJsonSerializerContext : JsonSerializerContext;
