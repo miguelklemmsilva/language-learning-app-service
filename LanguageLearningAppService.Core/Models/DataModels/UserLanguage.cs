@@ -6,10 +6,12 @@ namespace Core.Models.DataModels;
 [DynamoDBTable("user_languages")]
 public class UserLanguage
 {
-    [DynamoDBHashKey]
-    public required string UserId { get; set; }
+    [DynamoDBHashKey] public required string UserId { get; set; }
+
     [DynamoDBRangeKey(typeof(EnumConverter<Language>))]
     public required Language Language { get; set; }
+    [DynamoDBProperty]
+    public required Proficiency Proficiency { get; set; }
     [DynamoDBProperty]
     public required string Country { get; set; }
     [DynamoDBProperty]

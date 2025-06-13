@@ -28,6 +28,7 @@ namespace LanguageLearningAppService.Tests.ServiceTests
             var userLanguage = new UserLanguage
             {
                 UserId = userId, Language = Language.Spanish, Country = "Spain", Listening = true, Speaking = true,
+                Proficiency = Proficiency.Beginner,
                 Translation = true
             };
 
@@ -53,6 +54,7 @@ namespace LanguageLearningAppService.Tests.ServiceTests
             var userLanguage = new UserLanguage
             {
                 UserId = userId, Language = Language.Spanish, Country = "Spain", Listening = true, Speaking = true,
+                Proficiency = Proficiency.Beginner,
                 Translation = true
             };
 
@@ -79,6 +81,7 @@ namespace LanguageLearningAppService.Tests.ServiceTests
             var langFrench = new UserLanguage
             {
                 UserId = userId, Language = Language.French, Country = "France", Listening = true, Speaking = true,
+                Proficiency = Proficiency.Beginner,
                 Translation = true
             };
             await _userLanguageService.UpdateUserLanguageAsync(langFrench);
@@ -87,6 +90,7 @@ namespace LanguageLearningAppService.Tests.ServiceTests
             var langSpanish = new UserLanguage
             {
                 UserId = userId, Language = Language.Spanish, Country = "Spain", Listening = true, Speaking = true,
+                Proficiency = Proficiency.Beginner,
                 Translation = true
             };
             await _userLanguageService.UpdateUserLanguageAsync(langSpanish);
@@ -114,6 +118,7 @@ namespace LanguageLearningAppService.Tests.ServiceTests
             var langSpanish = new UserLanguage
             {
                 UserId = userId, Language = Language.Spanish, Country = "Spain", Listening = true, Speaking = true,
+                Proficiency = Proficiency.Beginner,
                 Translation = true
             };
             await _userLanguageService.UpdateUserLanguageAsync(langSpanish);
@@ -122,6 +127,7 @@ namespace LanguageLearningAppService.Tests.ServiceTests
             var langFrench = new UserLanguage
             {
                 UserId = userId, Language = Language.French, Country = "France", Listening = true, Speaking = true,
+                Proficiency = Proficiency.Beginner,
                 Translation = true
             };
             await _userLanguageService.UpdateUserLanguageAsync(langFrench);
@@ -153,6 +159,7 @@ namespace LanguageLearningAppService.Tests.ServiceTests
             var langSpanish = new UserLanguage
             {
                 UserId = userId, Language = Language.Spanish, Country = "Spain", Listening = true, Speaking = true,
+                Proficiency = Proficiency.Beginner,
                 Translation = true
             };
             await _userLanguageService.UpdateUserLanguageAsync(langSpanish);
@@ -179,6 +186,7 @@ namespace LanguageLearningAppService.Tests.ServiceTests
             var langGerman = new UserLanguage
             {
                 UserId = userId, Language = Language.German, Country = "Germany", Listening = true, Speaking = true,
+                Proficiency = Proficiency.Beginner,
                 Translation = true
             };
             await _userLanguageService.UpdateUserLanguageAsync(langGerman);

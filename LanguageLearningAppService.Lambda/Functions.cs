@@ -78,6 +78,7 @@ public class Functions(
         {
             UserId = username,
             Language = updateRequest.Language,
+            Proficiency = updateRequest.Proficiency,
             Country = updateRequest.Country,
             Translation = updateRequest.Translation,
             Listening = updateRequest.Listening,

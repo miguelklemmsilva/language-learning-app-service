@@ -29,6 +29,7 @@ namespace LanguageLearningAppService.Tests.ServiceTests
             {
                 UserId = userId,
                 Language = Language.Spanish,
+                Proficiency = Proficiency.Beginner,
                 Translation = true,
                 Listening = false,
                 Speaking = false,
@@ -80,6 +81,7 @@ namespace LanguageLearningAppService.Tests.ServiceTests
             {
                 UserId = userId,
                 Language = Language.French,
+                Proficiency = Proficiency.Beginner,
                 Translation = false,
                 Listening = false,
                 Speaking = false,
