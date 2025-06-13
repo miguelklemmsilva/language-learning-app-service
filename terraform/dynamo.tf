@@ -71,30 +71,3 @@ resource "aws_dynamodb_table" "allowed_vocabulary" {
     projection_type    = "ALL"
   }
 }
-resource "aws_dynamodb_table" "sentences" {
-  name         = "sentences"
-  billing_mode = "PAY_PER_REQUEST"
-  hash_key     = "id"
-
-  attribute {
-    name = "id"
-    type = "S"
-  }
-
-  attribute {
-    name = "srcLang"
-    type = "S"
-  }
-
-  attribute {
-    name = "tokenCount"
-    type = "N"
-  }
-
-  global_secondary_index {
-    name            = "LangTokenIndex"
-    hash_key        = "srcLang"
-    range_key       = "tokenCount"
-    projection_type = "ALL"
-  }
-}
